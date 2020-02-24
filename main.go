@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/codeskyblue/go-sh"
 	"github.com/gohugoio/hugo/commands"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/memfs"
@@ -40,7 +41,7 @@ func cleanUp() {
 	os.RemoveAll("compose")
 }
 
-func composeDir(fs billy.Filesystem, subdir string, target string) {
+func copyDir(fs billy.Filesystem, subdir string, target string) {
 	// TODO Dir not working
 
 	var files []os.FileInfo
@@ -88,14 +89,28 @@ func hugoRun(args []string) {
 	commands.Execute(args)
 }
 
+func compose(url string, branch string, subdir string, target string) {
+
+	fs := cloneDir(url, branch)
+	copyDir(fs, subdir, "compose/content/"+target+"/")
+}
+
+func getTheme() {
+	// FIXME make me native
+	sh.Command("mkdir", "temp").Run()
+	sh.Command("wget", "-qO-", "https://github.com/budparr/gohugo-theme-ananke/archive/master.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
+	sh.Command("echo", "theme = 'gohugo-theme-ananke-master'").Command("tee", "-a", "compose/config.toml").Run()
+}
+
 func main() {
 
 	cleanUp()
 	hugoRun([]string{"new", "site", "compose"})
+	getTheme()
 
-	fs := cloneDir("https://github.com/snipem/commute-tube", "master")
-	composeDir(fs, ".", "compose/content/commute/")
+	compose("https://github.com/snipem/commute-tube", "master", ".", "commute")
+	compose("https://github.com/snipem/alfred-fandom", "master", ".", "fandom")
 
-	hugoRun([]string{"--source", "compose"})
+	hugoRun([]string{"--source", "compose", "serve"})
 
 }
