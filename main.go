@@ -109,7 +109,7 @@ func main() {
 	getTheme()
 
 	compose("https://github.com/snipem/commute-tube", "master", ".", "commute")
-	compose("https://github.com/snipem/alfred-fandom", "master", ".", "fandom")
+	compose("https://github.com/snipem/psnprices", "master", ".", "psnprices")
 
 	hugoRun([]string{"--source", "compose", "serve"})
 
