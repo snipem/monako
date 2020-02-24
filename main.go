@@ -97,9 +97,10 @@ func compose(url string, branch string, subdir string, target string) {
 
 func getTheme() {
 	// FIXME make me native
-	sh.Command("mkdir", "temp").Run()
-	sh.Command("wget", "-qO-", "https://github.com/budparr/gohugo-theme-ananke/archive/master.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
-	sh.Command("echo", "theme = 'gohugo-theme-ananke-master'").Command("tee", "-a", "compose/config.toml").Run()
+	sh.Command("wget", "-qO-", "https://github.com/spf13/hyde/archive/master.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
+	sh.Command("echo", "theme = 'hyde-master'").Command("tee", "-a", "compose/config.toml").Run()
+
+	sh.Command("cat", "sidebar.example.toml").Command("tee", "-a", "compose/config.toml").Run()
 }
 
 func main() {
