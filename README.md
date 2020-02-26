@@ -10,3 +10,7 @@ A less opininated document aggregator and publisher. Easier to use and to adapt 
 ** Transform all documents below a specific structure
 * Use Antora like configuration file for main structure
 * Support Mermaid
+
+## TODOs
+
+* Realy big repos seem to produce `runtime error: invalid memory address or nil pointer dereference` error.
