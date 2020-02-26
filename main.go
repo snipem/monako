@@ -105,12 +105,18 @@ func getTheme() {
 
 func main() {
 
+	config, err := LoadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	cleanUp()
 	hugoRun([]string{"new", "site", "compose"})
 	getTheme()
 
-	compose("https://github.com/snipem/commute-tube", "master", ".", "commute")
-	compose("https://github.com/snipem/psnprices", "master", ".", "psnprices")
+	for _, c := range config {
+		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir)
+	}
 
 	hugoRun([]string{"--source", "compose", "serve"})
 

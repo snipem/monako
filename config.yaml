@@ -1,0 +1,11 @@
+---
+
+- src: https://github.com/snipem/commute-tube
+  branch: master
+  docdir: .
+  targetdir: commute
+
+- src: https://github.com/snipem/psnprices
+  branch: master
+  docdir: .
+  targetdir: psnprices
