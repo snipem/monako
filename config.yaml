@@ -9,3 +9,8 @@
   branch: master
   docdir: .
   targetdir: psnprices
+
+- src: https://github.com/arc42/arc42-template
+  branch: master
+  docdir: EN/asciidoc
+  targetdir: arc42
