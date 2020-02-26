@@ -45,7 +45,13 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 	// TODO Dir not working
 
 	var files []os.FileInfo
-	files, err := fs.ReadDir(subdir)
+
+	fs, err := fs.Chroot(subdir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	files, err = fs.ReadDir(".")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,6 +60,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 		if file.IsDir() {
 			continue
+			// FIXME Copy also dirs,
 		}
 		f, _ := fs.Open(file.Name())
 
@@ -118,6 +125,6 @@ func main() {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir)
 	}
 
-	hugoRun([]string{"--source", "compose", "serve"})
+	hugoRun([]string{"--source", "compose"})
 
 }
