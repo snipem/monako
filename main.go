@@ -5,9 +5,9 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/codeskyblue/go-sh"
 	"github.com/gohugoio/hugo/commands"
@@ -20,7 +20,7 @@ import (
 
 func cloneDir(url string, branch string) billy.Filesystem {
 
-	fmt.Printf("Cloning in to %s with branch %s, with dir %s", url, branch)
+	log.Printf("Cloning in to %s with branch %s", url, branch)
 
 	fs := memfs.New()
 
@@ -44,6 +44,7 @@ func cleanUp() {
 func copyDir(fs billy.Filesystem, subdir string, target string) {
 	// TODO Dir not working
 
+	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
 	var files []os.FileInfo
 
 	fs, err := fs.Chroot(subdir)
@@ -59,32 +60,40 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 	for _, file := range files {
 
 		if file.IsDir() {
+			// TODO is this memory consuming or is fsSubdir freed after recursion?
+			// fsSubdir := fs
+			copyDir(fs, file.Name(), target+file.Name())
 			continue
-			// FIXME Copy also dirs,
 		}
-		f, _ := fs.Open(file.Name())
 
-		// TODO check if 0755 is good?
-		err := os.MkdirAll(target, os.FileMode(0755))
+		f, err := fs.Open(file.Name())
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		t, _ := os.Create(target + "/" + file.Name())
+		// TODO check if 0755 is good?
+		err = os.MkdirAll(target, os.FileMode(0755))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		t, err := os.Create(target + "/" + file.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		if _, err = io.Copy(t, f); err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("%s\n", file.Name())
-		s, _ := ioutil.ReadAll(f)
-		fmt.Println(string(s))
+		log.Printf("Copied %s\n", file.Name())
+		// s, _ := ioutil.ReadAll(f)
+		// fmt.Println(string(s))
 
-		if err != nil {
-			log.Fatal(err)
-		}
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
-		// fmt.Printf("File contents: %s", content)
 	}
 
 	// CheckIfError(err)
@@ -111,6 +120,13 @@ func getTheme() {
 }
 
 func main() {
+
+	trace := true
+
+	if trace == true {
+		// Add line and filename to log
+		log.SetReportCaller(true)
+	}
 
 	config, err := LoadConfig()
 	if err != nil {
