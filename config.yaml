@@ -12,5 +12,6 @@
 
 - src: https://github.com/arc42/arc42-template
   branch: master
-  docdir: EN/asciidoc
+  # hugo does not support relative includes as of now
+  docdir: EN/asciidoc/src
   targetdir: arc42
