@@ -26,6 +26,7 @@ func cloneDir(url string, branch string) billy.Filesystem {
 
 	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
+		Depth:         1,
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)),
 		SingleBranch:  true,
 	})
