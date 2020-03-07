@@ -122,15 +122,20 @@ func hugoRun(args []string) {
 func compose(url string, branch string, subdir string, target string, username string, password string) {
 
 	fs := cloneDir(url, branch, username, password)
-	copyDir(fs, subdir, "compose/content/"+target+"/")
+	copyDir(fs, subdir, "compose/content/docs/"+target+"/")
 }
 
 func getTheme() {
 	// FIXME make me native
-	sh.Command("wget", "-qO-", "https://github.com/spf13/hyde/archive/master.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
-	sh.Command("echo", "theme = 'hyde-master'").Command("tee", "-a", "compose/config.toml").Run()
+	sh.Command("wget", "-qO-", "https://github.com/alex-shpak/hugo-book/archive/v6.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
+	// sh.Command("echo", "theme = 'hugo-book-6'").Command("tee", "-a", "compose/config.toml").Run()
+	sh.Command("cp", "config.toml", "compose/").Run()
 
-	sh.Command("cat", "sidebar.example.toml").Command("tee", "-a", "compose/config.toml").Run()
+	// sh.Command("cat", "sidebar.example.toml").Command("tee", "-a", "compose/config.toml").Run()
+
+	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
+	sh.Command("cp", "index.md", "compose/content/menu/").Run()
+
 }
 
 func main() {
