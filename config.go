@@ -9,6 +9,8 @@ import (
 type ComposeConfig struct {
 	Source      string `yaml:"src"`
 	Branch      string `yaml:"branch,omitempty"`
+	EnvUsername string `yaml:"envusername,omitempty"`
+	EnvPassword string `yaml:"envpassword,omitempty"`
 	DirWithDocs string `yaml:"docdir,omitempty"`
 	TargetDir   string `yaml:"targetdir,omitempty"`
 }

@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 run:
-	go run main.go config.go
+	source secrets.env && go run main.go config.go
 	hugo --source compose serve

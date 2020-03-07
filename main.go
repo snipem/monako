@@ -15,20 +15,33 @@ import (
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-func cloneDir(url string, branch string) billy.Filesystem {
+func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
 
+	log.Printf("%s : %s", username, password)
+
 	fs := memfs.New()
+
+	basicauth := http.BasicAuth{}
+
+	if username != "" && password != "" {
+		basicauth = http.BasicAuth{
+			Username: username,
+			Password: password,
+		}
+	}
 
 	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
 		Depth:         1,
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)),
 		SingleBranch:  true,
+		Auth:          &basicauth,
 	})
 
 	if err != nil {
@@ -106,9 +119,9 @@ func hugoRun(args []string) {
 	commands.Execute(args)
 }
 
-func compose(url string, branch string, subdir string, target string) {
+func compose(url string, branch string, subdir string, target string, username string, password string) {
 
-	fs := cloneDir(url, branch)
+	fs := cloneDir(url, branch, username, password)
 	copyDir(fs, subdir, "compose/content/"+target+"/")
 }
 
@@ -135,11 +148,11 @@ func main() {
 	}
 
 	cleanUp()
-	hugoRun([]string{"new", "site", "compose"})
+	hugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme()
 
 	for _, c := range config {
-		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir)
+		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
 	hugoRun([]string{"--source", "compose"})
