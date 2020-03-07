@@ -2,21 +2,17 @@
 headless: true
 ---
 
-- [**Example Site**]({{< relref "/docs/example" >}})
-- [Table of Contents]({{< relref "/docs/example/table-of-contents" >}})
-  - [With ToC]({{< relref "/docs/example/table-of-contents/with-toc" >}})
-  - [Without ToC]({{< relref "/docs/example/table-of-contents/without-toc" >}})
-- [Collapsed]({{< relref "/docs/example/collapsed" >}})
-  - [3rd]({{< relref "/docs/example/collapsed/3rd-level" >}})
-    - [4th]({{< relref "/docs/example/collapsed/3rd-level/4th-level" >}})
+- **Example Site**
 <br />
 
-- **Shortcodes**
-- [Buttons]({{< relref "/docs/shortcodes/buttons" >}})
-- [Columns]({{< relref "/docs/shortcodes/columns" >}})
-- [Expand]({{< relref "/docs/shortcodes/expand" >}})
-- [Hints]({{< relref "/docs/shortcodes/hints" >}})
-- [Katex]({{< relref "/docs/shortcodes/katex" >}})
-- [Mermaid]({{< relref "/docs/shortcodes/mermaid" >}})
-- [Tabs]({{< relref "/docs/shortcodes/tabs" >}})
+- **My Projects**
+- [Commute Tube]({{< relref "/docs/commute/readme" >}})
+- [PSPrices]({{< relref "/docs/psnprices/readme" >}})
+<br />
+
+- **Example for other Projects**
+- [Aweseome Markdown]({{< relref "/docs/awesome-markdown/readme" >}})
+  - **Arc 42 Templates**
+    - [Introduction and Goals]({{< relref "/docs/arc42/01_introduction_and_goals" >}})
+    - [Architecture Constraints]({{< relref "/docs/arc42/02_architecture_constraints" >}})
 <br />
