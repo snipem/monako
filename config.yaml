@@ -10,6 +10,16 @@
   docdir: .
   targetdir: psnprices
 
+- src: https://github.com/mundimark/awesome-markdown
+  branch: master
+  docdir: .
+  targetdir: awesome-markdown
+
+# - src: git@github.com:bodiam/awesome-asciidoc.git
+#   branch: master
+#   docdir: .
+#   targetdir: awesome-asciidoc
+
 - src: https://github.com/arc42/arc42-template
   branch: master
   # hugo does not support relative includes as of now
