@@ -116,19 +116,22 @@ func compose(url string, branch string, subdir string, target string, username s
 	copyDir(fs, subdir, "compose/content/docs/"+target+"/")
 }
 
-func getTheme() {
+func getTheme(hugoconfig string, menuconfig string) {
 	// FIXME make me native
 	sh.Command("wget", "-qO-", "https://github.com/alex-shpak/hugo-book/archive/v6.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
-	sh.Command("cp", "config.toml", "compose/").Run()
+	// TODO has to be TOML
+	sh.Command("cp", hugoconfig, "compose/config.toml").Run()
 
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
-	sh.Command("cp", "index.md", "compose/content/menu/").Run()
+	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
 }
 
 func main() {
 
 	var configfilepath = flag.String("config", "config.yaml", "Configuration file, default: config.yaml")
+	var hugoconfigfilepath = flag.String("hugo-config", "config.toml", "Configuration file for hugo, default: config.toml")
+	var menuconfigfilepath = flag.String("menu-config", "index.md", "Menu file for hugo-book theme, default: index.md")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
 	flag.Parse()
@@ -145,7 +148,7 @@ func main() {
 
 	cleanUp()
 	hugoRun([]string{"--quiet", "new", "site", "compose"})
-	getTheme()
+	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
