@@ -3,6 +3,7 @@ package main
 // run: make run
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -127,14 +128,17 @@ func getTheme() {
 
 func main() {
 
-	trace := true
+	var configfilepath = flag.String("config", "config.yaml", "Configuration file, default: config.yaml")
+	var trace = flag.Bool("trace", false, "Enable trace logging")
 
-	if trace == true {
+	flag.Parse()
+
+	if *trace == true {
 		// Add line and filename to log
 		log.SetReportCaller(true)
 	}
 
-	config, err := LoadConfig()
+	config, err := LoadConfig(*configfilepath)
 	if err != nil {
 		log.Fatal(err)
 	}

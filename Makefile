@@ -1,5 +1,8 @@
 SHELL := /bin/bash
 
-run:
-	touch secrets.env && source secrets.env && go run main.go config.go
+clean:
+	rm ./monako || true
+
+run: clean
+	touch secrets.env && source secrets.env && go build && ./monako -config config.prod.yaml
 	hugo --source compose serve

@@ -15,9 +15,9 @@ type ComposeConfig struct {
 	TargetDir   string `yaml:"targetdir,omitempty"`
 }
 
-func LoadConfig() (config []ComposeConfig, err error) {
+func LoadConfig(configfilepath string) (config []ComposeConfig, err error) {
 
-	source, err := ioutil.ReadFile("config.yaml")
+	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
 		return nil, err
 	}

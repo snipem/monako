@@ -12,3 +12,5 @@
 *.out
 compose/*
 secrets.env
+*.prod.*
+monako
