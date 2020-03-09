@@ -23,13 +23,12 @@ func cloneDir(url string, branch string, username string, password string) billy
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
 
-	log.Printf("%s : %s", username, password)
-
 	fs := memfs.New()
 
 	basicauth := http.BasicAuth{}
 
 	if username != "" && password != "" {
+		log.Printf("Using username and password")
 		basicauth = http.BasicAuth{
 			Username: username,
 			Password: password,
@@ -56,7 +55,6 @@ func cleanUp() {
 }
 
 func copyDir(fs billy.Filesystem, subdir string, target string) {
-	// TODO Dir not working
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
 	var files []os.FileInfo
