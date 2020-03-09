@@ -1,5 +1,0 @@
-[Menus]
-  main = [
-      {Name = "Commute Tube", URL = "/commute/readme/"},
-      {Name = "PSNPrices", URL = "/psnprices/readme/"}
-  ]
