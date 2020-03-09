@@ -99,16 +99,8 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		}
 
 		log.Printf("Copied %s\n", file.Name())
-		// s, _ := ioutil.ReadAll(f)
-		// fmt.Println(string(s))
-
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
 
 	}
-
-	// CheckIfError(err)
 
 }
 
@@ -126,10 +118,7 @@ func compose(url string, branch string, subdir string, target string, username s
 func getTheme() {
 	// FIXME make me native
 	sh.Command("wget", "-qO-", "https://github.com/alex-shpak/hugo-book/archive/v6.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
-	// sh.Command("echo", "theme = 'hugo-book-6'").Command("tee", "-a", "compose/config.toml").Run()
 	sh.Command("cp", "config.toml", "compose/").Run()
-
-	// sh.Command("cat", "sidebar.example.toml").Command("tee", "-a", "compose/config.toml").Run()
 
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", "index.md", "compose/content/menu/").Run()
