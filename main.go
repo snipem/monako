@@ -13,7 +13,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/codeskyblue/go-sh"
-	"github.com/gohugoio/hugo/commands"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
@@ -51,10 +50,6 @@ func cloneDir(url string, branch string, username string, password string) billy
 	}
 
 	return fs
-}
-
-func cleanUp() {
-	os.RemoveAll("compose")
 }
 
 func copyDir(fs billy.Filesystem, subdir string, target string) {
@@ -127,11 +122,6 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 }
 
-func hugoRun(args []string) {
-	// args := []string{"--contentDir", "compose"}
-	commands.Execute(args)
-}
-
 func compose(url string, branch string, subdir string, target string, username string, password string) {
 
 	fs := cloneDir(url, branch, username, password)
@@ -168,14 +158,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cleanUp()
-	hugoRun([]string{"--quiet", "new", "site", "compose"})
+	CleanUp()
+	HugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
-	hugoRun([]string{"--source", "compose"})
+	HugoRun([]string{"--source", "compose"})
 
 }

@@ -1,11 +1,27 @@
 package main
 
-import "strings"
+import (
+	"os"
+	"strings"
+
+	"github.com/gohugoio/hugo/commands"
+)
+
+func CleanUp() {
+	os.RemoveAll("compose")
+}
 
 func AsciidocPostprocessing(dirty []byte) []byte {
 	return dirty
 }
 
+func HugoRun(args []string) {
+	// args := []string{"--contentDir", "compose"}
+	commands.Execute(args)
+}
+
+// MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
+//  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
 func MarkdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
