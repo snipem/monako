@@ -6,8 +6,8 @@ A less opininated document aggregator and publisher. Easier to use and to adapt 
 
 * Make it simple and stupid
 * Git clone existing repositories
-** Don't attempt to change their structure
-** Transform all documents below a specific structure
+  * Don't attempt to change their structure
+  * Transform all documents below a specific structure
 * Use Antora like configuration file for main structure
 * Support Mermaid
 
