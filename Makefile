@@ -7,5 +7,8 @@ build: clean
 	go build .
 
 run: build
-	touch secrets.env && source secrets.env && ./monako -config config.prod.yaml -menu-config index.prod.md -hugo-config config.prod.toml
+	touch secrets.env && source secrets.env && \
+		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
+			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
+			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
 	hugo --source compose serve
