@@ -6,7 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -55,6 +57,21 @@ func cleanUp() {
 	os.RemoveAll("compose")
 }
 
+func asciidocPostprocessing(dirty []byte) []byte {
+	return dirty
+}
+
+func markdownPostprocessing(dirty []byte) []byte {
+	var d = string(dirty)
+
+	// FIXME really quick and dirty, just for testing
+	d = strings.ReplaceAll(d, "](http", "]xxxxxxhttp")
+	d = strings.ReplaceAll(d, "](", "](../")
+	d = strings.ReplaceAll(d, "]xxxxxxhttp", "](http")
+
+	return []byte(d)
+}
+
 func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
@@ -90,16 +107,36 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 			log.Fatal(err)
 		}
 
-		t, err := os.Create(target + "/" + file.Name())
-		if err != nil {
-			log.Fatal(err)
-		}
+		var targetFilename = target + "/" + file.Name()
 
-		if _, err = io.Copy(t, f); err != nil {
-			log.Fatal(err)
+		if strings.HasSuffix(file.Name(), ".md") {
+			var dirty, _ = ioutil.ReadAll(f)
+			clean := markdownPostprocessing(dirty)
+			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+		} else if strings.HasSuffix(file.Name(), ".adoc") {
+			var dirty, _ = ioutil.ReadAll(f)
+			clean := asciidocPostprocessing(dirty)
+			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+		} else {
+
+			t, err := os.Create(targetFilename)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if _, err = io.Copy(t, f); err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		log.Printf("Copied %s\n", file.Name())
+
+		// s, _ := ioutil.ReadAll(f)
+		// fmt.Println(string(s))
+
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 	}
 
