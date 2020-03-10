@@ -8,6 +8,9 @@ clean:
 build: clean
 	go build .
 
+test:
+	go test -v
+
 run: build
 	./monako -config config.yaml -menu-config index.md -hugo-config config.toml
 	hugo --source compose serve

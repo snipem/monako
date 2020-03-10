@@ -57,21 +57,6 @@ func cleanUp() {
 	os.RemoveAll("compose")
 }
 
-func asciidocPostprocessing(dirty []byte) []byte {
-	return dirty
-}
-
-func markdownPostprocessing(dirty []byte) []byte {
-	var d = string(dirty)
-
-	// FIXME really quick and dirty, just for testing
-	d = strings.ReplaceAll(d, "](http", "]xxxxxxhttp")
-	d = strings.ReplaceAll(d, "](", "](../")
-	d = strings.ReplaceAll(d, "]xxxxxxhttp", "](http")
-
-	return []byte(d)
-}
-
 func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
@@ -111,11 +96,11 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 		if strings.HasSuffix(file.Name(), ".md") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := markdownPostprocessing(dirty)
+			clean := MarkdownPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
 		} else if strings.HasSuffix(file.Name(), ".adoc") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := asciidocPostprocessing(dirty)
+			clean := AsciidocPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
 		} else {
 
