@@ -21,7 +21,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif"}
+var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
 
 func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
