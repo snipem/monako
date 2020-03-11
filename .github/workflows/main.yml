@@ -8,9 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Deps
-        run: make deps
-
       - name: Init
         run: |
           make init build
