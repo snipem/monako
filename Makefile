@@ -22,10 +22,12 @@ theme: clean
 test:
 	go test -v
 
-run: build
-	./monako -trace -config config.yaml -menu-config index.md -hugo-config config.toml
-	hugo --source compose serve
+run_prd: build
+	touch secrets.env && source secrets.env && \
+		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
+			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
+			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
 
 run_prd: build
-	touch secrets.env && source secrets.env && ./monako -config config.prod.yaml -menu-config index.prod.md -hugo-config config.prod.toml
+	./monako
 	hugo --source compose serve

@@ -22,6 +22,8 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
+var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
+
 func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
@@ -53,6 +55,15 @@ func cloneDir(url string, branch string, username string, password string) billy
 	return fs
 }
 
+func shouldIgnoreFile(filename string) bool {
+	for _, whitelisted := range fileWhitelist {
+		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(whitelisted)) {
+			return false
+		}
+	}
+	return true
+}
+
 func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
@@ -74,6 +85,8 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
 			copyDir(fs, file.Name(), target+file.Name())
+			continue
+		} else if shouldIgnoreFile(file.Name()) {
 			continue
 		}
 
