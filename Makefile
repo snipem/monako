@@ -28,6 +28,6 @@ run_prd: build
 			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
 			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
 
-run_prd: build
+run: build
 	./monako
 	hugo --source compose serve
