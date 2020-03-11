@@ -6,13 +6,13 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/codeskyblue/go-sh"
-	"github.com/gohugoio/hugo/commands"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
@@ -52,10 +52,6 @@ func cloneDir(url string, branch string, username string, password string) billy
 	}
 
 	return fs
-}
-
-func cleanUp() {
-	os.RemoveAll("compose")
 }
 
 func shouldIgnoreFile(filename string) bool {
@@ -104,24 +100,39 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 			log.Fatal(err)
 		}
 
-		t, err := os.Create(target + "/" + file.Name())
-		if err != nil {
-			log.Fatal(err)
-		}
+		var targetFilename = target + "/" + file.Name()
 
-		if _, err = io.Copy(t, f); err != nil {
-			log.Fatal(err)
+		if strings.HasSuffix(file.Name(), ".md") {
+			var dirty, _ = ioutil.ReadAll(f)
+			clean := MarkdownPostprocessing(dirty)
+			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+		} else if strings.HasSuffix(file.Name(), ".adoc") {
+			var dirty, _ = ioutil.ReadAll(f)
+			clean := AsciidocPostprocessing(dirty)
+			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+		} else {
+
+			t, err := os.Create(targetFilename)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if _, err = io.Copy(t, f); err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		log.Printf("Copied %s\n", file.Name())
 
+		// s, _ := ioutil.ReadAll(f)
+		// fmt.Println(string(s))
+
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+
 	}
 
-}
-
-func hugoRun(args []string) {
-	// args := []string{"--contentDir", "compose"}
-	commands.Execute(args)
 }
 
 func compose(url string, branch string, subdir string, target string, username string, password string) {
@@ -160,14 +171,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cleanUp()
-	hugoRun([]string{"--quiet", "new", "site", "compose"})
+	CleanUp()
+	HugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
-	hugoRun([]string{"--source", "compose"})
+	HugoRun([]string{"--source", "compose"})
 
 }
