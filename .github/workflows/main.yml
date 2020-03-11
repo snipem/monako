@@ -1,0 +1,16 @@
+name: Build with Hugo
+
+on: [push]
+
+jobs:
+  hugo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@develop
+
+      - name: Init
+        run: |
+          make init
+
+      - name: Run Monako
+        run: monako
