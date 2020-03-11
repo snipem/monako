@@ -18,5 +18,9 @@ jobs:
         run: |
           make init build
 
+      - name: Test
+        run: |
+          make test
+
       - name: Run Monako
         run: ./monako
