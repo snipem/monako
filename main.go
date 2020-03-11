@@ -83,7 +83,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		if file.IsDir() {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			copyDir(fs, file.Name(), target+file.Name())
+			copyDir(fs, file.Name(), target+"/"+file.Name())
 			continue
 		} else if shouldIgnoreFile(file.Name()) {
 			continue
