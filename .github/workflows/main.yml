@@ -10,7 +10,7 @@ jobs:
 
       - name: Init
         run: |
-          make init
+          make init build
 
       - name: Run Monako
-        run: monako
+        run: ./monako
