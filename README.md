@@ -13,4 +13,6 @@ A less opininated document aggregator and publisher. Easier to use and to adapt 
 
 ## TODOs
 
-* Realy big repos seem to produce `runtime error: invalid memory address or nil pointer dereference` error.
+* Really big repos seem to produce `runtime error: invalid memory address or nil pointer dereference` error.
+* Fail on wrong docdir ("TODO")
+* Make white list configurable
