@@ -7,7 +7,7 @@ clean:
 	rm ./monako || true
 
 deps:
-	go get -u github.com/go-bindata/go-bindata/...
+	go get -u .
 
 init: deps theme
 
