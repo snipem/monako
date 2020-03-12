@@ -12,7 +12,7 @@ deps:
 init: deps theme
 
 build: clean
-	go build .
+	go build ./...
 
 theme: clean
 	mkdir -p tmp/
