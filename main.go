@@ -24,6 +24,9 @@ import (
 
 var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
 
+// Default file mode for temporary files
+var filemode = os.FileMode(0700)
+
 func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
@@ -95,8 +98,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 			log.Fatal(err)
 		}
 
-		// TODO check if 0755 is good?
-		err = os.MkdirAll(target, os.FileMode(0755))
+		err = os.MkdirAll(target, filemode)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -106,11 +108,11 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		if strings.HasSuffix(file.Name(), ".md") {
 			var dirty, _ = ioutil.ReadAll(f)
 			clean := MarkdownPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else if strings.HasSuffix(file.Name(), ".adoc") {
 			var dirty, _ = ioutil.ReadAll(f)
 			clean := AsciidocPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else {
 
 			t, err := os.Create(targetFilename)
@@ -150,7 +152,7 @@ func extractTheme() {
 
 	// TODO Don't use local filesystem
 	tempfilename := "/tmp/theme.zip"
-	err = ioutil.WriteFile(tempfilename, themezip, os.FileMode(0755))
+	err = ioutil.WriteFile(tempfilename, themezip, filemode)
 	if err != nil {
 		log.Fatalf("Error writing temp theme %s", err)
 	}
