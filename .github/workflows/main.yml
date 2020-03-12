@@ -18,8 +18,8 @@ jobs:
       run: |
         echo "::set-env name=GOPATH::${{ github.workspace }}/go"
         echo "::add-path::${{ github.workspace }}/go/bin"
-        env
-        find /home/runner/
+        GOBIN=$PWD/bin go install github.com/containous/go-bindata
+        ./bin/go-bindata -version 
 
     - name: Checkout code
       uses: actions/checkout@v2
