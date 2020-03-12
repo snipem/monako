@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/artdarek/go-unzip"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/codeskyblue/go-sh"
@@ -141,15 +142,36 @@ func compose(url string, branch string, subdir string, target string, username s
 	copyDir(fs, subdir, "compose/content/docs/"+target+"/")
 }
 
+func extractTheme() {
+	themezip, err := Asset("tmp/theme.zip")
+	if err != nil {
+		log.Fatalf("Error loading theme %s", err)
+	}
+
+	// TODO Don't use local filesystem
+	tempfilename := "/tmp/theme.zip"
+	err = ioutil.WriteFile(tempfilename, themezip, os.FileMode(0755))
+	if err != nil {
+		log.Fatalf("Error writing temp theme %s", err)
+	}
+
+	// TODO Don't use a library that depends on local files
+	uz := unzip.New(tempfilename, "compose/themes")
+	err = uz.Extract()
+	if err != nil {
+		fmt.Println(err)
+	}
+	os.RemoveAll(tempfilename)
+}
+
 func getTheme(hugoconfig string, menuconfig string) {
-	// FIXME make me native
-	sh.Command("wget", "-qO-", "https://github.com/alex-shpak/hugo-book/archive/v6.zip").Command("bsdtar", "-xvf-", "-C", "compose/themes/").Run()
+
+	extractTheme()
 	// TODO has to be TOML
 	sh.Command("cp", hugoconfig, "compose/config.toml").Run()
 
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
-
 }
 
 func main() {
