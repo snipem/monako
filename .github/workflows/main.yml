@@ -1,26 +1,29 @@
 name: Build with Hugo
-
-on: [push]
-
+on: [push, pull_request]
 jobs:
-  hugo:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@master
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Test
+      run: go test ./...
 
-      - name: setup env
-        shell: bash
-        run: |
-          echo "::set-env name=GOPATH::${{ github.workspace }}/go"
-          echo "::add-path::${{ github.workspace }}/go/bin"
+    - name: Init
+      run: |
+        make init build
 
-      - name: Init
-        run: |
-          make init build
+    - name: Test
+      run: |
+        make test
 
-      - name: Test
-        run: |
-          make test
-
-      - name: Run Monako
-        run: ./monako
+    - name: Run Monako
+      run: ./monako
