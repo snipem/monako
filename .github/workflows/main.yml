@@ -14,12 +14,16 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Test
-      run: go test ./...
 
-    - name: Init
+    - name: Fetch Theme
+      run: make theme
+
+    - name: Test
+      run: make test
+
+    - name: Build
       run: |
-        make init build
+        make build
 
     - name: Test
       run: |
