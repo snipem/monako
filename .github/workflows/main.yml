@@ -18,7 +18,7 @@ jobs:
       run: |
         echo "::set-env name=GOPATH::${{ github.workspace }}/go"
         echo "::add-path::${{ github.workspace }}/go/bin"
-        GOBIN=$PWD/bin go install github.com/containous/go-bindata
+        GOBIN=$PWD/bin go get github.com/containous/go-bindata
         find $PWD | grep bindata
         GOBIN=$PWD/bin $PWD/bin/go-bindata -version 
 
