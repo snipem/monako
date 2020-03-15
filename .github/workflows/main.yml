@@ -1,4 +1,4 @@
-# run: ga .github/workflows/main.yml && privatcommit -m "Another run" && gps && open "https://github.com/snipem/monako/actions"
+# run: ga .github/workflows/main.yml && privatcommit -m "Another run" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
 name: Build with Hugo
 on: [push, pull_request]
 jobs:
@@ -23,9 +23,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Debug
+    - name: Fetch bindata
       run: |
-        go get
+        go get -v github.com/containous/go-bindata
         find $HOME | grep bindata
 
     - name: Fetch Theme
