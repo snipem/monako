@@ -1,5 +1,5 @@
 # run: ga .github/workflows/main.yml && privatcommit -m "Working" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
-name: Build with Hugo
+name: Run Monako
 on: [push, pull_request]
 jobs:
   test:
