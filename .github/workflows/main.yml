@@ -34,11 +34,11 @@ jobs:
     - name: Fetch Theme
       run: make theme
 
-    - name: Test
+    - name: test
       needs: [dependencies]
       run: make test
 
-    - name: Build
+    - name: build
       needs: [dependencies]
       run: make build
 
