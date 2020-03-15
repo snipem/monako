@@ -1,3 +1,4 @@
+# run: ga .github/workflows/main.yml && privatcommit -m "Another run" && gps
 name: Build with Hugo
 on: [push, pull_request]
 jobs:
@@ -24,7 +25,7 @@ jobs:
 
     - name: Debug
       run: |
-        find $PWD | grep bindata
+        find $PWD
 
     - name: Fetch Theme
       run: make theme
