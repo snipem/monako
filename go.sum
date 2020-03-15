@@ -3,6 +3,7 @@ github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYU
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
 github.com/artdarek/go-unzip v1.0.0/go.mod h1:KhX4LV7e4UwWCTo7orBYnJ6LJ/dZTI6jXxUg69hO/C8=
 github.com/codeskyblue/go-sh v0.0.0-20170112005953-b097669b1569/go.mod h1:2hUMLQDY+46DXIf/i7n2rUCHUwF3gZrb4slZV8C4RYI=
+github.com/containous/go-bindata v1.0.0 h1:ZpunUnBEVuQ1BUbhTuhhbsPU2crte+qD3Jg9NCol4o0=
 github.com/containous/go-bindata v1.0.0/go.mod h1:wrtxd41xkdQM2ejRCncH0CwN0YEyACBzOy3S3gl0sVU=
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
