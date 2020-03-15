@@ -25,6 +25,7 @@ jobs:
 
     - name: Debug
       run: |
+        go get
         find $HOME | grep bindata
 
     - name: Fetch Theme
