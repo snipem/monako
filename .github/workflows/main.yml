@@ -23,7 +23,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Dependencies
+    - name: dependencies
       run: make deps
 
     - name: Get and install bindata
@@ -35,7 +35,13 @@ jobs:
       run: make theme
 
     - name: Test
-      run: make test build
+      needs: [dependencies]
+      run: make test
+
+    - name: Build
+      needs: [dependencies]
+      run: make build
 
     - name: Run Monako
+      needs: [build]
       run: ./monako
