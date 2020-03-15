@@ -18,9 +18,9 @@ jobs:
       run: |
         echo "::set-env name=GOPATH::${{ github.workspace }}/go"
         echo "::add-path::${{ github.workspace }}/go/bin"
-        GOBIN=$PWD/bin go get github.com/containous/go-bindata
+        go get github.com/containous/go-bindata
         find $PWD | grep bindata
-        GOBIN=$PWD/bin $PWD/bin/go-bindata -version 
+        go-bindata -version 
 
     - name: Checkout code
       uses: actions/checkout@v2
