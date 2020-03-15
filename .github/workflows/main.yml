@@ -35,13 +35,10 @@ jobs:
       run: make theme
 
     - name: test
-      needs: [dependencies]
       run: make test
 
     - name: build
-      needs: [dependencies]
       run: make build
 
     - name: Run Monako
-      needs: [build]
       run: ./monako
