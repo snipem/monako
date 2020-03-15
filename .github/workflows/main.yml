@@ -27,7 +27,7 @@ jobs:
       run: |
         go get -v github.com/containous/go-bindata
         go install github.com/containous/go-bindata
-        find / | grep bindata
+        find $GOPATH | grep bindata
 
     - name: Fetch Theme
       run: make theme
