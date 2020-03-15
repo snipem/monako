@@ -22,6 +22,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Debug
+      run: |
+        find $PWD | grep bindata
+
     - name: Fetch Theme
       run: make theme
 
@@ -31,10 +35,6 @@ jobs:
     - name: Build
       run: |
         make build
-
-    - name: Debug
-      run: |
-        find $PWD | grep bindata
 
     - name: Test
       run: |
