@@ -7,7 +7,7 @@ clean:
 	rm ./monako || true
 
 deps:
-	go get -u .
+	go mod download
 
 init: deps theme
 
