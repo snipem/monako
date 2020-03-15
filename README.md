@@ -2,7 +2,7 @@
 
 ![Run Monako](https://github.com/snipem/monako/workflows/Run%20Monako/badge.svg?branch=develop)
 
-A less opininated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
+A less opinionated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
 
 ## Design Goals
 
@@ -19,6 +19,5 @@ Init with `make init`
 
 ## TODOs
 
-* Really big repos seem to produce `runtime error: invalid memory address or nil pointer dereference` error.
-* Fail on wrong docdir ("TODO")
+* Fail on wrong `docdir` ("TODO")
 * Make white list configurable
