@@ -24,6 +24,9 @@ import (
 
 var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
 
+// Default file mode for temporary files
+var filemode = os.FileMode(0700)
+
 func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
@@ -84,7 +87,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		if file.IsDir() {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			copyDir(fs, file.Name(), target+file.Name())
+			copyDir(fs, file.Name(), target+"/"+file.Name())
 			continue
 		} else if shouldIgnoreFile(file.Name()) {
 			continue
@@ -95,8 +98,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 			log.Fatal(err)
 		}
 
-		// TODO check if 0755 is good?
-		err = os.MkdirAll(target, os.FileMode(0755))
+		err = os.MkdirAll(target, filemode)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -106,11 +108,11 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		if strings.HasSuffix(file.Name(), ".md") {
 			var dirty, _ = ioutil.ReadAll(f)
 			clean := MarkdownPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else if strings.HasSuffix(file.Name(), ".adoc") {
 			var dirty, _ = ioutil.ReadAll(f)
 			clean := AsciidocPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, os.FileMode(0755))
+			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else {
 
 			t, err := os.Create(targetFilename)
@@ -156,7 +158,6 @@ func extractTheme() {
 	tmpFile.Write(themezip)
 	tempfilename := tmpFile.Name()
 
-	// err = ioutil.WriteFile(tempfilename, themezip, os.FileMode(0755))
 	if err != nil {
 		log.Fatalf("Error writing temp theme %s", err)
 	}

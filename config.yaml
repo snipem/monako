@@ -15,6 +15,11 @@
   docdir: .
   targetdir: awesome-markdown
 
+- src: https://github.com/snipem/maniacforum.git
+  branch: master
+  docdir: .
+  targetdir: maniacforum
+
 # - src: git@github.com:bodiam/awesome-asciidoc.git
 #   branch: master
 #   docdir: .
