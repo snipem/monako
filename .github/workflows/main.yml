@@ -35,15 +35,7 @@ jobs:
       run: make theme
 
     - name: Test
-      run: make test
-
-    - name: Build
-      run: |
-        make build
-
-    - name: Test
-      run: |
-        make test
+      run: make test build
 
     - name: Run Monako
       run: ./monako
