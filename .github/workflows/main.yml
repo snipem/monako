@@ -1,16 +1,44 @@
-name: Build with Hugo
-
-on: [push]
-
+# run: ga .github/workflows/main.yml && privatcommit -m "Working" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
+name: Run Monako
+on: [push, pull_request]
 jobs:
-  hugo:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@develop
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
 
-      - name: Init
-        run: |
-          make init
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
 
-      - name: Run Monako
-        run: monako
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: dependencies
+      run: make deps
+
+    - name: Get and install bindata
+      # three dots are mandatory
+      run: |
+        go get -u github.com/go-bindata/go-bindata/...
+
+    - name: Fetch Theme
+      run: make theme
+
+    - name: test
+      run: make test
+
+    - name: build
+      run: make build
+
+    - name: Run Monako
+      run: ./monako

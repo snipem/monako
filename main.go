@@ -150,9 +150,14 @@ func extractTheme() {
 		log.Fatalf("Error loading theme %s", err)
 	}
 
-	// TODO Don't use local filesystem
-	tempfilename := "/tmp/theme.zip"
-	err = ioutil.WriteFile(tempfilename, themezip, filemode)
+	// TODO Don't use local filesystem, keep it in memory
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "monako-theme-")
+	if err != nil {
+		fmt.Println("Cannot create temporary file", err)
+	}
+	tmpFile.Write(themezip)
+	tempfilename := tmpFile.Name()
+
 	if err != nil {
 		log.Fatalf("Error writing temp theme %s", err)
 	}
