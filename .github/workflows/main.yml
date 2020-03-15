@@ -25,8 +25,7 @@ jobs:
 
     - name: Fetch bindata
       run: |
-        go get -v github.com/go-bindata/go-bindata
-        go install github.com/go-bindata/go-bindata 
+        go get -u github.com/go-bindata/go-bindata/...
         find $GOPATH | grep bindata
 
     - name: Fetch Theme
