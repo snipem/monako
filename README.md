@@ -1,5 +1,7 @@
 # monako
 
+![Run Monako](https://github.com/snipem/monako/workflows/Run%20Monako/badge.svg?branch=develop)
+
 A less opininated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
 
 ## Design Goals
