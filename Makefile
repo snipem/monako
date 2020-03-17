@@ -27,6 +27,7 @@ run_prd: build
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
 			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
 			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
+	hugo --source compose serve
 
 run: build
 	./monako
