@@ -6,7 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type ComposeConfig struct {
+type composeConfig struct {
 	Source      string `yaml:"src"`
 	Branch      string `yaml:"branch,omitempty"`
 	EnvUsername string `yaml:"envusername,omitempty"`
@@ -15,14 +15,14 @@ type ComposeConfig struct {
 	TargetDir   string `yaml:"targetdir,omitempty"`
 }
 
-func LoadConfig(configfilepath string) (config []ComposeConfig, err error) {
+func loadConfig(configfilepath string) (config []composeConfig, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
 		return nil, err
 	}
 
-	var out []ComposeConfig
+	var out []composeConfig
 
 	err = yaml.Unmarshal(source, &out)
 	if err != nil {

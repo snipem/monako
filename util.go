@@ -8,11 +8,10 @@ import (
 	"github.com/gohugoio/hugo/commands"
 )
 
-func CleanUp() {
+func cleanUp() {
 	os.RemoveAll("compose")
 }
 
-func HugoRun(args []string) {
-	// args := []string{"--contentDir", "compose"}
+func hugoRun(args []string) {
 	commands.Execute(args)
 }

@@ -33,19 +33,19 @@ func main() {
 		log.SetReportCaller(true)
 	}
 
-	config, err := LoadConfig(*configfilepath)
+	config, err := loadConfig(*configfilepath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	CleanUp()
-	HugoRun([]string{"--quiet", "new", "site", "compose"})
+	cleanUp()
+	hugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
-	HugoRun([]string{"--source", "compose"})
+	hugoRun([]string{"--source", "compose"})
 
 }

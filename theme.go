@@ -19,7 +19,7 @@ func getTheme(hugoconfig string, menuconfig string) {
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
-	AddFixForAsciiDocTocToTheme()
+	addFixForADocTocToTheme()
 }
 
 func extractTheme() {

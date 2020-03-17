@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func AsciidocPostprocessing(dirty []byte) []byte {
+func asciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
 
@@ -18,7 +18,7 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 
 // MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
 //  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
-func MarkdownPostprocessing(dirty []byte) []byte {
+func markdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
 	// FIXME really quick and dirty, just for testing
@@ -29,7 +29,7 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 	return []byte(d)
 }
 
-func AddFixForAsciiDocTocToTheme() {
+func addFixForADocTocToTheme() {
 	themefile := "compose/themes/hugo-book-6/layouts/partials/docs/html-head.html"
 	javascriptFix := `
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

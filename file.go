@@ -98,11 +98,11 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 		if strings.HasSuffix(file.Name(), ".md") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := MarkdownPostprocessing(dirty)
+			clean := markdownPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else if strings.HasSuffix(file.Name(), ".adoc") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := AsciidocPostprocessing(dirty)
+			clean := asciidocPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else {
 
