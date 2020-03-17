@@ -41,3 +41,8 @@ func TestMarkdownFix(t *testing.T) {
 	}
 
 }
+
+func TestAddAsciidocFix(t *testing.T) {
+	// TODO add actual test
+	AddFixForAsciiDocTocToTheme()
+}
