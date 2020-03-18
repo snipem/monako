@@ -4,6 +4,21 @@
 
 A less opinionated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
 
+## Usage
+
+```
+$ monako -h
+Usage of ./monako:
+  -config string
+        Configuration file, default: config.yaml (default "config.yaml")
+  -hugo-config string
+        Configuration file for hugo, default: config.toml (default "config.toml")
+  -menu-config string
+        Menu file for hugo-book theme, default: index.md (default "index.md")
+  -trace
+        Enable trace logging
+```
+
 ## Design Goals
 
 * Make it simple and stupid
