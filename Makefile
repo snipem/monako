@@ -8,15 +8,12 @@ clean:
 
 deps:
 	go mod download
+	go get -u github.com/go-bindata/go-bindata/...
 
 init: deps theme
 
 build: clean
 	go build .
-
-build_linux: clean
-	mkdir -p builds/linux
-	GOOS=linux GOARCH=386 go build -o builds/linux/monako .
 
 theme: clean
 	mkdir -p tmp/
@@ -37,7 +34,7 @@ run: build
 	./monako
 	hugo --source compose serve
 
-image: build_linux
+image:
 	docker build -t monako/monako:0.0.1 .
 
 run_image:

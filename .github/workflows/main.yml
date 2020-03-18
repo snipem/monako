@@ -27,11 +27,6 @@ jobs:
     - name: dependencies
       run: make deps
 
-    - name: Get and install bindata
-      # three dots are mandatory
-      run: |
-        go get -u github.com/go-bindata/go-bindata/...
-
     - name: Fetch Theme
       run: make theme
 
