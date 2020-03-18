@@ -1,0 +1,40 @@
+# run: ga .github/workflows/main.yml && privatcommit -m "Working" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
+name: Run Monako
+on: [pull_request] # only run on pull requests for now
+# on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.14.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: setup env
+      shell: bash
+      run: |
+        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+        echo "::add-path::${{ github.workspace }}/go/bin"
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: dependencies
+      run: make deps
+
+    - name: Fetch Theme
+      run: make theme
+
+    - name: test
+      run: make test
+
+    - name: build
+      run: make build
+
+    - name: Run Monako
+      run: ./monako
