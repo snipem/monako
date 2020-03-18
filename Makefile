@@ -14,6 +14,10 @@ init: deps theme
 build: clean
 	go build .
 
+build_linux: clean
+	mkdir -p builds/linux
+	GOOS=linux GOARCH=386 go build -o builds/linux/monako .
+
 theme: clean
 	mkdir -p tmp/
 	curl -o tmp/theme.zip --location https://github.com/alex-shpak/hugo-book/archive/v6.zip
@@ -32,3 +36,9 @@ run_prd: build
 run: build
 	./monako
 	hugo --source compose serve
+
+image: build_linux
+	docker build -t monako/monako:0.0.1 .
+
+run_image:
+	docker run -v ${PWD}:/docs monako/monako:0.0.1 monako
