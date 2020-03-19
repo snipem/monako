@@ -17,7 +17,7 @@ build: clean
 
 theme: clean
 	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/alex-shpak/hugo-book/archive/v6.zip
+	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/v6s.zip
 	${GOPATH}/bin/go-bindata tmp/...
 
 test:

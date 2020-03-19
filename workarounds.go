@@ -30,7 +30,7 @@ func markdownPostprocessing(dirty []byte) []byte {
 }
 
 func addFixForADocTocToTheme() {
-	themefile := "compose/themes/hugo-book-6/layouts/partials/docs/html-head.html"
+	themefile := "compose/themes/monako-book-6s/layouts/partials/docs/html-head.html"
 	javascriptFix := `
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript">

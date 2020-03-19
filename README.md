@@ -14,7 +14,7 @@ Usage of ./monako:
   -hugo-config string
         Configuration file for hugo, default: config.toml (default "config.toml")
   -menu-config string
-        Menu file for hugo-book theme, default: index.md (default "index.md")
+        Menu file for monako-book theme, default: index.md (default "index.md")
   -trace
         Enable trace logging
 ```
