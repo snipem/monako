@@ -1,5 +1,5 @@
 # run: make image
-FROM golang:1.13
+FROM golang:1.14
 
 WORKDIR /build
 ADD . /build
