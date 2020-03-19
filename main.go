@@ -21,9 +21,9 @@ func compose(url string, branch string, subdir string, target string, username s
 
 func main() {
 
-	var configfilepath = flag.String("config", "config.yaml", "Configuration file, default: config.yaml")
-	var hugoconfigfilepath = flag.String("hugo-config", "config.toml", "Configuration file for hugo, default: config.toml")
-	var menuconfigfilepath = flag.String("menu-config", "index.md", "Menu file for monako-book theme, default: index.md")
+	var configfilepath = flag.String("config", "config.yaml", "Configuration file")
+	var hugoconfigfilepath = flag.String("hugo-config", "config.toml", "Configuration file for hugo")
+	var menuconfigfilepath = flag.String("menu-config", "index.md", "Menu file for monako-book theme")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
 	flag.Parse()

@@ -10,11 +10,11 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 $ monako -h
 Usage of ./monako:
   -config string
-        Configuration file, default: config.yaml (default "config.yaml")
+        Configuration file (default "config.yaml")
   -hugo-config string
-        Configuration file for hugo, default: config.toml (default "config.toml")
+        Configuration file for hugo (default "config.toml")
   -menu-config string
-        Menu file for monako-book theme, default: index.md (default "index.md")
+        Menu file for monako-book theme (default "index.md")
   -trace
         Enable trace logging
 ```
@@ -27,6 +27,11 @@ Usage of ./monako:
   * Transform all documents below a specific structure
 * Use Antora like configuration file for main structure
 * Support Mermaid
+
+## Features
+
+* Multi repository document fetching
+* Bundled dependencies (minus Asciidoctor)
 
 ## Development
 
