@@ -4,7 +4,11 @@ FROM golang:1.13
 WORKDIR /build
 ADD . /build
 
-RUN make init build
+RUN make init
+
+ENV GOOS=linux
+ENV GOARCH=386
+RUN make build
 
 FROM asciidoctor/docker-asciidoctor:1.1.0
 
