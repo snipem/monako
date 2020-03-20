@@ -28,11 +28,11 @@ run_prd: build
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
 			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
 			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
-	hugo --source compose serve
+	python -m http.server 8000 --directory compose/public
 
 run: build
 	./monako
-	hugo --source compose serve
+	python -m http.server 8000 --directory compose/public
 
 image:
 	docker build -t monako/monako:0.0.1 .
