@@ -1,0 +1,12 @@
+
+font name: clarikageo-medium
+font link: https://www.fontspring.com/fonts/the-refinery/clarika/clarika-geometric-medium
+font author: The Refinery
+font author site: https://www.refinerybrand.com/
+
+
+icon designer: Sergey Demushkin
+icon designer link: /mockturtle
+        
+{"bg":"transparent","icon-gradient-0":"#51A4FB","icon-gradient-1":"#51A4FB","font":"#000000","slogan":"#141414"}
+      
