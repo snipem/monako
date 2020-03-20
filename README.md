@@ -1,6 +1,8 @@
 # monako
 
 ![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/test_coverage)](https://codeclimate.com/github/snipem/monako/test_coverage)
 
 ![monako logo](res/logo/cover.png)
 
