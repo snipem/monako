@@ -41,3 +41,4 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Make white list configurable
+* The python sharing of python does not support added pathes to the base url, has to be removed
