@@ -31,7 +31,11 @@ jobs:
       run: make theme
 
     - name: test
+      uses: paambaati/codeclimate-action@v2.5.5
       run: make test
+      with:
+        coverageCommand: go tool cover -func=c.out
+        debug: true
 
     - name: build
       run: make build

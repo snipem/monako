@@ -21,7 +21,7 @@ theme: clean
 	${GOPATH}/bin/go-bindata tmp/...
 
 test:
-	go test -v
+	go test -v -coverprofile=c.out
 
 run_prd: build
 	touch secrets.env && source secrets.env && \
