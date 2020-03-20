@@ -2,7 +2,7 @@
 
 ![Run Monako](https://github.com/snipem/monako/workflows/Run%20Monako/badge.svg?branch=develop)
 
-<img src="res/logo/cover.png"></img>
+![monako logo](res/logo/cover.png)
 
 ----
 
@@ -14,7 +14,7 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 
 ```
 $ monako -h
-Usage of ./monako:
+Usage of monako:
   -config string
         Configuration file (default "config.yaml")
   -hugo-config string
