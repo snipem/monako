@@ -2,7 +2,13 @@
 
 ![Run Monako](https://github.com/snipem/monako/workflows/Run%20Monako/badge.svg?branch=develop)
 
+<img src="res/logo/cover.png"></img>
+
+----
+
 A less opinionated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
+
+----
 
 ## Usage
 
@@ -41,4 +47,5 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Make white list configurable
-* The python sharing of python does not support added pathes to the base url, has to be removed
+* The python sharing of python does not support added pathes to the base url. In order to run the pas has to be shortened
+* Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
