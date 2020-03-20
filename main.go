@@ -16,7 +16,7 @@ var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".
 func compose(url string, branch string, subdir string, target string, username string, password string) {
 
 	fs := cloneDir(url, branch, username, password)
-	copyDir(fs, subdir, "compose/content/docs/"+target+"/")
+	copyDir(fs, subdir, "compose/content/"+target+"/")
 }
 
 func main() {

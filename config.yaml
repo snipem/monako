@@ -3,22 +3,22 @@
 - src: https://github.com/snipem/commute-tube
   branch: master
   docdir: .
-  targetdir: commute
+  targetdir: docs/commute
 
 - src: https://github.com/snipem/psnprices
   branch: master
   docdir: .
-  targetdir: psnprices
+  targetdir: docs/psnprices
 
 - src: https://github.com/mundimark/awesome-markdown
   branch: master
   docdir: .
-  targetdir: awesome-markdown
+  targetdir: docs/awesome-markdown
 
 - src: https://github.com/snipem/maniacforum.git
   branch: master
   docdir: .
-  targetdir: maniacforum
+  targetdir: docs/maniacforum
 
 # - src: git@github.com:bodiam/awesome-asciidoc.git
 #   branch: master
@@ -29,4 +29,4 @@
   branch: master
   # hugo does not support relative includes as of now
   docdir: EN/asciidoc/src
-  targetdir: arc42
+  targetdir: docs/arc42
