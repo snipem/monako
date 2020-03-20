@@ -1,6 +1,6 @@
 # monako
 
-![Run Monako](https://github.com/snipem/monako/workflows/Run%20Monako/badge.svg?branch=develop)
+![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
 
 ![monako logo](res/logo/cover.png)
 
@@ -47,5 +47,5 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Make white list configurable
-* The python sharing of python does not support added pathes to the base url. In order to run the pas has to be shortened
+* The python sharing of python does not support added pathes to the base url. In order to run the path has to be shortened
 * Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
