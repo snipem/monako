@@ -30,7 +30,7 @@ func addFakeAsciidoctorBinForDiagramsToPath() {
 	  mv -f *.png compose/public/diagram
 	fi
 	`
-	tempDir := os.TempDir() + "asciidoctor_fake_binary"
+	tempDir := os.TempDir() + "/asciidoctor_fake_binary"
 	err := os.Mkdir(tempDir, os.FileMode(0700))
 	if err != nil && !os.IsExist(err) {
 		log.Fatalf("Error creating asciidoctor fake dir : %s", err)
