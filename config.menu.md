@@ -14,4 +14,7 @@ headless: true
     - **Arc 42 Templates**
       - [Introduction and Goals]({{< relref "/docs/arc42/01_introduction_and_goals" >}})
       - [Architecture Constraints]({{< relref "/docs/arc42/02_architecture_constraints" >}})
+    - **Asciidoctor Diagram**
+      - [Design]({{< relref "/docs/asciidoctor-diagram/design" >}})
+      - [Features]({{< relref "/docs/asciidoctor-diagram/features" >}})
 <br />

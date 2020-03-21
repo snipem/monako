@@ -32,6 +32,11 @@
 
 - src: https://github.com/arc42/arc42-template
   branch: master
-  # hugo does not support relative includes as of now
+  # hugo does not support relative includes as of now. This is used in the arc42 teamplates
   docdir: EN/asciidoc/src
   targetdir: docs/arc42
+
+- src: https://github.com/asciidoctor/asciidoctor-diagram.git
+  branch: master
+  docdir: examples
+  targetdir: docs/asciidoctor-diagram

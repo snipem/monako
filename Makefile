@@ -10,6 +10,9 @@ deps:
 	go mod download
 	go get -u github.com/go-bindata/go-bindata/...
 
+optional_deps:
+	gem install asciidoctor-diagram
+
 init: deps theme
 
 build: clean
@@ -37,6 +40,7 @@ run: build
 	$(MAKE) serve
 
 serve:
+	echo "Serving under http://localhost:8000"
 	/usr/bin/env python3 -m http.server 8000 --directory compose/public
 
 image:
