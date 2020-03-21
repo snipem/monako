@@ -39,6 +39,8 @@ func main() {
 	}
 
 	cleanUp()
+	addFakeAsciidoctorBinForDiagramsToPath()
+
 	hugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 

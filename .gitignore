@@ -18,3 +18,5 @@ monako
 tmp
 bindata.go
 builds
+.asciidoctor/
+static/diagram
