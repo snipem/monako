@@ -46,6 +46,7 @@ func main() {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
+	os.Setenv("HUGO_UGLYURLS", "true")
 	hugoRun([]string{"--source", "compose"})
 
 }

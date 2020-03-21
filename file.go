@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -96,24 +95,13 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 		var targetFilename = target + "/" + file.Name()
 
-		if strings.HasSuffix(file.Name(), ".md") {
-			var dirty, _ = ioutil.ReadAll(f)
-			clean := markdownPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, filemode)
-		} else if strings.HasSuffix(file.Name(), ".adoc") {
-			var dirty, _ = ioutil.ReadAll(f)
-			clean := asciidocPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, filemode)
-		} else {
+		t, err := os.Create(targetFilename)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-			t, err := os.Create(targetFilename)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			if _, err = io.Copy(t, f); err != nil {
-				log.Fatal(err)
-			}
+		if _, err = io.Copy(t, f); err != nil {
+			log.Fatal(err)
 		}
 
 		log.Printf("Copied %s\n", file.Name())
