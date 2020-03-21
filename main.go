@@ -21,9 +21,9 @@ func compose(url string, branch string, subdir string, target string, username s
 
 func main() {
 
-	var configfilepath = flag.String("config", "config.yaml", "Configuration file")
-	var hugoconfigfilepath = flag.String("hugo-config", "config.toml", "Configuration file for hugo")
-	var menuconfigfilepath = flag.String("menu-config", "index.md", "Menu file for monako-book theme")
+	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
+	var hugoconfigfilepath = flag.String("hugo-config", "config.hugo.toml", "Configuration file for Hugo")
+	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
 	flag.Parse()
@@ -39,6 +39,8 @@ func main() {
 	}
 
 	cleanUp()
+	addFakeAsciidoctorBinForDiagramsToPath()
+
 	hugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
