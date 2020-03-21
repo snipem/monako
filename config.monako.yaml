@@ -1,5 +1,10 @@
 ---
 
+- src: https://github.com/snipem/monako
+  branch: develop
+  docdir: .
+  targetdir: docs/monako
+
 - src: https://github.com/snipem/commute-tube
   branch: master
   docdir: .
