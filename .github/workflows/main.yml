@@ -33,11 +33,11 @@ jobs:
     - name: test
       run: make test
 
-    - name: coverage
-      uses: paambaati/codeclimate-action@v2.5.5
-      with:
-        coverageCommand: go tool cover -func=c.out
-        debug: true
+    # - name: coverage
+    #   uses: paambaati/codeclimate-action@v2.5.5
+    #   with:
+    #     coverageCommand: go tool cover -func=c.out
+    #     debug: true
 
     - name: build
       run: make build
