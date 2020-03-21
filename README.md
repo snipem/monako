@@ -2,7 +2,6 @@
 
 ![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/test_coverage)](https://codeclimate.com/github/snipem/monako/test_coverage)
 
 ![monako logo](res/logo/cover.png)
 
@@ -14,7 +13,7 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 
 ## Usage
 
-```
+```help
 $ monako -h
 Usage of monako:
   -config string
@@ -26,6 +25,8 @@ Usage of monako:
   -trace
         Enable trace logging
 ```
+
+A Docker image is available from [Dockerhub](https://hub.docker.com/repository/docker/snipem/monako).
 
 ## Design Goals
 
