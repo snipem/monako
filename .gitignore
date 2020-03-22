@@ -16,7 +16,8 @@ secrets.env
 *.prod.*
 monako
 tmp
-bindata.go
+internal/theme/bindata.go
 builds
 .asciidoctor/
 static/diagram
+c.out.tmp

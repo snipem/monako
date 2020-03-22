@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/snipem/monako/internal/config"
+	"github.com/snipem/monako/internal/workarounds"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
@@ -18,7 +20,7 @@ import (
 
 var filemode = os.FileMode(0700)
 
-func cloneDir(url string, branch string, username string, password string) billy.Filesystem {
+func CloneDir(url string, branch string, username string, password string) billy.Filesystem {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
 
@@ -50,7 +52,7 @@ func cloneDir(url string, branch string, username string, password string) billy
 }
 
 func shouldIgnoreFile(filename string) bool {
-	for _, whitelisted := range fileWhitelist {
+	for _, whitelisted := range config.FileWhitelist {
 		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(whitelisted)) {
 			return false
 		}
@@ -58,7 +60,7 @@ func shouldIgnoreFile(filename string) bool {
 	return true
 }
 
-func copyDir(fs billy.Filesystem, subdir string, target string) {
+func CopyDir(fs billy.Filesystem, subdir string, target string) {
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
 	var files []os.FileInfo
@@ -78,7 +80,7 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 		if file.IsDir() {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			copyDir(fs, file.Name(), target+"/"+file.Name())
+			CopyDir(fs, file.Name(), target+"/"+file.Name())
 			continue
 		} else if shouldIgnoreFile(file.Name()) {
 			continue
@@ -98,11 +100,11 @@ func copyDir(fs billy.Filesystem, subdir string, target string) {
 
 		if strings.HasSuffix(file.Name(), ".md") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := markdownPostprocessing(dirty)
+			clean := workarounds.MarkdownPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else if strings.HasSuffix(file.Name(), ".adoc") {
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := asciidocPostprocessing(dirty)
+			clean := workarounds.AsciidocPostprocessing(dirty)
 			ioutil.WriteFile(targetFilename, clean, filemode)
 		} else {
 

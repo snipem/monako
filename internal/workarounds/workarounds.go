@@ -1,4 +1,4 @@
-package main
+package workarounds
 
 import (
 	"io/ioutil"
@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func asciidocPostprocessing(dirty []byte) []byte {
+func AsciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
 
@@ -20,7 +20,7 @@ func asciidocPostprocessing(dirty []byte) []byte {
 
 // MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
 //  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
-func markdownPostprocessing(dirty []byte) []byte {
+func MarkdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
 	// FIXME really quick and dirty, just for testing
@@ -31,7 +31,7 @@ func markdownPostprocessing(dirty []byte) []byte {
 	return []byte(d)
 }
 
-func addFakeAsciidoctorBinForDiagramsToPath() {
+func AddFakeAsciidoctorBinForDiagramsToPath() {
 
 	shellscript := `#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
@@ -74,7 +74,7 @@ func addFakeAsciidoctorBinForDiagramsToPath() {
 
 }
 
-func addFixForADocTocToTheme() {
+func AddFixForADocTocToTheme() {
 	themefile := "compose/themes/monako-book-6s/layouts/partials/docs/html-head.html"
 	javascriptFix := `
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

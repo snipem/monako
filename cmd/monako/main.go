@@ -8,23 +8,23 @@ import (
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/snipem/monako/internal/config"
+	"github.com/snipem/monako/internal/theme"
+	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/helpers"
 )
-
-var fileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
-
-// Default file mode for temporary files
 
 func compose(url string, branch string, subdir string, target string, username string, password string) {
 
-	fs := cloneDir(url, branch, username, password)
-	copyDir(fs, subdir, "compose/content/"+target+"/")
+	fs := helpers.CloneDir(url, branch, username, password)
+	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/")
 }
 
 func addWorkarounds() {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
-		addFakeAsciidoctorBinForDiagramsToPath()
+		workarounds.AddFakeAsciidoctorBinForDiagramsToPath()
 	}
 }
 
@@ -42,21 +42,21 @@ func main() {
 		log.SetReportCaller(true)
 	}
 
-	config, err := loadConfig(*configfilepath)
+	config, err := config.LoadConfig(*configfilepath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cleanUp()
+	helpers.CleanUp()
 	addWorkarounds()
 
-	hugoRun([]string{"--quiet", "new", "site", "compose"})
-	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
+	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
+	theme.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
 	}
 
-	hugoRun([]string{"--source", "compose"})
+	helpers.HugoRun([]string{"--source", "compose"})
 
 }
