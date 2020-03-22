@@ -58,3 +58,4 @@ Init with `make init`
 ## Improvements
 
 * Support edit this page links with links to origin repository. Book theme provides a [similar feature](https://github.com/alex-shpak/hugo-book/search?q=BookRepo&unscoped_q=BookRepo).
+* Add ability to use diffrent base pathes in local sharing and deployment
