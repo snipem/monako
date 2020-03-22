@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"os"
+	"runtime"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -17,6 +18,14 @@ func compose(url string, branch string, subdir string, target string, username s
 
 	fs := cloneDir(url, branch, username, password)
 	copyDir(fs, subdir, "compose/content/"+target+"/")
+}
+
+func addWorkarounds() {
+	if runtime.GOOS == "windows" {
+		log.Println("Can't apply asciidoc diagram workaround on windows")
+	} else {
+		addFakeAsciidoctorBinForDiagramsToPath()
+	}
 }
 
 func main() {
@@ -39,7 +48,7 @@ func main() {
 	}
 
 	cleanUp()
-	addFakeAsciidoctorBinForDiagramsToPath()
+	addWorkarounds()
 
 	hugoRun([]string{"--quiet", "new", "site", "compose"})
 	getTheme(*hugoconfigfilepath, *menuconfigfilepath)
