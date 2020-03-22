@@ -1,5 +1,5 @@
 # run: ga .github/workflows/main.yml && privatcommit -m "Working" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
-name: Run Monako
+name: Build Monako
 on: [pull_request] # only run on pull requests for now
 # on: [push, pull_request]
 jobs:
@@ -18,8 +18,8 @@ jobs:
     - name: setup env
       shell: bash
       run: |
-        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
-        echo "::add-path::${{ github.workspace }}/go/bin"
+        echo "::set-env name=GOPATH::${{ github.workspace }}/../go"
+        echo "::add-path::${{ github.workspace }}/../go/bin"
 
     - name: Checkout code
       uses: actions/checkout@v2
@@ -33,8 +33,14 @@ jobs:
     - name: test
       run: make test
 
+    # - name: coverage
+    #   uses: paambaati/codeclimate-action@v2.5.5
+    #   with:
+    #     coverageCommand: go tool cover -func=c.out
+    #     debug: true
+
     - name: build
       run: make build
 
-    - name: Run Monako
-      run: ./monako
+    - name: Run Monako and compose site
+      run: make compose

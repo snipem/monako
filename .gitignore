@@ -7,13 +7,17 @@
 
 # Test binary, build with `go test -c`
 *.test
+c.out
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-compose/*
+compose
 secrets.env
 *.prod.*
 monako
 tmp
-bindata.go
+internal/theme/bindata.go
 builds
+.asciidoctor/
+static
+c.out.tmp
