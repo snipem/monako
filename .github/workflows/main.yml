@@ -42,5 +42,5 @@ jobs:
     - name: build
       run: make build
 
-    - name: Run Monako
-      run: ./monako
+    - name: Run Monako and compose site
+      run: make compose
