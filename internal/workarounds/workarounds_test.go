@@ -1,4 +1,4 @@
-package main
+package workarounds
 
 // run: make test
 

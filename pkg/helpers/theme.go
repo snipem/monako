@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"fmt"
@@ -8,9 +8,11 @@ import (
 
 	"github.com/artdarek/go-unzip"
 	"github.com/codeskyblue/go-sh"
+	"github.com/snipem/monako/internal/theme"
+	"github.com/snipem/monako/internal/workarounds"
 )
 
-func getTheme(hugoconfig string, menuconfig string) {
+func GetTheme(hugoconfig string, menuconfig string) {
 
 	extractTheme()
 	// TODO has to be TOML
@@ -19,11 +21,11 @@ func getTheme(hugoconfig string, menuconfig string) {
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
-	addFixForADocTocToTheme()
+	workarounds.AddFixForADocTocToTheme()
 }
 
 func extractTheme() {
-	themezip, err := Asset("tmp/theme.zip")
+	themezip, err := theme.Asset("tmp/theme.zip")
 	if err != nil {
 		log.Fatalf("Error loading theme %s", err)
 	}

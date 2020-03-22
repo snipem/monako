@@ -1,4 +1,4 @@
-package main
+package helpers
 
 // run: make test
 
@@ -8,10 +8,10 @@ import (
 	"github.com/gohugoio/hugo/commands"
 )
 
-func cleanUp() {
+func CleanUp() {
 	os.RemoveAll("compose")
 }
 
-func hugoRun(args []string) {
+func HugoRun(args []string) {
 	commands.Execute(args)
 }

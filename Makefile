@@ -16,12 +16,12 @@ optional_deps:
 init: deps theme
 
 build: clean
-	go build .
+	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
 	mkdir -p tmp/
 	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/v6s.zip
-	${GOPATH}/bin/go-bindata tmp/...
+	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 test:
 	go test -v -coverprofile=c.out.tmp
