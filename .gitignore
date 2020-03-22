@@ -11,7 +11,7 @@ c.out
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-compose/*
+compose
 secrets.env
 *.prod.*
 monako
@@ -19,5 +19,5 @@ tmp
 internal/theme/bindata.go
 builds
 .asciidoctor/
-static/diagram
+static
 c.out.tmp

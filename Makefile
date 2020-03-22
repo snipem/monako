@@ -36,8 +36,10 @@ run_prd: build
 	$(MAKE) serve
 
 run: build
-	./monako
-	$(MAKE) serve
+	./monako -config configs/config.monako.yaml \
+		-menu-config configs/config.menu.md \
+		-hugo-config configs/config.hugo.toml
+		$(MAKE) serve
 
 serve:
 	echo "Serving under http://localhost:8000"
