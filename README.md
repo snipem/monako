@@ -1,6 +1,8 @@
 # monako
 
 ![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
+[![Go Report Card](https://goreportcard.com/badge/github.com/snipem/monako)](https://goreportcard.com/report/github.com/snipem/monako)
+[![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
 
 ![monako logo](res/logo/cover.png)
