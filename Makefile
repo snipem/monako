@@ -1,6 +1,7 @@
 
 #run: make run
 SHELL := /bin/bash
+.PHONY: compose
 
 clean:
 	rm -r tmp/theme || true
@@ -35,11 +36,12 @@ run_prd: build
 			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
 	$(MAKE) serve
 
-run: build
+run: build compose serve
+
+compose:
 	./monako -config configs/config.monako.yaml \
 		-menu-config configs/config.menu.md \
 		-hugo-config configs/config.hugo.toml
-		$(MAKE) serve
 
 serve:
 	echo "Serving under http://localhost:8000"
