@@ -24,7 +24,7 @@ theme: clean
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 test:
-	go test -v -coverprofile=c.out.tmp
+	go test -v -coverprofile=c.out.tmp ./...
 	cat c.out.tmp | grep -v "/bindata.go" > c.out
 	rm c.out.tmp
 
