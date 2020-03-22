@@ -5,13 +5,15 @@ package helpers
 import (
 	"os"
 
-	"github.com/gohugoio/hugo/commands"
+	hugo "github.com/gohugoio/hugo/commands"
 )
 
+// CleanUp removes the compose folder
 func CleanUp() {
 	os.RemoveAll("compose")
 }
 
+// HugoRun runs Hugo like the command line interface
 func HugoRun(args []string) {
-	commands.Execute(args)
+	hugo.Execute(args)
 }

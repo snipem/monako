@@ -1,4 +1,4 @@
-package helpers
+package theme
 
 import (
 	"fmt"
@@ -8,10 +8,10 @@ import (
 
 	"github.com/artdarek/go-unzip"
 	"github.com/codeskyblue/go-sh"
-	"github.com/snipem/monako/internal/theme"
 	"github.com/snipem/monako/internal/workarounds"
 )
 
+// GetTheme fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func GetTheme(hugoconfig string, menuconfig string) {
 
 	extractTheme()
@@ -21,11 +21,12 @@ func GetTheme(hugoconfig string, menuconfig string) {
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
+	// TODO Make optional
 	workarounds.AddFixForADocTocToTheme()
 }
 
 func extractTheme() {
-	themezip, err := theme.Asset("tmp/theme.zip")
+	themezip, err := Asset("tmp/theme.zip")
 	if err != nil {
 		log.Fatalf("Error loading theme %s", err)
 	}

@@ -9,6 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/config"
+	"github.com/snipem/monako/internal/theme"
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
 )
@@ -50,7 +51,7 @@ func main() {
 	addWorkarounds()
 
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
-	helpers.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
+	theme.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
 	for _, c := range config {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
