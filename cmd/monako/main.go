@@ -20,11 +20,11 @@ func compose(url string, branch string, subdir string, target string, username s
 	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
-func addWorkarounds() {
+func addWorkarounds(c config.ComposeConfig) {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
-		workarounds.AddFakeAsciidoctorBinForDiagramsToPath()
+		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(c.BaseURL)
 	}
 }
 
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	helpers.CleanUp()
-	addWorkarounds()
+	addWorkarounds(config)
 
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
 	theme.GetTheme(config, *menuconfigfilepath)
