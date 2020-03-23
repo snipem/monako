@@ -32,6 +32,7 @@ func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
+	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
 	flag.Parse()
@@ -44,6 +45,11 @@ func main() {
 	config, err := config.LoadConfig(*configfilepath)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if *baseURLflag != "" {
+		// Overwrite config base url if it is set as parameter
+		config.BaseURL = *baseURLflag
 	}
 
 	helpers.CleanUp()
