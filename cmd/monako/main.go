@@ -31,7 +31,6 @@ func addWorkarounds() {
 func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
-	var hugoconfigfilepath = flag.String("hugo-config", "config.hugo.toml", "Configuration file for Hugo")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
@@ -51,7 +50,7 @@ func main() {
 	addWorkarounds()
 
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
-	theme.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
+	theme.GetTheme(config, *menuconfigfilepath)
 
 	for _, c := range config.Origins {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)

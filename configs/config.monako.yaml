@@ -1,4 +1,7 @@
 ---
+  baseURL : "https://example.com/"
+  title : "Hugo Book"
+
   whitelist:
     - ".md"
     - ".adoc"

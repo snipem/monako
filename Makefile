@@ -32,16 +32,14 @@ test:
 run_prd: build
 	touch secrets.env && source secrets.env && \
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
-			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
-			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
+			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md
 	$(MAKE) serve
 
 run: build compose serve
 
 compose:
 	./monako -config configs/config.monako.yaml \
-		-menu-config configs/config.menu.md \
-		-hugo-config configs/config.hugo.toml
+		-menu-config configs/config.menu.md
 
 serve:
 	echo "Serving under http://localhost:8000"

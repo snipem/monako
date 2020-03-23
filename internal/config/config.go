@@ -7,6 +7,8 @@ import (
 )
 
 type ComposeConfig struct {
+	BaseURL       string   `yaml:"baseURL"`
+	Title         string   `yaml:"title"`
 	Origins       []origin `yaml:"origins"`
 	FileWhitelist []string `yaml:"whitelist"`
 }
@@ -28,7 +30,6 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 	}
 
 	err = yaml.Unmarshal(source, &config)
-
 	return
 
 }
