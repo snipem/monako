@@ -33,6 +33,8 @@ func markdownPostprocessing(dirty []byte) []byte {
 
 func addFakeAsciidoctorBinForDiagramsToPath() {
 
+	//TODO Try command line from: https://gohugo.io/content-management/formats/#external-helpers
+
 	shellscript := `#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	if [ -f /usr/local/bin/asciidoctor ]; then
