@@ -14,10 +14,10 @@ import (
 	"github.com/snipem/monako/pkg/helpers"
 )
 
-func compose(url string, branch string, subdir string, target string, username string, password string) {
+func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
 
 	fs := helpers.CloneDir(url, branch, username, password)
-	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/")
+	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
 func addWorkarounds() {
@@ -53,8 +53,8 @@ func main() {
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
 	theme.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
 
-	for _, c := range config {
-		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
+	for _, c := range config.Origins {
+		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)
 	}
 
 	helpers.HugoRun([]string{"--source", "compose"})

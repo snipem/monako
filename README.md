@@ -52,7 +52,6 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Fail on build fail to prevent false deployment to production
-* Make white list configurable
 * The python sharing of python does not support added paths to the base url. In order to run the path has to be shortened
 * Drop Hugo config in favor of parametrized base url or in own config
 * Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
