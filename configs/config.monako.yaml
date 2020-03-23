@@ -1,42 +1,43 @@
 ---
+  baseURL : "https://example.com/"
+  title : "Hugo Book"
 
-- src: https://github.com/snipem/monako
-  branch: develop
-  docdir: .
-  targetdir: docs/monako
+  whitelist:
+    - ".md"
+    - ".adoc"
+    - ".jpg"
+    - ".jpeg"
+    - ".svg"
+    - ".gif"
+    - ".png"
 
-- src: https://github.com/snipem/commute-tube
-  branch: master
-  docdir: .
-  targetdir: docs/commute
+  origins:
+  - src: https://github.com/snipem/monako
+    branch: develop
+    docdir: .
+    targetdir: docs/monako
 
-- src: https://github.com/snipem/psnprices
-  branch: master
-  docdir: .
-  targetdir: docs/psnprices
+  - src: https://github.com/snipem/commute-tube
+    branch: master
+    docdir: .
+    targetdir: docs/commute
 
-- src: https://github.com/mundimark/awesome-markdown
-  branch: master
-  docdir: .
-  targetdir: docs/awesome-markdown
+  - src: https://github.com/snipem/psnprices
+    branch: master
+    docdir: .
+    targetdir: docs/psnprices
 
-- src: https://github.com/snipem/maniacforum.git
-  branch: master
-  docdir: .
-  targetdir: docs/maniacforum
+  - src: https://github.com/mundimark/awesome-markdown
+    branch: master
+    docdir: .
+    targetdir: docs/awesome-markdown
 
-# - src: git@github.com:bodiam/awesome-asciidoc.git
-#   branch: master
-#   docdir: .
-#   targetdir: awesome-asciidoc
+  - src: https://github.com/snipem/maniacforum.git
+    branch: master
+    docdir: .
+    targetdir: docs/maniacforum
 
-- src: https://github.com/arc42/arc42-template
-  branch: master
-  # hugo does not support relative includes as of now. This is used in the arc42 teamplates
-  docdir: EN/asciidoc/src
-  targetdir: docs/arc42
-
-- src: https://github.com/asciidoctor/asciidoctor-diagram.git
-  branch: master
-  docdir: examples
-  targetdir: docs/asciidoctor-diagram
+  - src: https://github.com/asciidoctor/asciidoctor-diagram.git
+    branch: master
+    docdir: examples
+    targetdir: docs/asciidoctor-diagram

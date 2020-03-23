@@ -18,10 +18,10 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 ```help
 $ monako -h
 Usage of monako:
+  -base-url string
+        Custom base URL
   -config string
         Configuration file (default "config.monako.yaml")
-  -hugo-config string
-        Configuration file for hugo (default "config.hugo.toml")
   -menu-config string
         Menu file for monako-book theme (default "config.menu.md")
   -trace
@@ -52,13 +52,9 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Fail on build fail to prevent false deployment to production
-* Make white list configurable
-* The python sharing of python does not support added paths to the base url. In order to run the path has to be shortened
-* Drop Hugo config in favor of parametrized base url or in own config
 * Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
 * Reduce uncritical warnings by Asciidoctor
 
 ## Improvements
 
 * Support edit this page links with links to origin repository. Book theme provides a [similar feature](https://github.com/alex-shpak/hugo-book/search?q=BookRepo&unscoped_q=BookRepo).
-* Add ability to use different base paths in local sharing and deployment
