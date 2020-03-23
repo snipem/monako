@@ -51,6 +51,7 @@ Init with `make init`
 ## TODOs
 
 * Fail on wrong `docdir` ("TODO")
+* Fail on build fail to prevent false deployment to production
 * Make white list configurable
 * The python sharing of python does not support added pathes to the base url. In order to run the path has to be shortened
 * Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
