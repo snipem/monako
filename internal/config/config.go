@@ -1,10 +1,12 @@
-package main
+package config
 
 import (
 	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
 )
+
+var FileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
 
 type composeConfig struct {
 	Source      string `yaml:"src"`
@@ -15,7 +17,7 @@ type composeConfig struct {
 	TargetDir   string `yaml:"targetdir,omitempty"`
 }
 
-func loadConfig(configfilepath string) (config []composeConfig, err error) {
+func LoadConfig(configfilepath string) (config []composeConfig, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {

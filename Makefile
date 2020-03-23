@@ -1,6 +1,7 @@
 
 #run: make run
 SHELL := /bin/bash
+.PHONY: compose
 
 clean:
 	rm -r tmp/theme || true
@@ -16,15 +17,15 @@ optional_deps:
 init: deps theme
 
 build: clean
-	go build .
+	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
 	mkdir -p tmp/
 	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/v6s.zip
-	${GOPATH}/bin/go-bindata tmp/...
+	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 test:
-	go test -v -coverprofile=c.out.tmp
+	go test -v -coverprofile=c.out.tmp ./...
 	cat c.out.tmp | grep -v "/bindata.go" > c.out
 	rm c.out.tmp
 
@@ -35,9 +36,12 @@ run_prd: build
 			-hugo-config ~/work/mopro/architecture/documentation/conf/config.prod.toml
 	$(MAKE) serve
 
-run: build
-	./monako
-	$(MAKE) serve
+run: build compose serve
+
+compose:
+	./monako -config configs/config.monako.yaml \
+		-menu-config configs/config.menu.md \
+		-hugo-config configs/config.hugo.toml
 
 serve:
 	echo "Serving under http://localhost:8000"

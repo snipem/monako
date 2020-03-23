@@ -55,7 +55,9 @@ Init with `make init`
 * Make white list configurable
 * The python sharing of python does not support added pathes to the base url. In order to run the path has to be shortened
 * Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
+* Reduce uncritical warnings by Asciidoctor
 
 ## Improvements
 
 * Support edit this page links with links to origin repository. Book theme provides a [similar feature](https://github.com/alex-shpak/hugo-book/search?q=BookRepo&unscoped_q=BookRepo).
+* Add ability to use diffrent base pathes in local sharing and deployment
