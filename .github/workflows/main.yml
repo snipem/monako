@@ -18,8 +18,8 @@ jobs:
     - name: setup env
       shell: bash
       run: |
-        echo "::set-env name=GOPATH::${{ github.workspace }}/go"
-        echo "::add-path::${{ github.workspace }}/go/bin"
+        echo "::set-env name=GOPATH::${{ github.workspace }}/../go"
+        echo "::add-path::${{ github.workspace }}/../go/bin"
 
     - name: Checkout code
       uses: actions/checkout@v2
@@ -42,5 +42,5 @@ jobs:
     - name: build
       run: make build
 
-    - name: Run Monako
-      run: ./monako
+    - name: Run Monako and compose site
+      run: make compose

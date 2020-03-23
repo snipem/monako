@@ -1,4 +1,4 @@
-package main
+package theme
 
 import (
 	"fmt"
@@ -8,9 +8,11 @@ import (
 
 	"github.com/artdarek/go-unzip"
 	"github.com/codeskyblue/go-sh"
+	"github.com/snipem/monako/internal/workarounds"
 )
 
-func getTheme(hugoconfig string, menuconfig string) {
+// GetTheme fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
+func GetTheme(hugoconfig string, menuconfig string) {
 
 	extractTheme()
 	// TODO has to be TOML
@@ -19,7 +21,8 @@ func getTheme(hugoconfig string, menuconfig string) {
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
-	addFixForADocTocToTheme()
+	// TODO Make optional
+	workarounds.AddFixForADocTocToTheme()
 }
 
 func extractTheme() {
