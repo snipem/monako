@@ -6,9 +6,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var FileWhitelist = []string{".md", ".adoc", ".jpg", ".jpeg", ".svg", ".gif", ".png"}
+type ComposeConfig struct {
+	BaseURL       string   `yaml:"baseURL"`
+	Title         string   `yaml:"title"`
+	Origins       []origin `yaml:"origins"`
+	FileWhitelist []string `yaml:"whitelist"`
+}
 
-type composeConfig struct {
+type origin struct {
 	Source      string `yaml:"src"`
 	Branch      string `yaml:"branch,omitempty"`
 	EnvUsername string `yaml:"envusername,omitempty"`
@@ -17,19 +22,14 @@ type composeConfig struct {
 	TargetDir   string `yaml:"targetdir,omitempty"`
 }
 
-func LoadConfig(configfilepath string) (config []composeConfig, err error) {
+func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	var out []composeConfig
-
-	err = yaml.Unmarshal(source, &out)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+	err = yaml.Unmarshal(source, &config)
+	return
 
 }

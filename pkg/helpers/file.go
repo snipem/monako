@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/snipem/monako/internal/config"
 	"github.com/snipem/monako/internal/workarounds"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/memfs"
@@ -51,8 +50,8 @@ func CloneDir(url string, branch string, username string, password string) billy
 	return fs
 }
 
-func shouldIgnoreFile(filename string) bool {
-	for _, whitelisted := range config.FileWhitelist {
+func shouldIgnoreFile(filename string, whitelist []string) bool {
+	for _, whitelisted := range whitelist {
 		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(whitelisted)) {
 			return false
 		}
@@ -60,7 +59,7 @@ func shouldIgnoreFile(filename string) bool {
 	return true
 }
 
-func CopyDir(fs billy.Filesystem, subdir string, target string) {
+func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []string) {
 
 	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
 	var files []os.FileInfo
@@ -80,9 +79,9 @@ func CopyDir(fs billy.Filesystem, subdir string, target string) {
 		if file.IsDir() {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			CopyDir(fs, file.Name(), target+"/"+file.Name())
+			CopyDir(fs, file.Name(), target+"/"+file.Name(), whitelist)
 			continue
-		} else if shouldIgnoreFile(file.Name()) {
+		} else if shouldIgnoreFile(file.Name(), whitelist) {
 			continue
 		}
 

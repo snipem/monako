@@ -14,25 +14,25 @@ import (
 	"github.com/snipem/monako/pkg/helpers"
 )
 
-func compose(url string, branch string, subdir string, target string, username string, password string) {
+func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
 
 	fs := helpers.CloneDir(url, branch, username, password)
-	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/")
+	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
-func addWorkarounds() {
+func addWorkarounds(c config.ComposeConfig) {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
-		workarounds.AddFakeAsciidoctorBinForDiagramsToPath()
+		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(c.BaseURL)
 	}
 }
 
 func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
-	var hugoconfigfilepath = flag.String("hugo-config", "config.hugo.toml", "Configuration file for Hugo")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
+	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 
 	flag.Parse()
@@ -47,14 +47,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if *baseURLflag != "" {
+		// Overwrite config base url if it is set as parameter
+		config.BaseURL = *baseURLflag
+	}
+
 	helpers.CleanUp()
-	addWorkarounds()
+	addWorkarounds(config)
 
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
-	theme.GetTheme(*hugoconfigfilepath, *menuconfigfilepath)
+	theme.GetTheme(config, *menuconfigfilepath)
 
-	for _, c := range config {
-		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword))
+	for _, c := range config.Origins {
+		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)
 	}
 
 	helpers.HugoRun([]string{"--source", "compose"})
