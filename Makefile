@@ -34,6 +34,7 @@ run_prd: build
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
 			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
 			-base-url http://localhost:8000
+
 	$(MAKE) serve
 
 run: build compose serve
