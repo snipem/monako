@@ -5,7 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
 
-![monako logo](res/logo/cover.png)
+![monako logo](assets/logo/cover.png)
 
 ----
 
