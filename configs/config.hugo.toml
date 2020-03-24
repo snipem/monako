@@ -2,7 +2,7 @@
 
 baseURL = 'https://example.com/'
 title = 'Hugo Book'
-theme = 'monako-book-6s'
+theme = 'monako-book-6s.1'
 
 # Book configuration
 disablePathToLower = true

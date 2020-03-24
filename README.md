@@ -52,7 +52,6 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Fail on build fail to prevent false deployment to production
-* Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
 * Reduce uncritical warnings by Asciidoctor
 
 ## Improvements

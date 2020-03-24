@@ -9,7 +9,6 @@ import (
 	"github.com/artdarek/go-unzip"
 	"github.com/codeskyblue/go-sh"
 	"github.com/snipem/monako/internal/config"
-	"github.com/snipem/monako/internal/workarounds"
 )
 
 // GetTheme fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
@@ -24,15 +23,13 @@ func GetTheme(composeConfig config.ComposeConfig, menuconfig string) {
 	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
 	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
 
-	// TODO Make optional
-	workarounds.AddFixForADocTocToTheme()
 }
 
 func createHugoConfig(c config.ComposeConfig) error {
 	configContent := fmt.Sprintf(`
 baseURL = '%s'
 title = '%s'
-theme = 'monako-book-6s'
+theme = 'monako-book-6s.1'
 
 # Book configuration
 disablePathToLower = true
