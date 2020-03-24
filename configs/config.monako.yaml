@@ -1,6 +1,6 @@
 ---
   baseURL : "https://example.com/"
-  title : "Hugo Book"
+  title : "My Projects"
 
   whitelist:
     - ".md"
