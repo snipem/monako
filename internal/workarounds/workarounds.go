@@ -42,7 +42,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	path := url.Path
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 
-	//TODO Try command line from: https://gohugo.io/content-management/formats/#external-helpers
+	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
+	// TODO: Are these attributes reasonable?
 
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
@@ -52,10 +53,22 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	  ad="/usr/bin/asciidoctor"
 	fi
 	
-	# Use stylesheet=none to prevent asciidoctor from inserting an own stylesheet
-	$ad -v -B . -r asciidoctor-diagram -a stylesheet=none -a icons=font -a docinfo=shared -a nofooter -a sectanchors -a experimental=true -a figure-caption! -a source-highlighter=highlightjs -a toc-title! -a stem=mathjax - | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/"
+	$ad -v -B . \
+		-r asciidoctor-diagram \
+		--no-header-footer \
+		--safe \
+		--trace \
+		-a icons=font \
+		-a docinfo=shared \
+		-a sectanchors \
+		-a experimental=true \
+		-a figure-caption! \
+		-a source-highlighter=highlightjs \
+		-a toc-title! \
+		-a stem=mathjax \
+		- | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/"
 	
-	# For some reason static is not parsed with monako
+	# For some reason static is not parsed with integrated Hugo
 	mkdir -p compose/public/diagram
 	
 	if ls *.svg >/dev/null 2>&1; then
@@ -85,43 +98,5 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	log.Printf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
 
 	return fakeBinary
-
-}
-
-func AddFixForADocTocToTheme() {
-	themefile := "compose/themes/monako-book-6s/layouts/partials/docs/html-head.html"
-	javascriptFix := `
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script type="text/javascript">
-	function fixAsciidocToc() {
-		var asciidoc_list = $("#toc > ul");
-
-		if (asciidoc_list.length > 0) {
-			// Add new sub item to right nav
-			var right_toc = $("body > main > aside.book-toc")[0];
-			right_toc.innerHTML += "<nav id='TableOfContents'> </nav>";
-		
-			// Take content from central asciidoc nav to right side
-			var new_nav = $("body > main > aside.book-toc > nav")[0];
-			new_nav.append(asciidoc_list[0]);
-		
-			// Remove all "Table of Contents" from central asciidoc
-			$("#toctitle")[0].remove();
-		}
-	}
-	window.onload = fixAsciidocToc;
-	</script>
-	`
-
-	f, err := os.OpenFile(themefile, os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		panic(err)
-	}
-
-	defer f.Close()
-
-	if _, err = f.WriteString(javascriptFix); err != nil {
-		panic(err)
-	}
 
 }

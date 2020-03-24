@@ -61,7 +61,7 @@ func shouldIgnoreFile(filename string, whitelist []string) bool {
 
 func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []string) {
 
-	log.Printf("Entering subdir %s of virtual filesystem from to target %s", subdir, target)
+	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
 	var files []os.FileInfo
 
 	fs, err := fs.Chroot(subdir)
@@ -117,7 +117,7 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 			}
 		}
 
-		log.Printf("Copied %s\n", file.Name())
+		log.Printf("%s -> %s\n", file.Name(), targetFilename)
 
 	}
 

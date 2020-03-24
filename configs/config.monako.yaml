@@ -1,6 +1,6 @@
 ---
   baseURL : "https://example.com/"
-  title : "Hugo Book"
+  title : "My Projects"
 
   whitelist:
     - ".md"
@@ -12,10 +12,6 @@
     - ".png"
 
   origins:
-  - src: https://github.com/snipem/monako
-    branch: develop
-    docdir: .
-    targetdir: docs/monako
 
   - src: https://github.com/snipem/commute-tube
     branch: master
@@ -37,7 +33,7 @@
     docdir: .
     targetdir: docs/maniacforum
 
-  - src: https://github.com/asciidoctor/asciidoctor-diagram.git
+  - src: https://github.com/bodiam/awesome-asciidoc.git
     branch: master
-    docdir: examples
-    targetdir: docs/asciidoctor-diagram
+    docdir: .
+    targetdir: docs/awesome-asciidoc

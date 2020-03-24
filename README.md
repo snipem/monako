@@ -5,13 +5,19 @@
 [![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
 
-![monako logo](res/logo/cover.png)
+![monako logo](assets/logo/cover.png)
 
 ----
 
 A less opinionated document aggregator and publisher. Easier to use and to adapt than Antora, Hugo, JBake and the likes.
 
 ----
+
+## Purpose
+
+Monako abstracts the complexity of collecting documentation from a configurable amount of Git repositories (origins).
+
+Monako uses Hugo as a static site generator. To the user Hugo is abstracted.
 
 ## Usage
 
@@ -22,6 +28,8 @@ Usage of monako:
         Custom base URL
   -config string
         Configuration file (default "config.monako.yaml")
+  -fail-on-error
+        Fail on document conversion errors
   -menu-config string
         Menu file for monako-book theme (default "config.menu.md")
   -trace
@@ -29,6 +37,47 @@ Usage of monako:
 ```
 
 A Docker image is available from [Dockerhub](https://hub.docker.com/repository/docker/snipem/monako).
+
+## Configuration
+
+### Configuration of Origins
+
+```yaml
+---
+  baseURL : "https://example.com/"
+  title : "My Projects"
+
+  whitelist:
+    - ".md"
+    - ".adoc"
+    - ".jpg"
+    - ".svg"
+    - ".png"
+
+  origins:
+  - src: https://github.com/snipem/commute-tube
+    branch: master
+    docdir: .
+    targetdir: docs/commute
+
+  - src: https://github.com/snipem/monako
+    branch: develop
+    docdir: doc
+    targetdir: docs/monako
+```
+
+### Configuration of Menus
+
+```markdown
+- **My Projects**
+  - [Commute Tube]({{< relref "/docs/commute/readme" >}})
+  - [Monako]({{< relref "/docs/monako/readme" >}})
+  ...
+```
+
+### Screenshot
+
+![Screenshot of a documentation site built with Monako](assets/screenshot.png)
 
 ## Design Goals
 
@@ -52,7 +101,6 @@ Init with `make init`
 
 * Fail on wrong `docdir` ("TODO")
 * Fail on build fail to prevent false deployment to production
-* Move TOC fix to [monako-book](https://github.com/snipem/monako-book)
 * Reduce uncritical warnings by Asciidoctor
 
 ## Improvements

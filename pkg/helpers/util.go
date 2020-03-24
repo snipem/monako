@@ -1,6 +1,6 @@
 package helpers
 
-// run: make test
+// run: make run
 
 import (
 	"os"
@@ -14,6 +14,7 @@ func CleanUp() {
 }
 
 // HugoRun runs Hugo like the command line interface
-func HugoRun(args []string) {
-	hugo.Execute(args)
+func HugoRun(args []string) error {
+	response := hugo.Execute(args)
+	return response.Err
 }
