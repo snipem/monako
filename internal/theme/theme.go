@@ -43,18 +43,6 @@ unsafe = true
 [markup.tableOfContents]
 startLevel = 1
 
-[menu]
-# [[menu.before]]
-[[menu.after]]
-name = "Github"
-url = "https://github.com/alex-shpak/hugo-book"
-weight = 10
-
-[[menu.after]]
-name = "Hugo Themes"
-url = "https://themes.gohugo.io/hugo-book/"
-weight = 20
-
 [params]
 # (Optional, default true) Controls table of contents visibility on right side of pages.
 # Start and end levels can be controlled with markup.tableOfContents setting.
