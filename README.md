@@ -13,6 +13,12 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 
 ----
 
+## Purpose
+
+Monako abstracts the complexity of collecting documentation from a configurable amount of Git repositories (origins).
+
+Monako uses Hugo as a static site generator. To the user Hugo is abstracted.
+
 ## Usage
 
 ```help
@@ -22,6 +28,8 @@ Usage of monako:
         Custom base URL
   -config string
         Configuration file (default "config.monako.yaml")
+  -fail-on-error
+        Fail on document conversion errors
   -menu-config string
         Menu file for monako-book theme (default "config.menu.md")
   -trace
@@ -29,6 +37,47 @@ Usage of monako:
 ```
 
 A Docker image is available from [Dockerhub](https://hub.docker.com/repository/docker/snipem/monako).
+
+## Configuration
+
+### Configuration of Origins
+
+```yaml
+---
+  baseURL : "https://example.com/"
+  title : "My Projects"
+
+  whitelist:
+    - ".md"
+    - ".adoc"
+    - ".jpg"
+    - ".svg"
+    - ".png"
+
+  origins:
+  - src: https://github.com/snipem/commute-tube
+    branch: master
+    docdir: .
+    targetdir: docs/commute
+
+  - src: https://github.com/snipem/monako
+    branch: develop
+    docdir: doc
+    targetdir: docs/monako
+```
+
+### Configuration of Menus
+
+```markdown
+- **My Projects**
+  - [Commute Tube]({{< relref "/docs/commute/readme" >}})
+  - [Monako]({{< relref "/docs/monako/readme" >}})
+  ...
+```
+
+### Screenshot
+
+![Screenshot of a documentation site built with Monako](assets/screenshot.png)
 
 ## Design Goals
 
