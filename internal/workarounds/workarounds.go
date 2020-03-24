@@ -57,9 +57,11 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	# Use stylesheet=none to prevent asciidoctor from inserting an own stylesheet
 	$ad -v -B . \
 		-r asciidoctor-diagram \
+		--no-header-footer \
+		--safe \
+		--trace \
 		-a icons=font \
 		-a docinfo=shared \
-		-a nofooter \
 		-a sectanchors \
 		-a experimental=true \
 		-a figure-caption! \
