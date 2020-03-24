@@ -44,6 +44,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	//TODO Try command line from: https://gohugo.io/content-management/formats/#external-helpers
 
+	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
+
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	if [ -f /usr/local/bin/asciidoctor ]; then
@@ -53,9 +55,20 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	fi
 	
 	# Use stylesheet=none to prevent asciidoctor from inserting an own stylesheet
-	$ad -v -B . -r asciidoctor-diagram -a stylesheet=none -a icons=font -a docinfo=shared -a nofooter -a sectanchors -a experimental=true -a figure-caption! -a source-highlighter=highlightjs -a toc-title! -a stem=mathjax - | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/"
+	$ad -v -B . \
+		-r asciidoctor-diagram \
+		-a icons=font \
+		-a docinfo=shared \
+		-a nofooter \
+		-a sectanchors \
+		-a experimental=true \
+		-a figure-caption! \
+		-a source-highlighter=highlightjs \
+		-a toc-title! \
+		-a stem=mathjax \
+		- | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/"
 	
-	# For some reason static is not parsed with monako
+	# For some reason static is not parsed with integrated Hugo
 	mkdir -p compose/public/diagram
 	
 	if ls *.svg >/dev/null 2>&1; then
