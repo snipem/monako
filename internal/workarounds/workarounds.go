@@ -42,9 +42,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	path := url.Path
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 
-	//TODO Try command line from: https://gohugo.io/content-management/formats/#external-helpers
-
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
+	// TODO: Are these attributes reasonable?
 
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
