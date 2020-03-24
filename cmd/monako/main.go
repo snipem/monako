@@ -34,6 +34,7 @@ func main() {
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
 	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
+	var failOnError = flag.Bool("fail-on-error", false, "Fail on document conversion errors")
 
 	flag.Parse()
 
@@ -62,6 +63,9 @@ func main() {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)
 	}
 
-	helpers.HugoRun([]string{"--source", "compose"})
+	err = helpers.HugoRun([]string{"--source", "compose"})
+	if *failOnError && err != nil {
+		log.Fatal(err)
+	}
 
 }
