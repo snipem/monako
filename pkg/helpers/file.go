@@ -64,7 +64,12 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
 	var files []os.FileInfo
 
-	fs, err := fs.Chroot(subdir)
+	_, err := fs.Stat(subdir)
+	if err != nil {
+		log.Fatalf("Error while reading subdir %s: %s", subdir, err)
+	}
+
+	fs, err = fs.Chroot(subdir)
 	if err != nil {
 		log.Fatal(err)
 	}
