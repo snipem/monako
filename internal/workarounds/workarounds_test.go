@@ -32,20 +32,25 @@ func TestMarkdownFix(t *testing.T) {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
 	}
 
+}
+func TestMarkdownFixDontDo(t *testing.T) {
+
 	dirty := "!(caption example)[lokalfolderurl/image.png]"
-	clean = string(MarkdownPostprocessing([]byte(dirty)))
-	want := "!(caption example)[lokalfolderurl/image.png]"
+	want := "!(caption example)[../lokalfolderurl/image.png]"
+
+	clean := string(MarkdownPostprocessing([]byte(dirty)))
 
 	if clean != want {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, want)
 	}
 
+}
+func TestMarkdownFixInnerLinks(t *testing.T) {
 	// Dont fix local links
 
-	noNeedToClean = "[[1]](#1)"
-	clean = dirty
+	noNeedToClean := "[[1]](#1)"
 
-	clean = string(MarkdownPostprocessing([]byte(noNeedToClean)))
+	clean := string(MarkdownPostprocessing([]byte(noNeedToClean)))
 
 	if clean != noNeedToClean {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)

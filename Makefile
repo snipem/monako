@@ -1,7 +1,7 @@
 
 #run: make run
 SHELL := /bin/bash
-.PHONY: compose
+.PHONY: compose test
 
 clean:
 	rm -r tmp/theme || true
