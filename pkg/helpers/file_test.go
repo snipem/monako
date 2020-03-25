@@ -3,16 +3,13 @@ package helpers
 // run: make test
 
 import (
-	"os"
 	"testing"
 )
 
 func TestCloneDir(t *testing.T) {
 
-	wd, err := os.Getwd()
-
 	// Use current dir as test repo, navigate two folders up because we are in /pkg/helpers
-	git, fs := CloneDir("file://"+wd+"/../..", "master", "", "")
+	git, fs := CloneDir("https://github.com/snipem/monako.git", "master", "", "")
 
 	if git != nil {
 		t.Log("Git Clone returned")
