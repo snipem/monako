@@ -77,12 +77,12 @@ BookSection = 'docs'
 
 # Set source repository location.
 # Used for 'Last Modified' and 'Edit this page' links.
-BookRepo = 'https://github.com/alex-shpak/hugo-book'
+#BookRepo = 'https://github.com/alex-shpak/hugo-book'
 
 # Enable "Edit this page" links for 'doc' page type.
 # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
 # Path must point to 'content' directory of repo.
-BookEditPath = 'edit/master/exampleSite/content'
+#BookEditPath = 'edit/master/exampleSite/content'
 
 # Configure the date format used on the pages
 # - In git information
