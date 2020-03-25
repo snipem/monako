@@ -11,6 +11,9 @@ import (
 	"strings"
 )
 
+// AsciidocPostprocessing fixes common errors with Hugo processing vanilla Asciidoc
+// 1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
+// for pretty urls
 func AsciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
@@ -24,6 +27,7 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 
 // MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
 //  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
+// for pretty urls
 func MarkdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
@@ -98,7 +102,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	if err != nil {
 		log.Fatalf("Error creating asciidoctor fake binary: %s", err)
 	}
-	// TODO Remove file afterwards
 
 	os.Setenv("PATH", tempDir+":"+os.Getenv("PATH"))
 
