@@ -13,7 +13,7 @@ import (
 const monakoMenuDirectory = "monako_menu_directory"
 const themeName = "monako-book-master"
 
-// CreateHugoPage fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
+// CreateHugoPage extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
 
 	dir := "compose/content/" + monakoMenuDirectory
