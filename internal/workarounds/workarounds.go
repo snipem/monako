@@ -1,5 +1,7 @@
 package workarounds
 
+// run: make test
+
 import (
 	"fmt"
 	"io/ioutil"
@@ -13,10 +15,10 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
 
-	// FIXME really quick and dirty, just for testing
-	d = strings.ReplaceAll(d, "image:http", "imagexxxxxxhttp")
+	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+	d = strings.ReplaceAll(d, "image:http", "image_______http")
 	d = strings.ReplaceAll(d, "image:", "image:../")
-	d = strings.ReplaceAll(d, "imagexxxxxxhttp", "image:http")
+	d = strings.ReplaceAll(d, "image_______http", "image:http")
 	return []byte(d)
 }
 
@@ -25,10 +27,10 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 func MarkdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
-	// FIXME really quick and dirty, just for testing
-	d = strings.ReplaceAll(d, ")[http", ")xxxxxxhttp")
+	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+	d = strings.ReplaceAll(d, ")[http", ")_______http")
 	d = strings.ReplaceAll(d, ")[", ")[../")
-	d = strings.ReplaceAll(d, ")xxxxxxhttp", ")[http")
+	d = strings.ReplaceAll(d, ")_______http", ")[http")
 
 	return []byte(d)
 }
