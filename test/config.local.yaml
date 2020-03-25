@@ -1,0 +1,19 @@
+---
+    baseURL : "https://example.com/"
+    title : "My Projects"
+  
+    whitelist:
+      - ".md"
+      - ".adoc"
+      - ".jpg"
+      - ".jpeg"
+      - ".svg"
+      - ".gif"
+      - ".png"
+  
+    origins:
+  
+    - src: file://.
+      branch: master
+      docdir: test/test_docs 
+      targetdir: docs/test/

@@ -39,6 +39,11 @@ run_prd: build
 
 run: build compose serve
 
+run_local: build 
+	# Runs locally, clons this git repo to use test data
+	./monako -config test/config.local.yaml -menu-config test/config.menu.local.md
+	$(MAKE) serve
+
 compose:
 	./monako -config configs/config.monako.yaml \
 		-menu-config configs/config.menu.md
