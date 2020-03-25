@@ -25,7 +25,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 
 func TestMarkdownFix(t *testing.T) {
 
-	noNeedToClean := "!(caption example)[http://url/image.jpg]"
+	noNeedToClean := "![caption example](http://url/image.jpg)"
 	clean := string(MarkdownPostprocessing([]byte(noNeedToClean)))
 
 	if clean != noNeedToClean {
@@ -35,8 +35,8 @@ func TestMarkdownFix(t *testing.T) {
 }
 func TestMarkdownFixDontDo(t *testing.T) {
 
-	dirty := "!(caption example)[lokalfolderurl/image.png]"
-	want := "!(caption example)[../lokalfolderurl/image.png]"
+	dirty := "![caption example](lokalfolderurl/image.png)"
+	want := "![caption example](../lokalfolderurl/image.png)"
 
 	clean := string(MarkdownPostprocessing([]byte(dirty)))
 
