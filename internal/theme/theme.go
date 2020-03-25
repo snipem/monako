@@ -7,12 +7,14 @@ import (
 	"os"
 
 	"github.com/artdarek/go-unzip"
-	"github.com/codeskyblue/go-sh"
 	"github.com/snipem/monako/internal/config"
 )
 
-// GetTheme fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
-func GetTheme(composeConfig config.ComposeConfig, menuconfig string) {
+// CreateHugoPage fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
+func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
+
+	dir := "compose/content/monako_menu"
+	dst := dir + "/index.md"
 
 	extractTheme()
 	err := createHugoConfig(composeConfig)
@@ -20,8 +22,17 @@ func GetTheme(composeConfig config.ComposeConfig, menuconfig string) {
 		log.Fatal(err)
 	}
 
-	sh.Command("mkdir", "-p", "compose/content/menu/").Run()
-	sh.Command("cp", menuconfig, "compose/content/menu/index.md").Run()
+	os.Mkdir(dir, os.FileMode(0744))
+
+	data, err := ioutil.ReadFile(menuconfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile(dst, data, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
 
@@ -55,7 +66,7 @@ BookToC = true
 
 # (Optional, default none) Set leaf bundle to render as side menu
 # When not specified file structure and weights will be used
-BookMenuBundle = '/menu'
+BookMenuBundle = '/monako_menu'
 
 # (Optional, default docs) Specify section of content to render as menu
 # You can also set value to '*' to render all sections to menu
