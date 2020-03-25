@@ -11,6 +11,7 @@ import (
 )
 
 const monakoMenuDirectory = "monako_menu_directory"
+const themeName = "monako-book-master"
 
 // CreateHugoPage fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
@@ -42,7 +43,7 @@ func createHugoConfig(c config.ComposeConfig) error {
 	configContent := fmt.Sprintf(`
 baseURL = '%s'
 title = '%s'
-theme = 'monako-book-6s.1'
+theme = '%s'
 
 # Book configuration
 disablePathToLower = true
@@ -98,7 +99,7 @@ BookSearch = true
 # See https://gohugo.io/content-management/comments/#configure-disqus
 # Can be overwritten by same param in page frontmatter
 BookComments = true
-	`, c.BaseURL, c.Title, monakoMenuDirectory)
+	`, c.BaseURL, c.Title, themeName, monakoMenuDirectory)
 	return ioutil.WriteFile("compose/config.toml", []byte(configContent), os.FileMode(0700))
 }
 
@@ -111,7 +112,7 @@ func extractTheme() {
 	// TODO Don't use local filesystem, keep it in memory
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "monako-theme-")
 	if err != nil {
-		fmt.Println("Cannot create temporary file", err)
+		log.Fatalf("Cannot create temporary file %s", err)
 	}
 	tmpFile.Write(themezip)
 	tempfilename := tmpFile.Name()
@@ -124,7 +125,7 @@ func extractTheme() {
 	uz := unzip.New(tempfilename, "compose/themes")
 	err = uz.Extract()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Error extracting theme: %s ", err)
 	}
 	os.RemoveAll(tempfilename)
 }
