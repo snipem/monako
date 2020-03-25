@@ -9,11 +9,7 @@ import (
 func TestCloneDir(t *testing.T) {
 
 	// Use current dir as test repo, navigate two folders up because we are in /pkg/helpers
-	git, fs := CloneDir("https://github.com/snipem/monako.git", "master", "", "")
-
-	if git != nil {
-		t.Log("Git Clone returned")
-	}
+	_, fs := CloneDir("https://github.com/snipem/monako.git", "master", "", "")
 
 	root, err := fs.Chroot(".")
 
