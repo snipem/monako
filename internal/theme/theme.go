@@ -10,10 +10,12 @@ import (
 	"github.com/snipem/monako/internal/config"
 )
 
+const monakoMenuDirectory = "monako_menu_directory"
+
 // CreateHugoPage fetches the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
 
-	dir := "compose/content/monako_menu"
+	dir := "compose/content/" + monakoMenuDirectory
 	dst := dir + "/index.md"
 
 	extractTheme()
@@ -66,7 +68,7 @@ BookToC = true
 
 # (Optional, default none) Set leaf bundle to render as side menu
 # When not specified file structure and weights will be used
-BookMenuBundle = '/monako_menu'
+BookMenuBundle = '/%s'
 
 # (Optional, default docs) Specify section of content to render as menu
 # You can also set value to '*' to render all sections to menu
@@ -96,7 +98,7 @@ BookSearch = true
 # See https://gohugo.io/content-management/comments/#configure-disqus
 # Can be overwritten by same param in page frontmatter
 BookComments = true
-	`, c.BaseURL, c.Title)
+	`, c.BaseURL, c.Title, monakoMenuDirectory)
 	return ioutil.WriteFile("compose/config.toml", []byte(configContent), os.FileMode(0700))
 }
 
