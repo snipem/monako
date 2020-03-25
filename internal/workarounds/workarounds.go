@@ -40,6 +40,11 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		log.Fatal(err)
 	}
 	path := url.Path
+
+	// Single slashes will add up to "//" which some webservers don't support
+	if path == "/" {
+		path = ""
+	}
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
