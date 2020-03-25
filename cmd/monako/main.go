@@ -16,7 +16,7 @@ import (
 
 func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
 
-	fs := helpers.CloneDir(url, branch, username, password)
+	_, fs := helpers.CloneDir(url, branch, username, password)
 	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
