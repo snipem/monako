@@ -33,8 +33,12 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 
 	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
 	d = strings.ReplaceAll(d, "](http", ")_______http")
+	d = strings.ReplaceAll(d, "]](", "]]_______(")
+
 	d = strings.ReplaceAll(d, "](", "](../")
+
 	d = strings.ReplaceAll(d, ")_______http", "](http")
+	d = strings.ReplaceAll(d, "]]_______(", "]](")
 
 	return []byte(d)
 }
