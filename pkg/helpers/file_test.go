@@ -62,9 +62,7 @@ func TestIsAsciidoc(t *testing.T) {
 }
 
 func TestGitCommiter(t *testing.T) {
-	// Use current dir as test repo, navigate two folders up because we are in /pkg/helpers
-
-	fileName := "pkg/helpers/util.go"
+	fileName := "README.md"
 
 	ci := GetCommitInfo(g, fileName)
 
