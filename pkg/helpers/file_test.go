@@ -3,13 +3,28 @@ package helpers
 // run: make test
 
 import (
+	"os"
+	"strings"
 	"testing"
+
+	"gopkg.in/src-d/go-billy.v4"
+	"gopkg.in/src-d/go-git.v4"
 )
 
-func TestCloneDir(t *testing.T) {
+var g *git.Repository
+var fs billy.Filesystem
 
-	// Use current dir as test repo, navigate two folders up because we are in /pkg/helpers
-	_, fs := CloneDir("https://github.com/snipem/monako.git", "master", "", "")
+func TestMain(m *testing.M) {
+	// Setup git clone of repo
+	setup()
+	os.Exit(m.Run())
+}
+
+func setup() {
+	g, fs = CloneDir("https://github.com/snipem/monako.git", "master", "", "")
+}
+
+func TestCloneDir(t *testing.T) {
 
 	root, err := fs.Chroot(".")
 
@@ -44,4 +59,18 @@ func TestIsAsciidoc(t *testing.T) {
 	if isAsciidoc("somefolderwith.adoc-init/somefile.tmp") {
 		t.Error("Asciidoc not detected correctly")
 	}
+}
+
+func TestGitCommiter(t *testing.T) {
+	// Use current dir as test repo, navigate two folders up because we are in /pkg/helpers
+
+	fileName := "pkg/helpers/util.go"
+
+	ci := GetCommitInfo(g, fileName)
+
+	mail := ci.Committer.Email
+	if !strings.Contains(mail, "@") {
+		t.Errorf("Commiter %s does not contain @", mail)
+	}
+
 }

@@ -13,6 +13,7 @@ import (
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
@@ -166,4 +167,23 @@ func copyFile(targetFilename string, from io.Reader) {
 		log.Fatal(err)
 	}
 
+}
+
+func GetCommitInfo(r *git.Repository, filename string) *object.Commit {
+
+	cIter, err := r.Log(&git.LogOptions{
+		FileName: &filename,
+		All:      true,
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	commit, err := cIter.Next()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return commit
 }
