@@ -1,6 +1,6 @@
 ---
     baseURL : "https://example.com/"
-    title : "My Projects"
+    title : "Local Test Page"
   
     whitelist:
       - ".md"
@@ -16,5 +16,5 @@
     # Files have to be commited to appear!
     - src: file://.
       branch: develop-add-tests
-      docdir: test/test_docs 
+      docdir: test/test_docs
       targetdir: docs/test/
