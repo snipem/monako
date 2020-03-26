@@ -1,4 +1,5 @@
 # Asciidoc First Level
+:toc:
 
 ## Asciidoc Second Level
 
