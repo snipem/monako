@@ -58,7 +58,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
-	// TODO: Are these attributes reasonable?
 
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
@@ -67,20 +66,16 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	else
 	  ad="/usr/bin/asciidoctor"
 	fi
+
+	// Use empty css to trick asciidoctor into using none without error
+	echo "" > tmp.empty.css
 	
-	$ad -v -B . \
+	$ad -B . \
 		-r asciidoctor-diagram \
-		--no-header-footer \
+		-a nofooter \
+		-a stylesheet=tmp.empty.css \
 		--safe \
 		--trace \
-		-a icons=font \
-		-a docinfo=shared \
-		-a sectanchors \
-		-a experimental=true \
-		-a figure-caption! \
-		-a source-highlighter=highlightjs \
-		-a toc-title! \
-		-a stem=mathjax \
 		- | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/"
 	
 	# For some reason static is not parsed with integrated Hugo
