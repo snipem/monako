@@ -19,6 +19,9 @@ import (
 
 var filemode = os.FileMode(0700)
 
+const Asciidoc = "ASCIIDOC"
+const Markdown = "MARKDOWN"
+
 func CloneDir(url string, branch string, username string, password string) (*git.Repository, billy.Filesystem) {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
@@ -57,6 +60,26 @@ func shouldIgnoreFile(filename string, whitelist []string) bool {
 		}
 	}
 	return true
+}
+
+func isMarkdown(filename string) bool {
+	return strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".md"))
+}
+
+func isAsciidoc(filename string) bool {
+	return strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".adoc")) ||
+		strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".asciidoc")) ||
+		strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".asc"))
+}
+
+func DetermineFormat(filename string) string {
+	if isMarkdown(filename) {
+		return Markdown
+	} else if isAsciidoc(filename) {
+		return Asciidoc
+	} else {
+		return ""
+	}
 }
 
 func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []string) {
@@ -101,29 +124,46 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 		}
 
 		var targetFilename = target + "/" + file.Name()
+		contentFormat := DetermineFormat(file.Name())
 
-		if strings.HasSuffix(file.Name(), ".md") {
+		switch contentFormat {
+		case Asciidoc:
+		case Markdown:
+
 			var dirty, _ = ioutil.ReadAll(f)
-			clean := workarounds.MarkdownPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, filemode)
-		} else if strings.HasSuffix(file.Name(), ".adoc") {
-			var dirty, _ = ioutil.ReadAll(f)
-			clean := workarounds.AsciidocPostprocessing(dirty)
-			ioutil.WriteFile(targetFilename, clean, filemode)
-		} else {
+			var content []byte
 
-			t, err := os.Create(targetFilename)
-			if err != nil {
-				log.Fatal(err)
-			}
+			if contentFormat == Markdown {
 
-			if _, err = io.Copy(t, f); err != nil {
-				log.Fatal(err)
+				content = workarounds.MarkdownPostprocessing(dirty)
+				// content = file.ExpandFrontmatter(content)
+
+			} else if contentFormat == Asciidoc {
+
+				content = workarounds.AsciidocPostprocessing(dirty)
+				// content = file.ExpandFrontmatter(content)
+
 			}
+			ioutil.WriteFile(targetFilename, content, filemode)
+
+		default:
+			copyFile(targetFilename, f)
 		}
 
 		log.Printf("%s -> %s\n", file.Name(), targetFilename)
 
+	}
+
+}
+
+func copyFile(targetFilename string, from io.Reader) {
+	t, err := os.Create(targetFilename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err = io.Copy(t, from); err != nil {
+		log.Fatal(err)
 	}
 
 }

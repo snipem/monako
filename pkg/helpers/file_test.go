@@ -25,3 +25,23 @@ func TestCloneDir(t *testing.T) {
 		}
 	}
 }
+
+func TestIsMarkdown(t *testing.T) {
+	if !isMarkdown("markdown.md") || !isMarkdown("markdown.MD") {
+		t.Error("Markdown not detected correctly")
+	}
+
+	if isMarkdown("somefolderwith.md-init/somefile.tmp") {
+		t.Error("Markdown not detected correctly")
+	}
+}
+
+func TestIsAsciidoc(t *testing.T) {
+	if !isAsciidoc("asciidoc.adoc") || !isAsciidoc("example.ADOC") {
+		t.Error("Asciidoc not detected correctly")
+	}
+
+	if isAsciidoc("somefolderwith.adoc-init/somefile.tmp") {
+		t.Error("Asciidoc not detected correctly")
+	}
+}
