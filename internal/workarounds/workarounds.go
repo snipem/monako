@@ -1,5 +1,7 @@
 package workarounds
 
+// run: make test
+
 import (
 	"fmt"
 	"io/ioutil"
@@ -9,26 +11,34 @@ import (
 	"strings"
 )
 
+// AsciidocPostprocessing fixes common errors with Hugo processing vanilla Asciidoc
+// 1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
+// for pretty urls
 func AsciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
 
-	// FIXME really quick and dirty, just for testing
-	d = strings.ReplaceAll(d, "image:http", "imagexxxxxxhttp")
+	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+	d = strings.ReplaceAll(d, "image:http", "image_______http")
 	d = strings.ReplaceAll(d, "image:", "image:../")
-	d = strings.ReplaceAll(d, "imagexxxxxxhttp", "image:http")
+	d = strings.ReplaceAll(d, "image_______http", "image:http")
 	return []byte(d)
 }
 
 // MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
 //  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
+// for pretty urls
 func MarkdownPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
-	// FIXME really quick and dirty, just for testing
-	d = strings.ReplaceAll(d, "](http", "]xxxxxxhttp")
+	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+	d = strings.ReplaceAll(d, "](http", ")_______http")
+	d = strings.ReplaceAll(d, "]](", "]]_______(")
+
 	d = strings.ReplaceAll(d, "](", "](../")
-	d = strings.ReplaceAll(d, "]xxxxxxhttp", "](http")
+
+	d = strings.ReplaceAll(d, ")_______http", "](http")
+	d = strings.ReplaceAll(d, "]]_______(", "]](")
 
 	return []byte(d)
 }
@@ -40,6 +50,11 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		log.Fatal(err)
 	}
 	path := url.Path
+
+	// Single slashes will add up to "//" which some webservers don't support
+	if path == "/" {
+		path = ""
+	}
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
@@ -91,7 +106,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	if err != nil {
 		log.Fatalf("Error creating asciidoctor fake binary: %s", err)
 	}
-	// TODO Remove file afterwards
 
 	os.Setenv("PATH", tempDir+":"+os.Getenv("PATH"))
 

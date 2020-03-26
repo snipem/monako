@@ -99,7 +99,6 @@ Init with `make init`
 
 ## TODOs
 
-* Fail on wrong `docdir` ("TODO")
 * Fail on build fail to prevent false deployment to production
 * Reduce uncritical warnings by Asciidoctor
 

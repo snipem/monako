@@ -16,7 +16,7 @@ import (
 
 func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
 
-	fs := helpers.CloneDir(url, branch, username, password)
+	_, fs := helpers.CloneDir(url, branch, username, password)
 	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
@@ -57,7 +57,7 @@ func main() {
 	addWorkarounds(config)
 
 	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
-	theme.GetTheme(config, *menuconfigfilepath)
+	theme.CreateHugoPage(config, *menuconfigfilepath)
 
 	for _, c := range config.Origins {
 		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)

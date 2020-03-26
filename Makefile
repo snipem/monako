@@ -1,7 +1,7 @@
 
 #run: make run
 SHELL := /bin/bash
-.PHONY: compose
+.PHONY: compose test
 
 clean:
 	rm -r tmp/theme || true
@@ -21,7 +21,7 @@ build: clean
 
 theme: clean
 	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/v6s.1.zip
+	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 test:
@@ -38,6 +38,11 @@ run_prd: build
 	$(MAKE) serve
 
 run: build compose serve
+
+run_local: build 
+	# Runs locally, clons this git repo to use test data
+	./monako -config test/config.local.yaml -menu-config test/config.menu.local.md
+	$(MAKE) serve
 
 compose:
 	./monako -config configs/config.monako.yaml \

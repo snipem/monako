@@ -19,7 +19,7 @@ import (
 
 var filemode = os.FileMode(0700)
 
-func CloneDir(url string, branch string, username string, password string) billy.Filesystem {
+func CloneDir(url string, branch string, username string, password string) (*git.Repository, billy.Filesystem) {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
 
@@ -35,7 +35,7 @@ func CloneDir(url string, branch string, username string, password string) billy
 		}
 	}
 
-	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
+	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
 		Depth:         1,
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)),
@@ -47,7 +47,7 @@ func CloneDir(url string, branch string, username string, password string) billy
 		log.Fatal(err)
 	}
 
-	return fs
+	return repo, fs
 }
 
 func shouldIgnoreFile(filename string, whitelist []string) bool {
@@ -64,7 +64,12 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
 	var files []os.FileInfo
 
-	fs, err := fs.Chroot(subdir)
+	_, err := fs.Stat(subdir)
+	if err != nil {
+		log.Fatalf("Error while reading subdir %s: %s", subdir, err)
+	}
+
+	fs, err = fs.Chroot(subdir)
 	if err != nil {
 		log.Fatal(err)
 	}

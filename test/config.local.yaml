@@ -1,0 +1,20 @@
+---
+    baseURL : "https://example.com/"
+    title : "Local Test Page"
+  
+    whitelist:
+      - ".md"
+      - ".adoc"
+      - ".jpg"
+      - ".jpeg"
+      - ".svg"
+      - ".gif"
+      - ".png"
+  
+    origins:
+  
+    # Files have to be commited to appear!
+    - src: file://.
+      branch: develop-add-tests
+      docdir: test/test_docs
+      targetdir: docs/test/

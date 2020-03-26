@@ -1,0 +1,79 @@
+# Asciidoc First Level
+:toc:
+
+## Asciidoc Second Level
+
+Ihr naht euch wieder, schwankende Gestalten! Die früh sich einst dem trüben
+Blick gezeigt. Versuch’ ich wohl euch diesmal fest zu halten? Fühl’ ich
+mein Herz noch jenem Wahn geneigt? Ihr drängt euch zu! nun gut, so mögt ihr
+walten. Wie ihr aus Dunst und Nebel um mich steigt. Mein Busen fühlt sich
+jugendlich erschüttert. 
+
+```go
+	if err != nil {
+		if len(files) == 0 {
+			t.Errorf("No files checked out")
+		}
+    }
+```
+
+.Picture in same folder
+image:profile.png[Picture in same folder]
+
+Vom Zauberhauch der euren Zug umwittert. Ihr bringt mit
+euch die Bilder froher Tage. Und manche liebe Schatten steigen auf Gleich einer
+alten, halbverklungnen Sage. Kommt erste Lieb’ und Freundschaft mit herauf Der
+Schmerz wird neu, es wiederholt die Klage. Des Lebens labyrinthisch irren Lauf,
+Und nennt die Guten, die, um schöne Stunden Vom Glück getäuscht, vor mir
+hinweggeschwunden.
+
+### Asciidoc Third Level with Ditaa Diagramm
+
+[ditaa]
+....
+                   +-------------+
+                   | Asciidoctor |-------+
+                   |   diagram   |       |
+                   +-------------+       | PNG out
+                       ^                 |
+                       | ditaa in        |
+                       |                 v
+ +--------+   +--------+----+    /---------------\
+ |        | --+ Asciidoctor +--> |               |
+ |  Text  |   +-------------+    |   Beautiful   |
+ |Document|   |   !magic!   |    |    Output     |
+ |     {d}|   |             |    |               |
+ +---+----+   +-------------+    \---------------/
+     :                                   ^
+     |          Lots of work             |
+     +-----------------------------------+
+....
+
+Ihr naht euch wieder, schwankende Gestalten! Die früh sich einst dem trüben
+Blick gezeigt. Versuch’ ich wohl euch diesmal fest zu halten? Fühl’ ich
+mein Herz noch jenem Wahn geneigt? Ihr drängt euch zu! nun gut, so mögt ihr
+walten. Wie ihr aus Dunst und Nebel um mich steigt. Mein Busen fühlt sich
+jugendlich erschüttert. Vom Zauberhauch der euren Zug umwittert. Ihr bringt mit
+euch die Bilder froher Tage. Und manche liebe Schatten steigen auf Gleich einer
+alten, halbverklungnen Sage. Kommt erste Lieb’ und Freundschaft mit herauf Der
+Schmerz wird neu, es wiederholt die Klage. Des Lebens labyrinthisch irren Lauf,
+Und nennt die Guten, die, um schöne Stunden Vom Glück getäuscht, vor mir
+hinweggeschwunden.
+
+.Picture in sub folder
+image:subfolder/subfolderprofile.png[Picture in sub folder]
+
+### Mermaid Example
+
+{{< mermaid >}}
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    alt is sick
+        Bob->>Alice: Not so good :(
+    else is well
+        Bob->>Alice: Feeling fresh like a daisy
+    end
+    opt Extra response
+        Bob->>Alice: Thanks for asking
+    end
+{{< /mermaid >}}
