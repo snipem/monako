@@ -64,7 +64,11 @@ func TestIsAsciidoc(t *testing.T) {
 func TestGitCommiter(t *testing.T) {
 	fileName := "README.md"
 
-	ci := GetCommitInfo(g, fileName)
+	ci, err := GetCommitInfo(g, fileName)
+
+	if err != nil {
+		t.Error(err)
+	}
 
 	mail := ci.Committer.Email
 	if !strings.Contains(mail, "@") {
