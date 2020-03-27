@@ -57,3 +57,7 @@ image:
 
 run_image:
 	docker run -v ${PWD}:/docs monako/monako:0.0.1 monako
+
+hooks:
+	# setup git hooks
+	git config --local core.hooksPath .githooks/
