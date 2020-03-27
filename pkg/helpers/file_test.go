@@ -76,3 +76,34 @@ func TestGitCommiter(t *testing.T) {
 	}
 
 }
+
+func TestGitCommiterFileNotFound(t *testing.T) {
+	fileName := "Not existing file...."
+
+	_, err := GetCommitInfo(g, fileName)
+
+	if err == nil {
+		t.Error("No error given")
+	}
+
+	if strings.Contains(err.Error(), "EOF") {
+		t.Error("Err contains EOF and is too technical")
+	}
+
+}
+
+func TestGitCommiterSubfolder(t *testing.T) {
+	fileName := ".github/workflows/main.yml"
+
+	ci, err := GetCommitInfo(g, fileName)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	mail := ci.Committer.Email
+	if !strings.Contains(mail, "@") {
+		t.Errorf("Commiter %s does not contain @", mail)
+
+	}
+}
