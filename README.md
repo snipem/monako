@@ -1,6 +1,7 @@
 # monako
 
 ![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/snipem/monako/badge.svg?branch=master)](https://coveralls.io/github/snipem/monako?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/snipem/monako)](https://goreportcard.com/report/github.com/snipem/monako)
 [![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
@@ -101,6 +102,8 @@ Init with `make init`
 
 * Fail on build fail to prevent false deployment to production
 * Reduce uncritical warnings by Asciidoctor
+* Whats up with the double slashes on copying?
+* Add last commit hash to checkout log
 
 ## Improvements
 
