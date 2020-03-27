@@ -43,6 +43,9 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 	return []byte(d)
 }
 
+// AddFakeAsciidoctorBinForDiagramsToPath adds a fake asciidoctor bin to the PATH
+// to trick Hugo into taking this one. This makes it possible to manipulate the parameters
+// for asciidoctor while being called from Hugo.
 func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	url, err := url.Parse(baseURL)

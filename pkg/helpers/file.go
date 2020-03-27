@@ -22,9 +22,14 @@ import (
 
 var filemode = os.FileMode(0700)
 
+// Asciidoc is a const for identifying Asciidoc Documents
 const Asciidoc = "ASCIIDOC"
+
+// Markdown is a const for identifying Markdown Documents
 const Markdown = "MARKDOWN"
 
+// CloneDir clones a HTTPS or lokal Git repository with the given branch and optional username and password.
+// A virtual filesystem is returned containing the cloned files.
 func CloneDir(url string, branch string, username string, password string) (*git.Repository, billy.Filesystem) {
 
 	log.Printf("Cloning in to %s with branch %s", url, branch)
@@ -75,6 +80,8 @@ func isAsciidoc(filename string) bool {
 		strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".asc"))
 }
 
+// DetermineFormat determines the markup format of a file by it's filename.
+// Results can be Markdown and Asciidoc
 func DetermineFormat(filename string) string {
 	if isMarkdown(filename) {
 		return Markdown
@@ -85,6 +92,9 @@ func DetermineFormat(filename string) string {
 	}
 }
 
+// CopyDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
+// The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
+// information
 func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target string, whitelist []string) {
 
 	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
@@ -177,9 +187,9 @@ func copyFile(targetFilename string, from io.Reader) {
 
 }
 
+// GetCommitInfo returns the Commit Info for a given file of the repository
+// identified by it's filename
 func GetCommitInfo(r *git.Repository, filename string) (*object.Commit, error) {
-
-	filename = "README.md"
 
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &filename,
