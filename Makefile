@@ -21,7 +21,7 @@ build: clean
 
 theme: clean
 	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
+	curl -o tmp/theme.zip --location https://github.com/snipem/monako-docsy/archive/master.zip
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 test:
