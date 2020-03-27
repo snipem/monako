@@ -81,12 +81,12 @@ A Docker image is available from [Dockerhub](https://hub.docker.com/repository/d
 
 ## Design Goals
 
-* Make it simple and stupid
-* Git clone existing repositories
-  * Don't attempt to change their structure
-  * Transform all documents below a specific structure
-* Use Antora like configuration file for main structure
-* Support Mermaid
+* Make it simple and stupid, single binary with no dependencies ✓
+* Git clone existing repositories ✓
+  * Don't attempt to change their structure ✓
+  * Transform all documents below a specific structure ✓
+* Use Antora like configuration file for main structure ✓
+* Support Mermaid ✓
 
 ## Features
 
