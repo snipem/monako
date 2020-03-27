@@ -1,9 +1,3 @@
 #!/bin/bash
 
-if [ -z "$(make test)" ]; then 
-  # Working directory clean
-  git status --porcelain | grep "" && echo "Git not clean" && exit 1
-else 
-  echo test failed, not pushing
-  exit 1
-fi
+make test
