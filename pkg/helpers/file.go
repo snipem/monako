@@ -133,7 +133,7 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target strin
 		// if err != nil {
 		// 	log.Fatal(err)
 		// }
-		log.Printf("%s", commitinfo)
+		// log.Printf("%s", commitinfo)
 
 		switch contentFormat {
 		case Asciidoc:
