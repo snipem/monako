@@ -83,7 +83,7 @@ func DetermineFormat(filename string) string {
 	}
 }
 
-func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []string) {
+func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target string, whitelist []string) {
 
 	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
 	var files []os.FileInfo
@@ -108,7 +108,7 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 		if file.IsDir() {
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			CopyDir(fs, file.Name(), target+"/"+file.Name(), whitelist)
+			CopyDir(g, fs, file.Name(), target+"/"+file.Name(), whitelist)
 			continue
 		} else if shouldIgnoreFile(file.Name(), whitelist) {
 			continue
@@ -126,6 +126,9 @@ func CopyDir(fs billy.Filesystem, subdir string, target string, whitelist []stri
 
 		var targetFilename = target + "/" + file.Name()
 		contentFormat := DetermineFormat(file.Name())
+
+		commitinfo := GetCommitInfo(g, file.Name())
+		log.Printf("%s", commitinfo)
 
 		switch contentFormat {
 		case Asciidoc:

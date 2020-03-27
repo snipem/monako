@@ -16,8 +16,8 @@ import (
 
 func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
 
-	_, fs := helpers.CloneDir(url, branch, username, password)
-	helpers.CopyDir(fs, subdir, "compose/content/"+target+"/", whitelist)
+	g, fs := helpers.CloneDir(url, branch, username, password)
+	helpers.CopyDir(g, fs, subdir, "compose/content/"+target+"/", whitelist)
 }
 
 func addWorkarounds(c config.ComposeConfig) {
