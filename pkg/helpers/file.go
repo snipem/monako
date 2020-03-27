@@ -1,5 +1,7 @@
 package helpers
 
+// run: make run
+
 import (
 	"fmt"
 	"io"
@@ -127,7 +129,10 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target strin
 		var targetFilename = target + "/" + file.Name()
 		contentFormat := DetermineFormat(file.Name())
 
-		commitinfo := GetCommitInfo(g, file.Name())
+		// commitinfo, err := GetCommitInfo(g, file.Name())
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 		log.Printf("%s", commitinfo)
 
 		switch contentFormat {
@@ -172,7 +177,9 @@ func copyFile(targetFilename string, from io.Reader) {
 
 }
 
-func GetCommitInfo(r *git.Repository, filename string) *object.Commit {
+func GetCommitInfo(r *git.Repository, filename string) (*object.Commit, error) {
+
+	filename = "README.md"
 
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &filename,
@@ -180,13 +187,22 @@ func GetCommitInfo(r *git.Repository, filename string) *object.Commit {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("Error while opening %s from git log: %s", filename, err)
 	}
 
-	commit, err := cIter.Next()
+	var commit *object.Commit
+
+	// cIter.ForEach(func(c *object.Commit) error {
+	// 	log.Fatal(c.File)
+	// 	commit = c
+	// 	return nil
+	// })
+
+	commit, err = cIter.Next()
+	defer cIter.Close()
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("Error while fetching git commit info for '%s' from git log: %s", filename, err)
 	}
 
-	return commit
+	return commit, nil
 }
