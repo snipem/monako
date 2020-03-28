@@ -5,6 +5,7 @@ import (
 )
 
 func TestFrontmatter(t *testing.T) {
-	t.Skip("No working test case")
-	ExpandFrontmatter("content", nil)
+	t.Error("No working test case")
+	t.Fail()
+	// ExpandFrontmatter("content", nil)
 }
