@@ -119,10 +119,10 @@ func TestCopyDir(t *testing.T) {
 	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
 	defer os.RemoveAll(targetDir)
 
-	expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
-
 	var whitelist = []string{".md", ".png"}
 	CopyDir(g, fs, "test", targetDir, whitelist)
+
+	expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
 
 	b, err := ioutil.ReadFile(expectedTargetFile)
 	if err != nil {
@@ -141,10 +141,10 @@ func TestCopyDirWithSubfolderSource(t *testing.T) {
 	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
 	defer os.RemoveAll(targetDir)
 
-	expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
-
 	var whitelist = []string{".md", ".png"}
 	CopyDir(g, fs, "test/test_docs/", targetDir, whitelist)
+
+	expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
 
 	b, err := ioutil.ReadFile(expectedTargetFile)
 	if err != nil {
