@@ -96,12 +96,14 @@ func TestGitCommiterFileNotFound(t *testing.T) {
 }
 
 func TestGitCommiterSubfolder(t *testing.T) {
+	// fileName := "test/config.menu.local.md"
 	fileName := ".github/workflows/main.yml"
 
 	ci, err := GetCommitInfo(g, fileName)
 
 	if err != nil {
 		t.Error(err)
+		t.FailNow()
 	}
 
 	mail := ci.Committer.Email

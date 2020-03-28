@@ -50,7 +50,7 @@ func CloneDir(url string, branch string, username string, password string) (*git
 
 	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
-		Depth:         1,
+		Depth:         0, // problem with depth = 1 is that git log from older commits, can't be accessed
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)),
 		SingleBranch:  true,
 		Auth:          &basicauth,
@@ -150,11 +150,12 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 		// FIXME Problem is: at this point only a relative file name to the subdir
 		// is recognized
 
-		// commitinfo, err := GetCommitInfo(g, file.Name())
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// log.Printf("%s", commitinfo)
+		gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
+		commitinfo, err := GetCommitInfo(g, gitFilepath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("Commitinfo for file: %s", commitinfo)
 
 		switch contentFormat {
 		case Asciidoc:
