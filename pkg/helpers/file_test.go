@@ -3,7 +3,6 @@ package helpers
 // run: make test
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -116,10 +115,13 @@ func TestCopyDir(t *testing.T) {
 	var whitelist = []string{".md", ".png"}
 	CopyDir(g, fs, "test", target, whitelist)
 
-	_, err := ioutil.ReadFile(target + "test_docs/test_doc_markdown.md")
+	b, err := ioutil.ReadFile(target + "test_docs/test_doc_markdown.md")
 	if err != nil {
-		fmt.Print(err)
 		t.Errorf("To be copied file not found")
+	}
+
+	if !strings.Contains(string(b), "# Markdown Doc 1") {
+		t.Errorf("Wrong file copied under right name")
 	}
 
 }
