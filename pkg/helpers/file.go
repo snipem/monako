@@ -158,22 +158,13 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("Commitinfo for file: %s", commitinfo)
-
-		switch contentFormat {
-		case Asciidoc:
-		case Markdown:
 
 			var dirty, _ = ioutil.ReadAll(f)
 			var content []byte
 
 			if contentFormat == Markdown {
-
 				content = workarounds.MarkdownPostprocessing(dirty)
-				// content = file.ExpandFrontmatter(content)
-
 			} else if contentFormat == Asciidoc {
-
 				content = workarounds.AsciidocPostprocessing(dirty)
 			}
 			content = []byte(ExpandFrontmatter(string(content), commitinfo))
