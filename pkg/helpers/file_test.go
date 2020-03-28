@@ -3,6 +3,8 @@ package helpers
 // run: make test
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -106,4 +108,18 @@ func TestGitCommiterSubfolder(t *testing.T) {
 		t.Errorf("Commiter %s does not contain @", mail)
 
 	}
+}
+
+func TestCopyDir(t *testing.T) {
+
+	target := "tmp/testrun/"
+	var whitelist = []string{".md", ".png"}
+	CopyDir(g, fs, "test", target, whitelist)
+
+	_, err := ioutil.ReadFile(target + "test_docs/test_doc_markdown.md")
+	if err != nil {
+		fmt.Print(err)
+		t.Errorf("To be copied file not found")
+	}
+
 }
