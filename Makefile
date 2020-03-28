@@ -12,7 +12,7 @@ deps:
 	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
-	gem install asciidoctor-diagram
+	gem install asciidoctor asciidoctor-diagram
 
 init: deps theme
 

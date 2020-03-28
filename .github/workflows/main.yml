@@ -15,6 +15,9 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
+    - name: Setup Ruby for use with actions
+      uses: actions/setup-ruby@v1.0.0
+
     - name: setup env
       shell: bash
       run: |
@@ -26,6 +29,9 @@ jobs:
 
     - name: dependencies
       run: make --always-make deps
+
+    - name: optional dependencies
+      run: make --always-make optional_deps
 
     - name: Fetch Theme
       run: make --always-make theme
