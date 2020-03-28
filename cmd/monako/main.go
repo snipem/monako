@@ -4,7 +4,6 @@ package main
 
 import (
 	"flag"
-	"os"
 	"path/filepath"
 	"runtime"
 
@@ -14,12 +13,6 @@ import (
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
 )
-
-func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
-
-	g, fs := helpers.CloneDir(url, branch, username, password)
-	helpers.CopyDir(g, fs, subdir, "compose/content/"+target+"/", whitelist)
-}
 
 func addWorkarounds(c config.ComposeConfig) {
 	if runtime.GOOS == "windows" {
@@ -57,22 +50,14 @@ func main() {
 
 	helpers.CleanUp()
 	addWorkarounds(config)
+	config.CompositionDir = filepath.Join(*targetdir, config.CompositionDir)
 
-	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
+	helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
 	theme.CreateHugoPage(config, *menuconfigfilepath)
 
-	for _, c := range config.Origins {
-		compose(
-			c.Source,
-			c.Branch,
-			c.DirWithDocs,
-			filepath.Join(*targetdir, c.TargetDir),
-			os.Getenv(c.EnvUsername),
-			os.Getenv(c.EnvPassword),
-			config.FileWhitelist)
-	}
+	config.Compose()
 
-	err = helpers.HugoRun([]string{"--source", "compose"})
+	err = helpers.HugoRun([]string{"--source", config.CompositionDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}
