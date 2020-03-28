@@ -14,7 +14,7 @@
     origins:
   
     # Files have to be commited to appear!
-    - src: file://.
+    - src: https://github.com/snipem/monako.git
       branch: develop
       docdir: test/test_docs
       targetdir: docs/test/

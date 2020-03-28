@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
@@ -32,6 +33,7 @@ func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
+	var targetdir = flag.String("target-dir", ".", "Target dir for composed site")
 	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 	var failOnError = flag.Bool("fail-on-error", false, "Fail on document conversion errors")
@@ -60,7 +62,14 @@ func main() {
 	theme.CreateHugoPage(config, *menuconfigfilepath)
 
 	for _, c := range config.Origins {
-		compose(c.Source, c.Branch, c.DirWithDocs, c.TargetDir, os.Getenv(c.EnvUsername), os.Getenv(c.EnvPassword), config.FileWhitelist)
+		compose(
+			c.Source,
+			c.Branch,
+			c.DirWithDocs,
+			filepath.Join(*targetdir, c.TargetDir),
+			os.Getenv(c.EnvUsername),
+			os.Getenv(c.EnvPassword),
+			config.FileWhitelist)
 	}
 
 	err = helpers.HugoRun([]string{"--source", "compose"})
