@@ -33,6 +33,9 @@ jobs:
     - name: optional dependencies
       run: make --always-make optional_deps
 
+    - name: debug2
+      run: find / | grep asciidoctor
+
     - name: Fetch Theme
       run: make --always-make theme
 
