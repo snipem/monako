@@ -23,3 +23,6 @@ c.out.tmp
 tmp.empty.css
 empty.css
 coverage.out.tmp
+
+# Monako bin
+monako
