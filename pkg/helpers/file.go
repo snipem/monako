@@ -118,7 +118,6 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Found %s in folder", files)
 
 	for _, file := range files {
 
