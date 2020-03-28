@@ -202,16 +202,14 @@ func GetCommitInfo(r *git.Repository, filename string) (*object.Commit, error) {
 
 	var commit *object.Commit
 
-	// cIter.ForEach(func(c *object.Commit) error {
-	// 	log.Fatal(c.File)
-	// 	commit = c
-	// 	return nil
-	// })
-
 	commit, err = cIter.Next()
 	defer cIter.Close()
+
 	if err != nil {
-		return nil, fmt.Errorf("Error while fetching git commit info for '%s' from git log: %s", filename, err)
+		if err.Error() == "EOF" {
+			return nil, fmt.Errorf("File %s not found in git log", filename)
+		}
+		return nil, fmt.Errorf("Unknown error while fetching git commit info for '%s' from git log", filename)
 	}
 
 	return commit, nil
