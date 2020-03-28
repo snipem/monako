@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
 	"gopkg.in/src-d/go-billy.v4"
@@ -103,19 +102,17 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 	source = filepath.Clean(source)
 	target = filepath.Clean(target)
 
-	log.Printf("Copying subdir '%s' to target dir '%s'", source, target)
+	log.Printf("Copying subdir '%s' to target dir '%s' ...", source, target)
 
-	subdir := filepath.Base(source)
-	_, err := fs.Stat(subdir)
-	if err != nil {
-		log.Fatalf("Subdir %s does not exist: %s", source, err)
-	}
+	var err error
 
-	fs, err = fs.Chroot(subdir)
-	if err != nil {
-		log.Fatal(err)
+	// TODO: This is also done on every recursion. Maybe this is overhead.
+	for _, dir := range strings.Split(source, string(filepath.Separator)) {
+		fs, err = fs.Chroot(dir)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	log.Printf("Chrooted into '%s'", subdir)
 
 	var files []os.FileInfo
 	files, err = fs.ReadDir(".")
@@ -154,10 +151,10 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 		case Asciidoc, Markdown:
 
 			// TODO: Only use strings not []byte
-		commitinfo, err := GetCommitInfo(g, gitFilepath)
-		if err != nil {
-			log.Fatal(err)
-		}
+			commitinfo, err := GetCommitInfo(g, gitFilepath)
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			var dirty, _ = ioutil.ReadAll(f)
 			var content []byte
@@ -174,7 +171,7 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 			copyFile(targetFilename, f)
 		}
 
-		log.Printf("%s -> %s\n", file.Name(), targetFilename)
+		log.Printf("%s -> %s\n", gitFilepath, targetFilename)
 
 	}
 
