@@ -48,6 +48,7 @@ func CloneDir(url string, branch string, username string, password string) (*git
 		}
 	}
 
+	// TODO Check if we can check out less depth. Like depth = 1
 	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:           url,
 		Depth:         0, // problem with depth = 1 is that git log from older commits, can't be accessed
@@ -147,10 +148,12 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 		var targetFilename = filepath.Join(target, file.Name())
 		contentFormat := DetermineFormat(file.Name())
 
-		// FIXME Problem is: at this point only a relative file name to the subdir
-		// is recognized
-
 		gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
+
+		switch contentFormat {
+		case Asciidoc, Markdown:
+
+			// TODO: Only use strings not []byte
 		commitinfo, err := GetCommitInfo(g, gitFilepath)
 		if err != nil {
 			log.Fatal(err)
@@ -172,9 +175,8 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 			} else if contentFormat == Asciidoc {
 
 				content = workarounds.AsciidocPostprocessing(dirty)
-				// content = file.ExpandFrontmatter(content)
-
 			}
+			content = []byte(ExpandFrontmatter(string(content), commitinfo))
 			ioutil.WriteFile(targetFilename, content, filemode)
 
 		default:
