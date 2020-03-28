@@ -5,6 +5,7 @@ package helpers
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -17,6 +18,7 @@ var fs billy.Filesystem
 
 func TestMain(m *testing.M) {
 	// Setup git clone of repo
+	// log.SetReportCaller(true)
 	setup()
 	os.Exit(m.Run())
 }
@@ -111,11 +113,15 @@ func TestGitCommiterSubfolder(t *testing.T) {
 
 func TestCopyDir(t *testing.T) {
 
+	source := "test"
 	target := "tmp/testrun/"
-	var whitelist = []string{".md", ".png"}
-	CopyDir(g, fs, "test", target, whitelist)
 
-	b, err := ioutil.ReadFile(target + "test_docs/test_doc_markdown.md")
+	expectedTargetFile := filepath.Join(target, "test_docs/test_doc_markdown.md")
+
+	var whitelist = []string{".md", ".png"}
+	CopyDir(g, fs, source, target, whitelist)
+
+	b, err := ioutil.ReadFile(expectedTargetFile)
 	if err != nil {
 		t.Errorf("To be copied file not found")
 	}

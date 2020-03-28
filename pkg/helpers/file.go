@@ -1,14 +1,16 @@
 package helpers
 
-// run: make run
+// run: make test
 
 import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
+	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
 	"gopkg.in/src-d/go-billy.v4"
@@ -95,21 +97,26 @@ func DetermineFormat(filename string) string {
 // CopyDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target string, whitelist []string) {
+func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target string, whitelist []string) {
 
-	log.Printf("Copying subdir '%s' to target dir %s", subdir, target)
-	var files []os.FileInfo
+	source = filepath.Clean(source)
+	target = filepath.Clean(target)
 
+	log.Printf("Copying subdir '%s' to target dir '%s'", source, target)
+
+	subdir := filepath.Base(source)
 	_, err := fs.Stat(subdir)
 	if err != nil {
-		log.Fatalf("Error while reading subdir %s: %s", subdir, err)
+		log.Fatalf("Subdir %s does not exist: %s", source, err)
 	}
 
 	fs, err = fs.Chroot(subdir)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("Chrooted into '%s'", subdir)
 
+	var files []os.FileInfo
 	files, err = fs.ReadDir(".")
 	if err != nil {
 		log.Fatal(err)
@@ -118,9 +125,10 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target strin
 	for _, file := range files {
 
 		if file.IsDir() {
+			foldername := filepath.Join(target, file.Name())
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			CopyDir(g, fs, file.Name(), target+"/"+file.Name(), whitelist)
+			CopyDir(g, fs, filepath.Join(source, file.Name()), foldername, whitelist)
 			continue
 		} else if shouldIgnoreFile(file.Name(), whitelist) {
 			continue
@@ -136,8 +144,11 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, subdir string, target strin
 			log.Fatal(err)
 		}
 
-		var targetFilename = target + "/" + file.Name()
+		var targetFilename = filepath.Join(target, file.Name())
 		contentFormat := DetermineFormat(file.Name())
+
+		// FIXME Problem is: at this point only a relative file name to the subdir
+		// is recognized
 
 		// commitinfo, err := GetCommitInfo(g, file.Name())
 		// if err != nil {
