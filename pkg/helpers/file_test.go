@@ -113,9 +113,8 @@ func TestGitCommiterSubfolder(t *testing.T) {
 	}
 }
 
-func TestCopyDir(t *testing.T) {
+func copyDirFrame(t *testing.T, source string) {
 
-	source := "test"
 	target := "tmp/testrun/"
 
 	expectedTargetFile := filepath.Join(target, "test_docs/test_doc_markdown.md")
@@ -132,4 +131,12 @@ func TestCopyDir(t *testing.T) {
 		t.Errorf("Wrong file copied under right name")
 	}
 
+}
+
+func TestCopyDir(t *testing.T) {
+	copyDirFrame(t, "test")
+}
+
+func TestCopyDirWithSubfolderSource(t *testing.T) {
+	copyDirFrame(t, "test/test_docs/")
 }
