@@ -113,15 +113,16 @@ func TestGitCommiterSubfolder(t *testing.T) {
 	}
 }
 
-func copyDirFrame(t *testing.T, source string, expectedTarget string, whattofind string) {
+// TestCopyDir is a test for testing the copying capability of a single directory
+func TestCopyDir(t *testing.T) {
 
 	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
-	// defer os.RemoveAll(targetDir)
+	defer os.RemoveAll(targetDir)
 
-	expectedTargetFile := filepath.Join(targetDir, expectedTarget)
+	expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
 
 	var whitelist = []string{".md", ".png"}
-	CopyDir(g, fs, source, targetDir, whitelist)
+	CopyDir(g, fs, "test", targetDir, whitelist)
 
 	b, err := ioutil.ReadFile(expectedTargetFile)
 	if err != nil {
@@ -132,13 +133,26 @@ func copyDirFrame(t *testing.T, source string, expectedTarget string, whattofind
 	if !strings.Contains(string(b), "# Markdown Doc 1") {
 		t.Errorf("Wrong file copied under right name")
 	}
-
 }
 
-func TestCopyDir(t *testing.T) {
-	copyDirFrame(t, "test", "test_docs/test_doc_markdown.md", "# Markdown Doc 1")
-}
-
+// TestCopyDirWithSubfolderSource tests if a source can be a deeper path like "test/test_docs" instead of
+// starting at highest level or just one directory deep
 func TestCopyDirWithSubfolderSource(t *testing.T) {
-	copyDirFrame(t, "test/test_docs/", "test_doc_markdown.md", "# Markdown Doc 1")
+	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
+	defer os.RemoveAll(targetDir)
+
+	expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
+
+	var whitelist = []string{".md", ".png"}
+	CopyDir(g, fs, "test/test_docs/", targetDir, whitelist)
+
+	b, err := ioutil.ReadFile(expectedTargetFile)
+	if err != nil {
+		t.Errorf("Expected file %s not found", expectedTargetFile)
+		t.FailNow()
+	}
+
+	if !strings.Contains(string(b), "# Markdown Doc 1") {
+		t.Errorf("Wrong file copied under right name")
+	}
 }
