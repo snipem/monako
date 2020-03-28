@@ -24,13 +24,22 @@ theme: clean
 	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
-test:
-	go test -v -coverprofile=c.out.tmp ./...
-	cat c.out.tmp | grep -v "/bindata.go" > c.out
-	rm c.out.tmp
+secrets:
+	touch config/secrets.env && source config/secrets.env	
 
-run_prd: build
-	touch secrets.env && source secrets.env && \
+test:
+	go test -v -covermode=count -coverprofile=coverage.out.tmp ./...
+	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
+	rm coverage.out.tmp
+
+coverage: test
+	${GOPATH}/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken ${COVERALLS_TOKEN}
+
+test_deps:
+	go get golang.org/x/tools/cmd/cover
+	go get github.com/mattn/goveralls
+
+run_prd: build secrets
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
 			-menu-config ~/work/mopro/architecture/documentation/conf/menu.prod.md \
 			-base-url http://localhost:8000
