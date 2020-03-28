@@ -150,7 +150,7 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 		case Asciidoc, Markdown:
 
 			// TODO: Only use strings not []byte
-			commitinfo, err := GetCommitInfo(g, gitFilepath)
+			// commitinfo, err := GetCommitInfo(g, gitFilepath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -163,7 +163,7 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 			} else if contentFormat == Asciidoc {
 				content = workarounds.AsciidocPostprocessing(dirty)
 			}
-			content = []byte(ExpandFrontmatter(string(content), g, gitFilepath, commitinfo))
+			// content = []byte(ExpandFrontmatter(string(content), g, gitFilepath, commitinfo))
 			ioutil.WriteFile(targetFilename, content, filemode)
 
 		default:
