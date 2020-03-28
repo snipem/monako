@@ -28,7 +28,7 @@ secrets:
 	touch config/secrets.env && source config/secrets.env	
 
 test:
-	go test -v -covermode=count -coverprofile=coverage.out.tmp ./...
+	go test -covermode=count -coverprofile=coverage.out.tmp ./...
 	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
 	rm coverage.out.tmp
 

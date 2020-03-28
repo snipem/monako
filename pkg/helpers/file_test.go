@@ -113,18 +113,20 @@ func TestGitCommiterSubfolder(t *testing.T) {
 	}
 }
 
-func copyDirFrame(t *testing.T, source string) {
+func copyDirFrame(t *testing.T, source string, expectedTarget string, whattofind string) {
 
-	target := "tmp/testrun/"
+	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
+	// defer os.RemoveAll(targetDir)
 
-	expectedTargetFile := filepath.Join(target, "test_docs/test_doc_markdown.md")
+	expectedTargetFile := filepath.Join(targetDir, expectedTarget)
 
 	var whitelist = []string{".md", ".png"}
-	CopyDir(g, fs, source, target, whitelist)
+	CopyDir(g, fs, source, targetDir, whitelist)
 
 	b, err := ioutil.ReadFile(expectedTargetFile)
 	if err != nil {
-		t.Errorf("To be copied file not found")
+		t.Errorf("Expected file %s not found", expectedTargetFile)
+		t.FailNow()
 	}
 
 	if !strings.Contains(string(b), "# Markdown Doc 1") {
@@ -134,9 +136,9 @@ func copyDirFrame(t *testing.T, source string) {
 }
 
 func TestCopyDir(t *testing.T) {
-	copyDirFrame(t, "test")
+	copyDirFrame(t, "test", "test_docs/test_doc_markdown.md", "# Markdown Doc 1")
 }
 
 func TestCopyDirWithSubfolderSource(t *testing.T) {
-	copyDirFrame(t, "test/test_docs/")
+	copyDirFrame(t, "test/test_docs/", "test_doc_markdown.md", "# Markdown Doc 1")
 }

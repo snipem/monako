@@ -99,7 +99,7 @@ func DetermineFormat(filename string) string {
 // information
 func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target string, whitelist []string) {
 
-	source = filepath.Clean(source)
+	source = filepath.Clean(source) + string(filepath.Separator)
 	target = filepath.Clean(target)
 
 	log.Printf("Copying subdir '%s' to target dir '%s' ...", source, target)
@@ -107,18 +107,18 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 	var err error
 
 	// TODO: This is also done on every recursion. Maybe this is overhead.
-	for _, dir := range strings.Split(source, string(filepath.Separator)) {
-		fs, err = fs.Chroot(dir)
-		if err != nil {
-			log.Fatal(err)
-		}
+	fs, err = fs.Chroot(source)
+	if err != nil {
+		log.Fatal(err)
 	}
+	log.Printf("Entering '%s' ...", source)
 
 	var files []os.FileInfo
 	files, err = fs.ReadDir(".")
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("Found %s in folder", files)
 
 	for _, file := range files {
 
@@ -126,7 +126,7 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 			foldername := filepath.Join(target, file.Name())
 			// TODO is this memory consuming or is fsSubdir freed after recursion?
 			// fsSubdir := fs
-			CopyDir(g, fs, filepath.Join(source, file.Name()), foldername, whitelist)
+			CopyDir(g, fs, file.Name(), foldername, whitelist)
 			continue
 		} else if shouldIgnoreFile(file.Name(), whitelist) {
 			continue
