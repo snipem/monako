@@ -15,9 +15,6 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
-    - name: Setup Ruby for use with actions
-      uses: actions/setup-ruby@v1.0.0
-
     - name: setup env
       shell: bash
       run: |
@@ -30,20 +27,11 @@ jobs:
     - name: dependencies
       run: make --always-make deps
 
-    - name: optional dependencies
-      run: make --always-make optional_deps
-
     - name: Fetch Theme
       run: make --always-make theme
 
     - name: test
       run: make --always-make test
-
-    # - name: coverage
-    #   uses: paambaati/codeclimate-action@v2.5.5
-    #   with:
-    #     coverageCommand: go tool cover -func=c.out
-    #     debug: true
 
     - name: build
       run: make --always-make build
