@@ -14,6 +14,6 @@
   
     # Files have to be commited to appear!
     - src: https://github.com/snipem/monako-test.git
-      branch: develop
+      branch: master
       docdir: .
       targetdir: docs/test/

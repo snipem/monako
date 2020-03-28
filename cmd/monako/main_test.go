@@ -10,7 +10,7 @@ func TestMain(t *testing.T) {
 		"monako",
 		"-fail-on-error",
 		"-target-dir", "/tmp/target",
-		"-config", "../../test/config.local.yaml",
-		"-menu-config", "../../test/config.menu.local.md"}
+		"-config", "../../test/configs/only_markdown/config.markdown.yaml",
+		"-menu-config", "../../test/configs/only_markdown/config.menu.markdown.md"}
 	main()
 }
