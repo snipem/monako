@@ -6,7 +6,7 @@
 [![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
 
-![monako logo](assets/logo/cover.png)
+![monako logo](https://github.com/snipem/monako/raw/master/assets/logo/cover.png)
 
 ----
 
@@ -78,7 +78,7 @@ A Docker image is available from [Dockerhub](https://hub.docker.com/repository/d
 
 ### Screenshot
 
-![Screenshot of a documentation site built with Monako](assets/screenshot.png)
+![Screenshot of a documentation site built with Monako](https://github.com/snipem/monako/raw/master/assets/screenshot.png)
 
 ## Design Goals
 
