@@ -26,7 +26,10 @@ func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
 		log.Fatal(err)
 	}
 
-	os.Mkdir(dir, os.FileMode(0744))
+	err = os.Mkdir(dir, os.FileMode(0744))
+	if err != nil {
+		log.Fatalf("Error menu dir %s", err)
+	}
 
 	data, err := ioutil.ReadFile(menuconfig)
 	if err != nil {
@@ -84,7 +87,11 @@ func extractTheme(composeConfig config.ComposeConfig) {
 	if err != nil {
 		log.Fatalf("Cannot create temporary file %s", err)
 	}
-	tmpFile.Write(themezip)
+	_, err = tmpFile.Write(themezip)
+	if err != nil {
+		log.Fatalf("Error temporary theme zip file %s", err)
+	}
+
 	tempfilename := tmpFile.Name()
 
 	if err != nil {

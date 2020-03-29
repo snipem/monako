@@ -4,7 +4,6 @@ package main
 
 import (
 	"flag"
-	"path/filepath"
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
@@ -33,7 +32,7 @@ func main() {
 
 	flag.Parse()
 
-	if *trace == true {
+	if *trace {
 		// Add line and filename to log
 		log.SetReportCaller(true)
 	}
@@ -48,11 +47,16 @@ func main() {
 		config.BaseURL = *baseURLflag
 	}
 
-	helpers.CleanUp()
 	addWorkarounds(config)
-	config.CompositionDir = filepath.Join(*targetdir, config.CompositionDir)
 
-	helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
+	config.SetTargetDir(*targetdir)
+	config.CleanUp()
+
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
+	if *failOnError && err != nil {
+		log.Fatal(err)
+	}
+
 	theme.CreateHugoPage(config, *menuconfigfilepath)
 
 	config.Compose()

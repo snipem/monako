@@ -2,7 +2,9 @@ package config
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
@@ -18,6 +20,7 @@ type ComposeConfig struct {
 	CompositionDir string
 }
 
+// Origin contains all information for a document origin
 type Origin struct {
 	Source      string `yaml:"src"`
 	Branch      string `yaml:"branch,omitempty"`
@@ -43,6 +46,7 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 
 }
 
+// Compose builds the Monako directory structure
 func (c *ComposeConfig) Compose() {
 
 	for _, o := range c.Origins {
@@ -50,4 +54,17 @@ func (c *ComposeConfig) Compose() {
 		helpers.CopyDir(g, fs, o.DirWithDocs, c.CompositionDir, c.FileWhitelist)
 	}
 
+}
+
+// CleanUp removes the compose folder
+func (c *ComposeConfig) CleanUp() {
+	err := os.RemoveAll(c.CompositionDir)
+	if err != nil {
+		log.Fatalf("Error while cleaning up: %s", err)
+	}
+}
+
+// SetTargetDir sets the target dir. Standard is relative to the current directory (".")
+func (c *ComposeConfig) SetTargetDir(targetdir string) {
+	c.CompositionDir = filepath.Join(targetdir, c.CompositionDir)
 }
