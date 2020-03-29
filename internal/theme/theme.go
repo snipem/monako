@@ -64,7 +64,7 @@ startLevel = 1
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings
 BookToC = true
-# BookLogo = 'logo.png'
+BookLogo = 'logo.png'
 BookMenuBundle = '/%s'
 BookSection = 'docs'
 #BookRepo = 'https://github.com/alex-shpak/hugo-book'
