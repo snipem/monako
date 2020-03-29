@@ -31,10 +31,7 @@ jobs:
       run: make --always-make theme
 
     - name: test
-      run: make --always-make test
-
-    - name: coverage
-      run: make --always-make coverage
+      run: make --always-make test coverage
       env:
         COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
