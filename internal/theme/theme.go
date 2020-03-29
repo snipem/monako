@@ -18,7 +18,7 @@ const themeName = "monako-book-master"
 func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
 
 	dir := filepath.Join(composeConfig.CompositionDir, monakoMenuDirectory)
-	dst := dir + "/index.md"
+	dst := filepath.Join(dir, "index.md")
 
 	extractTheme(composeConfig)
 	err := createHugoConfig(composeConfig)

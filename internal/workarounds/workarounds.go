@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -93,12 +94,12 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	fi
 	`, escapedPath)
 
-	tempDir := os.TempDir() + "/asciidoctor_fake_binary"
+	tempDir := filepath.Join(os.TempDir(), "asciidoctor_fake_binary")
 	err = os.Mkdir(tempDir, os.FileMode(0700))
 	if err != nil && !os.IsExist(err) {
 		log.Fatalf("Error creating asciidoctor fake dir : %s", err)
 	}
-	fakeBinary := tempDir + "/asciidoctor"
+	fakeBinary := filepath.Join(tempDir, "asciidoctor")
 
 	err = ioutil.WriteFile(fakeBinary, []byte(shellscript), os.FileMode(0700))
 	if err != nil {
