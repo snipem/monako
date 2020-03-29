@@ -4,8 +4,6 @@ package main
 
 import (
 	"flag"
-	"os"
-	"path/filepath"
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
@@ -14,12 +12,6 @@ import (
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
 )
-
-func compose(url string, branch string, subdir string, target string, username string, password string, whitelist []string) {
-
-	g, fs := helpers.CloneDir(url, branch, username, password)
-	helpers.CopyDir(g, fs, subdir, "compose/content/"+target+"/", whitelist)
-}
 
 func addWorkarounds(c config.ComposeConfig) {
 	if runtime.GOOS == "windows" {
@@ -40,7 +32,7 @@ func main() {
 
 	flag.Parse()
 
-	if *trace == true {
+	if *trace {
 		// Add line and filename to log
 		log.SetReportCaller(true)
 	}
@@ -55,24 +47,21 @@ func main() {
 		config.BaseURL = *baseURLflag
 	}
 
-	helpers.CleanUp()
 	addWorkarounds(config)
 
-	helpers.HugoRun([]string{"--quiet", "new", "site", "compose"})
-	theme.CreateHugoPage(config, *menuconfigfilepath)
+	config.SetTargetDir(*targetdir)
+	config.CleanUp()
 
-	for _, c := range config.Origins {
-		compose(
-			c.Source,
-			c.Branch,
-			c.DirWithDocs,
-			filepath.Join(*targetdir, c.TargetDir),
-			os.Getenv(c.EnvUsername),
-			os.Getenv(c.EnvPassword),
-			config.FileWhitelist)
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
+	if *failOnError && err != nil {
+		log.Fatal(err)
 	}
 
-	err = helpers.HugoRun([]string{"--source", "compose"})
+	theme.CreateHugoPage(config, *menuconfigfilepath)
+
+	config.Compose()
+
+	err = helpers.HugoRun([]string{"--source", config.CompositionDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}

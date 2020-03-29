@@ -164,7 +164,10 @@ func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target strin
 				content = workarounds.AsciidocPostprocessing(dirty)
 			}
 			// content = []byte(ExpandFrontmatter(string(content), g, gitFilepath, commitinfo))
-			ioutil.WriteFile(targetFilename, content, filemode)
+			err = ioutil.WriteFile(targetFilename, content, filemode)
+			if err != nil {
+				log.Fatalf("Error writing file %s", err)
+			}
 
 		default:
 			copyFile(targetFilename, f)
