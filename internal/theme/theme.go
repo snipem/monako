@@ -17,7 +17,7 @@ const themeName = "monako-book-master"
 // CreateHugoPage extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func CreateHugoPage(composeConfig config.ComposeConfig, menuconfig string) {
 
-	dir := filepath.Join(composeConfig.CompositionDir, monakoMenuDirectory)
+	dir := filepath.Join(composeConfig.CompositionDir, composeConfig.ContentDir, monakoMenuDirectory)
 	dst := filepath.Join(dir, "index.md")
 
 	extractTheme(composeConfig)

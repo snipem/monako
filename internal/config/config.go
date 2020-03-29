@@ -18,6 +18,7 @@ type ComposeConfig struct {
 	FileWhitelist []string `yaml:"whitelist"`
 
 	CompositionDir string
+	ContentDir     string
 }
 
 // Origin contains all information for a document origin
@@ -42,6 +43,7 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 
 	// Set standard composition subdirectory
 	config.CompositionDir = "compose"
+	config.ContentDir = "content"
 	return
 
 }
