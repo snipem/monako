@@ -33,6 +33,11 @@ jobs:
     - name: test
       run: make --always-make test
 
+    - name: coverage
+      run: make --always-make coverage
+      env:
+        COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+
     - name: build
       run: make --always-make build
 
