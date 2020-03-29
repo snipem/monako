@@ -3,6 +3,7 @@ module github.com/snipem/monako
 go 1.12
 
 require (
+	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
 	github.com/artdarek/go-unzip v1.0.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gohugoio/hugo v0.67.0
