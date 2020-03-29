@@ -32,7 +32,7 @@ test:
 run_prd: build
 	touch secrets.env && source secrets.env && \
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
-			-menu-config ~/work/mopro/architecture/documentation/conf/index.prod.md \
+			-menu-config ~/work/mopro/architecture/documentation/conf/menu.prod.md \
 			-base-url http://localhost:8000
 
 	$(MAKE) serve

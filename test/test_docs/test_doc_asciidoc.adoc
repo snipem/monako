@@ -1,7 +1,7 @@
-# Asciidoc First Level
+= Asciidoc First Level
 :toc:
 
-## Asciidoc Second Level
+== Asciidoc Second Level
 
 Ihr naht euch wieder, schwankende Gestalten! Die früh sich einst dem trüben
 Blick gezeigt. Versuch’ ich wohl euch diesmal fest zu halten? Fühl’ ich
@@ -26,6 +26,12 @@ alten, halbverklungnen Sage. Kommt erste Lieb’ und Freundschaft mit herauf Der
 Schmerz wird neu, es wiederholt die Klage. Des Lebens labyrinthisch irren Lauf,
 Und nennt die Guten, die, um schöne Stunden Vom Glück getäuscht, vor mir
 hinweggeschwunden.
+
+### Asciidoc Third Level with Includes
+
+include::test_doc_asciidoc_include_me.adoc[]
+
+include::subfolder/test_doc_asciidoc_include_me_subfolder.adoc[]
 
 ### Asciidoc Third Level with Ditaa Diagramm
 
