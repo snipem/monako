@@ -41,7 +41,7 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 	err = yaml.Unmarshal(source, &config)
 
 	// Set standard composition subdirectory
-	config.CompositionDir = "compose/content/"
+	config.CompositionDir = "compose"
 	return
 
 }
@@ -49,9 +49,12 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 // Compose builds the Monako directory structure
 func (c *ComposeConfig) Compose() {
 
+	contentDir := filepath.Join(c.CompositionDir, "content")
+
 	for _, o := range c.Origins {
+		originTargetDir := filepath.Join(contentDir, o.TargetDir)
 		g, fs := helpers.CloneDir(o.Source, o.Branch, os.Getenv(o.EnvUsername), os.Getenv(o.EnvPassword))
-		helpers.CopyDir(g, fs, o.DirWithDocs, c.CompositionDir, c.FileWhitelist)
+		helpers.CopyDir(g, fs, o.DirWithDocs, originTargetDir, c.FileWhitelist)
 	}
 
 }

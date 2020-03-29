@@ -51,7 +51,7 @@ theme = '%s'
 
 # Book configuration
 disablePathToLower = true
-enableGitInfo = true
+enableGitInfo = false
 
 # Needed for mermaid/katex shortcodes
 [markup]
