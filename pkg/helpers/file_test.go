@@ -18,7 +18,6 @@ var fs billy.Filesystem
 
 func TestMain(m *testing.M) {
 	// Setup git clone of repo
-	// log.SetReportCaller(true)
 	setup()
 	os.Exit(m.Run())
 }
@@ -78,6 +77,7 @@ func TestGitCommiterSubfolder(t *testing.T) {
 // TestCopyDir is a test for testing the copying capability of a single directory
 func TestCopyDir(t *testing.T) {
 
+	// TODO Get own temporary test folder
 	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
 	defer os.RemoveAll(targetDir)
 
