@@ -26,6 +26,8 @@ github.com/BurntSushi/locker v0.0.0-20171006230638-a6e239ea1c69 h1:+tu3HOoMXB7RX
 github.com/BurntSushi/locker v0.0.0-20171006230638-a6e239ea1c69/go.mod h1:L1AbZdiDllfyYH5l5OkAaZtk7VkWe89bPJFmnDBNHxg=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93 h1:NnAUCP75PRm8yWE7+MZBIAR6PA9iwsBYEc6ZNYOy+AQ=
+github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93/go.mod h1:TK+jB3mBs+8ZMWhU5BqZKnZWJ1MrLo8etNVg51ueTBo=
 github.com/GeertJohan/go.incremental v1.0.0/go.mod h1:6fAjUhbVuX1KcMD3c8TEgVUqmo4seqhv0i0kdATSkM0=
 github.com/GeertJohan/go.rice v1.0.0/go.mod h1:eH6gbSOAUv07dQuZVnBmoDP8mgsM1rtixis4Tib9if0=
 github.com/GoogleCloudPlatform/cloudsql-proxy v0.0.0-20190418212003-6ac0b49e7197/go.mod h1:aJ4qN3TfrelA6NZ6AXsXRfmEVaYin3EDbSPJrKS8OXo=

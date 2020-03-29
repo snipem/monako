@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alecthomas/assert"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-git.v4"
 )

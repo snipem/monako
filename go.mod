@@ -3,7 +3,7 @@ module github.com/snipem/monako
 go 1.12
 
 require (
-	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
+	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
 	github.com/artdarek/go-unzip v1.0.0
 	github.com/bombsimon/wsl/v2 v2.2.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect
@@ -29,7 +29,7 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v0.0.7 // indirect
 	github.com/spf13/viper v1.6.2 // indirect
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/stretchr/testify v1.5.1
 	github.com/wacul/ptr v1.0.0 // indirect
 	golang.org/x/sys v0.0.0-20200327173247-9dae0f8f5775 // indirect
 	golang.org/x/tools v0.0.0-20200329025819-fd4102a86c65 // indirect
