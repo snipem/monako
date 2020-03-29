@@ -33,7 +33,7 @@ test:
 	rm coverage.out.tmp
 
 coverage: test
-	${GOPATH}/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken ${COVERALLS_TOKEN}
+	${GOPATH}/bin/goveralls -coverprofile=coverage.out -service=github -repotoken ${COVERALLS_TOKEN}
 
 test_deps:
 	go get golang.org/x/tools/cmd/cover
