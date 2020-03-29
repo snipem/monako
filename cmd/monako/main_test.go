@@ -3,7 +3,6 @@ package main
 // run: go test -v ./cmd/monako
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -48,21 +47,36 @@ func TestMain(t *testing.T) {
 	assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/subfolder/subfolderprofile.png"), "Relative subfolder picture right placed")
 	assert.Contains(t, content, "<img src=\"../subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains relative picture")
 
-	t.Run("Serve over HTTP and test", func(t *testing.T) {
+	fs := http.FileServer(http.Dir(filepath.Join(targetDir, "compose/public/")))
+	ts := httptest.NewServer(http.StripPrefix("/", fs))
+	defer ts.Close()
 
-		fs := http.FileServer(http.Dir(filepath.Join(targetDir, "compose/public/")))
-		ts := httptest.NewServer(http.StripPrefix("/", fs))
-		defer ts.Close()
+	t.Run("Check if images and sources are served", func(t *testing.T) {
 
 		content, err = getContent(ts, "")
-		urls, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
+		assert.NoError(t, err, "HTTP Call failed")
 
-		for _, url := range urls {
-			fmt.Println(url)
+		urls, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
+		if err != nil {
+			log.Fatal(err)
 		}
 
+		for _, url := range urls {
+			if strings.HasPrefix(url.String(), ts.URL) {
+				t.Logf("Checking for local served url %s", url.String())
+				// Check only if it's served, ignore content
+				_, err = getContent(ts, "")
+				assert.NoError(t, err, "URL is not served")
+			}
+		}
+	})
+
+	t.Run("Check contents of served page", func(t *testing.T) {
+
+		content, err = getContent(ts, "")
 		assert.NoError(t, err, "HTTP Call failed")
-		assert.Contains(t, content, "usus", "does not contain test")
+
+		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
 
 	})
 
