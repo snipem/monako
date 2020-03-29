@@ -8,8 +8,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var composeDir string = "compose/content/"
-
 // ComposeConfig is the root of the Monako config
 type ComposeConfig struct {
 	BaseURL       string   `yaml:"baseURL"`
@@ -38,6 +36,9 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 	}
 
 	err = yaml.Unmarshal(source, &config)
+
+	// Set standard composition subdirectory
+	config.CompositionDir = "compose/content/"
 	return
 
 }
