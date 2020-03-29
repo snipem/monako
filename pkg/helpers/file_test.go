@@ -82,27 +82,23 @@ func TestCopyDir(t *testing.T) {
 	defer os.RemoveAll(targetDir)
 
 	var whitelist = []string{".md", ".png"}
-	CopyDir(g, fs, "test", targetDir, whitelist)
 
-	expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
+	t.Run("start in single directory 'test'", func(t *testing.T) {
+		CopyDir(g, fs, "test", targetDir, whitelist)
+		expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
+		b, err := ioutil.ReadFile(expectedTargetFile)
 
-	b, err := ioutil.ReadFile(expectedTargetFile)
-	assert.NoError(t, err, "File not found")
-	assert.Contains(t, string(b), "# Markdown Doc 1")
-}
+		assert.NoError(t, err, "File not found")
+		assert.Contains(t, string(b), "# Markdown Doc 1")
+	})
 
-// TestCopyDirWithSubfolderSource tests if a source can be a deeper path like "test/test_docs" instead of
-// starting at highest level or just one directory deep
-func TestCopyDirWithSubfolderSource(t *testing.T) {
-	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
-	defer os.RemoveAll(targetDir)
+	t.Run("start in deeper directory 'test/test_docs/'", func(t *testing.T) {
+		CopyDir(g, fs, "test/test_docs/", targetDir, whitelist)
+		expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
+		b, err := ioutil.ReadFile(expectedTargetFile)
 
-	var whitelist = []string{".md", ".png"}
-	CopyDir(g, fs, "test/test_docs/", targetDir, whitelist)
+		assert.NoError(t, err, "File not found")
+		assert.Contains(t, string(b), "# Markdown Doc 1")
+	})
 
-	expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
-
-	b, err := ioutil.ReadFile(expectedTargetFile)
-	assert.NoError(t, err, "File not found")
-	assert.Contains(t, string(b), "# Markdown Doc 1")
 }
