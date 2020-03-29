@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: dependencies
-      run: make --always-make deps
+      run: make --always-make deps test_deps
 
     - name: Fetch Theme
       run: make --always-make theme
