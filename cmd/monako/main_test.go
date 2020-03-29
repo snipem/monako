@@ -92,7 +92,8 @@ func TestMain(t *testing.T) {
 	})
 
 	if !t.Failed() && runtime.GOOS != "windows" {
-		// Only clean up when not failed and not on Windows (https://github.com/snipem/monako/pull/16/checks?check_run_id=543627521)
+		// Only clean up when not failed
+		// and not on Windows this is because of a filet bug (https://github.com/Flaque/filet/issues/3)
 		filet.CleanUp(t)
 	}
 }
