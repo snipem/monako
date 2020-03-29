@@ -24,7 +24,7 @@ func TestMain(t *testing.T) {
 	main()
 
 	assert.FileExists(t, filepath.Join(targetDir, "compose/config.toml"), "Hugo config is not present")
-	assert.FileExists(t, filepath.Join(targetDir, "compose/monako_menu_directory/index.md"), "Menu is not present")
+	assert.FileExists(t, filepath.Join(targetDir, "compose/content/monako_menu_directory/index.md"), "Menu is not present")
 	assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"), "Generated Test doc does not exist")
 
 	if !t.Failed() {
