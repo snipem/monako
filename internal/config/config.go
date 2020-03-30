@@ -2,6 +2,8 @@ package config
 
 import (
 	"io/ioutil"
+	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/snipem/monako/pkg/helpers"
@@ -51,13 +53,13 @@ func (c *ComposeConfig) Compose() {
 
 }
 
-// // CleanUp removes the compose folder
-// func (c *ComposeConfig) CleanUp() {
-// 	// err := os.RemoveAll(c.CompositionDir)
-// 	// if err != nil {
-// 	// 	log.Fatalf("Error while cleaning up: %s", err)
-// 	// }
-// }
+// CleanUp removes the compose folder
+func (c *ComposeConfig) CleanUp() {
+	err := os.RemoveAll(c.CompositionDir)
+	if err != nil {
+		log.Fatalf("Error while cleaning up: %s", err)
+	}
+}
 
 // SetTargetDir sets the target dir. Standard is relative to the current directory (".")
 func (c *ComposeConfig) SetTargetDir(targetdir string) {

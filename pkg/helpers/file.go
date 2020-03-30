@@ -192,14 +192,14 @@ func (file OriginFile) composeFile(rootDir string) {
 		log.Fatalf("Error when creating '%s': %s", copyDir, err)
 	}
 
-	var targetFilename = filepath.Join(rootDir, file.parentOrigin.TargetDir, file.Path)
+	var targetFilename = filepath.Join(rootDir, file.parentOrigin.TargetDir, relativeFilePath)
 	contentFormat := file.GetFormat()
 
 	// gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
 
 	switch contentFormat {
 	case Asciidoc, Markdown:
-
+		file.copyMarkupFile(targetFilename)
 	default:
 		file.copyFile(targetFilename)
 	}
