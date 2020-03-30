@@ -118,7 +118,7 @@ type Origin struct {
 
 type OriginFile struct {
 	Commit *object.Commit
-	Path   string // TODO: Use path to access it via i.e. fs.Stat("internal/workarounds/workarounds.go")
+	Path   string
 
 	parentOrigin *Origin
 }

@@ -2,10 +2,7 @@ package config
 
 import (
 	"io/ioutil"
-	"os"
 	"path/filepath"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
@@ -54,13 +51,13 @@ func (c *ComposeConfig) Compose() {
 
 }
 
-// CleanUp removes the compose folder
-func (c *ComposeConfig) CleanUp() {
-	err := os.RemoveAll(c.CompositionDir)
-	if err != nil {
-		log.Fatalf("Error while cleaning up: %s", err)
-	}
-}
+// // CleanUp removes the compose folder
+// func (c *ComposeConfig) CleanUp() {
+// 	// err := os.RemoveAll(c.CompositionDir)
+// 	// if err != nil {
+// 	// 	log.Fatalf("Error while cleaning up: %s", err)
+// 	// }
+// }
 
 // SetTargetDir sets the target dir. Standard is relative to the current directory (".")
 func (c *ComposeConfig) SetTargetDir(targetdir string) {
