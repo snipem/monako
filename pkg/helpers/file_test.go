@@ -1,6 +1,6 @@
 package helpers
 
-// run: make test
+// run: go test -v ./pkg/helpers
 
 import (
 	"io/ioutil"
@@ -8,13 +8,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/Flaque/filet"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/src-d/go-billy.v4"
-	"gopkg.in/src-d/go-git.v4"
 )
 
-var g *git.Repository
-var fs billy.Filesystem
+var o *Origin
 
 func TestMain(m *testing.M) {
 	// Setup git clone of repo
@@ -23,18 +21,8 @@ func TestMain(m *testing.M) {
 }
 
 func setup() {
-	g, fs = CloneDir("https://github.com/snipem/monako.git", "master", "", "")
-}
-
-func TestCloneDir(t *testing.T) {
-
-	root, err := fs.Chroot(".")
-	assert.NoError(t, err, "Could not chroot dir")
-
-	files, err := root.ReadDir(".")
-	assert.NoError(t, err, "Could not read dir")
-	assert.NotZero(t, len(files), "Should have cloned some files")
-
+	o = NewOrigin("https://github.com/snipem/monako.git", "master", ".", "test/docs")
+	o.CloneDir()
 }
 
 func TestIsMarkdown(t *testing.T) {
@@ -52,7 +40,7 @@ func TestIsAsciidoc(t *testing.T) {
 func TestGitCommiter(t *testing.T) {
 	fileName := "README.md"
 
-	ci, err := GetCommitInfo(g, fileName)
+	ci, err := GetCommitInfo(o.repo, fileName)
 
 	assert.NoError(t, err, "Could not retrieve commit info")
 	assert.Contains(t, ci.Committer.Email, "@")
@@ -61,14 +49,14 @@ func TestGitCommiter(t *testing.T) {
 
 func TestGitCommiterFileNotFound(t *testing.T) {
 	fileName := "Not existing file...."
-	_, err := GetCommitInfo(g, fileName)
+	_, err := GetCommitInfo(o.repo, fileName)
 
 	assert.Error(t, err, "Expect error for non existing file")
 }
 
 func TestGitCommiterSubfolder(t *testing.T) {
 	fileName := "test/config.menu.local.md"
-	ci, err := GetCommitInfo(g, fileName)
+	ci, err := GetCommitInfo(o.repo, fileName)
 
 	assert.NoError(t, err, "Could not retrieve commit info")
 	assert.Contains(t, ci.Committer.Email, "@")
@@ -78,14 +66,17 @@ func TestGitCommiterSubfolder(t *testing.T) {
 func TestCopyDir(t *testing.T) {
 
 	// TODO Get own temporary test folder
-	targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
-	defer os.RemoveAll(targetDir)
+	// targetDir := filepath.Join(os.TempDir(), "tmp/testrun/", t.Name())
+	// defer os.RemoveAll(targetDir)
 
 	var whitelist = []string{".md", ".png"}
 
 	t.Run("start in single directory 'test'", func(t *testing.T) {
-		CopyDir(g, fs, "test", targetDir, whitelist)
-		expectedTargetFile := filepath.Join(targetDir, "test_docs/test_doc_markdown.md")
+		o.SourceDir = "test"
+		o.FileWhitelist = whitelist
+		tempDir := filet.TmpDir(t, "")
+		o.ComposeDir(tempDir)
+		expectedTargetFile := filepath.Join(tempDir, "compose", "test_docs/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)
 
 		assert.NoError(t, err, "File not found")
@@ -93,8 +84,11 @@ func TestCopyDir(t *testing.T) {
 	})
 
 	t.Run("start in deeper directory 'test/test_docs/'", func(t *testing.T) {
-		CopyDir(g, fs, "test/test_docs/", targetDir, whitelist)
-		expectedTargetFile := filepath.Join(targetDir, "/test_doc_markdown.md")
+		o.SourceDir = "test/test_docs/"
+		o.FileWhitelist = whitelist
+		tempDir := filet.TmpDir(t, "")
+		o.ComposeDir(tempDir)
+		expectedTargetFile := filepath.Join(tempDir, "compose", "/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)
 
 		assert.NoError(t, err, "File not found")

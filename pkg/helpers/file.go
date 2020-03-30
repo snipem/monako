@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
 	"gopkg.in/src-d/go-billy.v4"
@@ -31,13 +32,16 @@ const Markdown = "MARKDOWN"
 
 // CloneDir clones a HTTPS or lokal Git repository with the given branch and optional username and password.
 // A virtual filesystem is returned containing the cloned files.
-func CloneDir(url string, branch string, username string, password string) (*git.Repository, billy.Filesystem) {
+func (origin *Origin) CloneDir() {
 
-	log.Printf("Cloning in to %s with branch %s", url, branch)
+	log.Printf("Cloning in to %s with branch %s", origin.URL, origin.Branch)
 
-	fs := memfs.New()
+	origin.filesystem = memfs.New()
 
 	basicauth := http.BasicAuth{}
+
+	username := os.Getenv(origin.EnvUsername)
+	password := os.Getenv(origin.EnvPassword)
 
 	if username != "" && password != "" {
 		log.Printf("Using username and password")
@@ -48,28 +52,30 @@ func CloneDir(url string, branch string, username string, password string) (*git
 	}
 
 	// TODO Check if we can check out less depth. Like depth = 1
-	repo, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
-		URL:           url,
+	repo, err := git.Clone(memory.NewStorage(), origin.filesystem, &git.CloneOptions{
+		URL:           origin.URL,
 		Depth:         0, // problem with depth = 1 is that git log from older commits, can't be accessed
-		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branch)),
+		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", origin.Branch)),
 		SingleBranch:  true,
 		Auth:          &basicauth,
 	})
+
+	origin.repo = repo
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return repo, fs
+	return
 }
 
-func shouldIgnoreFile(filename string, whitelist []string) bool {
+func fileIsWhitelisted(filename string, whitelist []string) bool {
 	for _, whitelisted := range whitelist {
 		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(whitelisted)) {
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func isMarkdown(filename string) bool {
@@ -82,113 +88,168 @@ func isAsciidoc(filename string) bool {
 		strings.HasSuffix(strings.ToLower(filename), strings.ToLower(".asc"))
 }
 
-// DetermineFormat determines the markup format of a file by it's filename.
+// GetFormat determines the markup format of a file by it's filename.
 // Results can be Markdown and Asciidoc
-func DetermineFormat(filename string) string {
-	if isMarkdown(filename) {
+func (file OriginFile) GetFormat() string {
+	if isMarkdown(file.Path) {
 		return Markdown
-	} else if isAsciidoc(filename) {
+	} else if isAsciidoc(file.Path) {
 		return Asciidoc
 	} else {
 		return ""
 	}
 }
 
-// CopyDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
+// Origin contains all information for a document origin
+type Origin struct {
+	URL           string   `yaml:"src"`
+	Branch        string   `yaml:"branch,omitempty"`
+	EnvUsername   string   `yaml:"envusername,omitempty"`
+	EnvPassword   string   `yaml:"envpassword,omitempty"`
+	SourceDir     string   `yaml:"docdir,omitempty"`
+	TargetDir     string   `yaml:"targetdir,omitempty"`
+	FileWhitelist []string `yaml:"whitelist,omitempty"`
+
+	Files []OriginFile
+
+	repo       *git.Repository
+	filesystem billy.Filesystem
+}
+
+type OriginFile struct {
+	Commit *object.Commit
+	Path   string // TODO: Use path to access it via i.e. fs.Stat("internal/workarounds/workarounds.go")
+
+	parentOrigin *Origin
+}
+
+// ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func CopyDir(g *git.Repository, fs billy.Filesystem, source string, target string, whitelist []string) {
+func (origin Origin) ComposeDir(rootDir string) {
+	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
 
-	source = filepath.Clean(source) + string(filepath.Separator)
-	target = filepath.Clean(target)
-
-	log.Printf("Copying subdir '%s' to target dir '%s' ...", source, target)
-
-	var err error
-
-	// TODO: This is also done on every recursion. Maybe this is overhead.
-	fs, err = fs.Chroot(source)
-	if err != nil {
-		log.Fatal(err)
+	for _, file := range origin.Files {
+		file.composeFile(rootDir)
 	}
-	log.Printf("Entering '%s' ...", source)
+}
 
-	var files []os.FileInfo
-	files, err = fs.ReadDir(".")
-	if err != nil {
-		log.Fatal(err)
-	}
+func NewOrigin(url string, branch string, sourceDir string, targetDir string) *Origin {
+	o := new(Origin)
+	o.URL = url
+	o.Branch = branch
+	o.SourceDir = sourceDir
+	o.TargetDir = targetDir
+	return o
+}
 
+func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
+
+	var originFiles []OriginFile
+
+	files, _ := origin.filesystem.ReadDir(startdir)
 	for _, file := range files {
 
 		if file.IsDir() {
-			foldername := filepath.Join(target, file.Name())
-			// TODO is this memory consuming or is fsSubdir freed after recursion?
-			// fsSubdir := fs
-			CopyDir(g, fs, file.Name(), foldername, whitelist)
-			continue
-		} else if shouldIgnoreFile(file.Name(), whitelist) {
-			continue
-		}
+			// Recurse over file and add there files to originFiles
+			originFiles = append(originFiles,
+				origin.getWhitelistedFiles(
+					filepath.Join(startdir, file.Name()),
+				)...)
+		} else if fileIsWhitelisted(file.Name(), origin.FileWhitelist) {
+			// Just add this file to originFiles
+			var originFile OriginFile
+			originFile.Path = filepath.Join(startdir, file.Name())
+			originFile.parentOrigin = &origin
 
-		f, err := fs.Open(file.Name())
-		if err != nil {
-			log.Fatal(err)
-		}
+			var err error
+			originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
 
-		err = os.MkdirAll(target, filemode)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var targetFilename = filepath.Join(target, file.Name())
-		contentFormat := DetermineFormat(file.Name())
-
-		gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
-
-		switch contentFormat {
-		case Asciidoc, Markdown:
-
-			// TODO: Only use strings not []byte
-			// commitinfo, err := GetCommitInfo(g, gitFilepath)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatalf("Can't extract git info for %s", originFile.Path)
 			}
 
-			var dirty, _ = ioutil.ReadAll(f)
-			var content []byte
+			log.Println(originFile.Path)
 
-			if contentFormat == Markdown {
-				content = workarounds.MarkdownPostprocessing(dirty)
-			} else if contentFormat == Asciidoc {
-				content = workarounds.AsciidocPostprocessing(dirty)
-			}
-			// content = []byte(ExpandFrontmatter(string(content), g, gitFilepath, commitinfo))
-			err = ioutil.WriteFile(targetFilename, content, filemode)
-			if err != nil {
-				log.Fatalf("Error writing file %s", err)
-			}
-
-		default:
-			copyFile(targetFilename, f)
+			originFiles = append(originFiles, originFile)
 		}
-
-		log.Printf("%s -> %s\n", gitFilepath, targetFilename)
 
 	}
+	return originFiles
+}
+
+func (file OriginFile) composeFile(rootDir string) {
+
+	sourceDir := file.parentOrigin.SourceDir
+	relativeFilePath := strings.TrimPrefix(file.Path, sourceDir)
+
+	fileDirs := filepath.Dir(relativeFilePath)
+	copyDir := filepath.Join(rootDir, file.parentOrigin.TargetDir, fileDirs)
+
+	// log.Printf("Trying to create '%s'", copyDir)
+	err := os.MkdirAll(copyDir, filemode)
+	if err != nil {
+		log.Fatalf("Error when creating '%s': %s", copyDir, err)
+	}
+
+	var targetFilename = filepath.Join(rootDir, file.parentOrigin.TargetDir, file.Path)
+	contentFormat := file.GetFormat()
+
+	// gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
+
+	switch contentFormat {
+	case Asciidoc, Markdown:
+
+	default:
+		file.copyFile(targetFilename)
+	}
+	log.Printf("%s -> %s\n", file.Path, targetFilename)
 
 }
 
-func copyFile(targetFilename string, from io.Reader) {
+func (file OriginFile) copyFile(targetFilename string) {
+
+	origin := file.parentOrigin
+	f, err := origin.filesystem.Open(file.Path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	t, err := os.Create(targetFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if _, err = io.Copy(t, from); err != nil {
+	if _, err = io.Copy(t, f); err != nil {
 		log.Fatal(err)
 	}
 
+}
+
+func (file OriginFile) copyMarkupFile(targetFilename string) {
+
+	// TODO: Only use strings not []byte
+	// commitinfo, err := GetCommitInfo(g, gitFilepath)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	bf, err := file.parentOrigin.filesystem.Open(file.Path)
+
+	var dirty, _ = ioutil.ReadAll(bf)
+	var content []byte
+	contentFormat := file.GetFormat()
+
+	if contentFormat == Markdown {
+		content = workarounds.MarkdownPostprocessing(dirty)
+	} else if contentFormat == Asciidoc {
+		content = workarounds.AsciidocPostprocessing(dirty)
+	}
+	// content = []byte(ExpandFrontmatter(string(content), gitFilepath, file.Commit))
+	err = ioutil.WriteFile(targetFilename, content, filemode)
+	if err != nil {
+		log.Fatalf("Error writing file %s", err)
+	}
 }
 
 // GetCommitInfo returns the Commit Info for a given file of the repository

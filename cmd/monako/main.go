@@ -25,7 +25,7 @@ func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
-	var targetdir = flag.String("target-dir", ".", "Target dir for composed site")
+	var targetdir = flag.String("target-dir", "", "Target dir for composed site")
 	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 	var failOnError = flag.Bool("fail-on-error", false, "Fail on document conversion errors")
