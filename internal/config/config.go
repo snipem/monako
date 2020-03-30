@@ -22,7 +22,7 @@ type ComposeConfig struct {
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
-func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
+func LoadConfig(configfilepath string, targetdir string) (config ComposeConfig, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
@@ -32,7 +32,8 @@ func LoadConfig(configfilepath string) (config ComposeConfig, err error) {
 	err = yaml.Unmarshal(source, &config)
 
 	// Set standard composition subdirectory
-	config.CompositionDir = "compose"
+	config.CompositionDir = filepath.Join(targetdir, "compose")
+	// As demanded by Hugo
 	config.ContentDir = "content"
 	return
 

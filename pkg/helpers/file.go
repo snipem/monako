@@ -163,12 +163,12 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 			originFile.Path = filepath.Join(startdir, file.Name())
 			originFile.parentOrigin = &origin
 
-			var err error
-			originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
+			// var err error
+			// originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
 
-			if err != nil {
-				log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
-			}
+			// if err != nil {
+			// 	log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
+			// }
 
 			log.Println(originFile.Path)
 
