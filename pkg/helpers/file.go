@@ -3,6 +3,7 @@ package helpers
 // run: make test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -166,7 +167,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 			originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
 
 			if err != nil {
-				log.Fatalf("Can't extract git info for %s", originFile.Path)
+				log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
 			}
 
 			log.Println(originFile.Path)
@@ -201,13 +202,13 @@ func (file OriginFile) composeFile(rootDir string) {
 	case Asciidoc, Markdown:
 		file.copyMarkupFile(targetFilename)
 	default:
-		file.copyFile(targetFilename)
+		file.copyRegularFile(targetFilename)
 	}
 	log.Printf("%s -> %s\n", file.Path, targetFilename)
 
 }
 
-func (file OriginFile) copyFile(targetFilename string) {
+func (file OriginFile) copyRegularFile(targetFilename string) {
 
 	origin := file.parentOrigin
 	f, err := origin.filesystem.Open(file.Path)
@@ -256,6 +257,7 @@ func (file OriginFile) copyMarkupFile(targetFilename string) {
 // identified by it's filename
 func GetCommitInfo(r *git.Repository, filename string) (*object.Commit, error) {
 
+	// TODO what is wrong here?
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &filename,
 		All:      true,
@@ -265,17 +267,21 @@ func GetCommitInfo(r *git.Repository, filename string) (*object.Commit, error) {
 		return nil, fmt.Errorf("Error while opening %s from git log: %s", filename, err)
 	}
 
-	var commit *object.Commit
+	var returnCommit *object.Commit
 
-	commit, err = cIter.Next()
+	err = cIter.ForEach(func(commit *object.Commit) error {
+		if commit == nil {
+			return errors.New("Commit is nil")
+		}
+		returnCommit = commit
+		return nil
+	},
+	)
 	defer cIter.Close()
 
 	if err != nil {
-		if err.Error() == "EOF" {
-			return nil, fmt.Errorf("File %s not found in git log", filename)
-		}
-		return nil, fmt.Errorf("Unknown error while fetching git commit info for '%s' from git log", filename)
+		return nil, err
 	}
 
-	return commit, nil
+	return returnCommit, nil
 }
