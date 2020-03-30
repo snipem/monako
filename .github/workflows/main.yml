@@ -32,11 +32,14 @@ jobs:
 
     - name: test
       run: make --always-make test
-      env:
-        COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
     - name: build
       run: make --always-make build
+      
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.6
+      with:
+        file: coverage.out
 
     - name: Run Monako and compose site
       run: make --always-make compose
