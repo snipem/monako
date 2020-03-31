@@ -17,12 +17,15 @@ import (
 
 // OriginFile represents a single file of an origin
 type OriginFile struct {
+
+	// Commit is the commit info about this file
 	Commit *object.Commit
 	// RemotePath is the path in the origin repository
 	RemotePath string
 	// LocalPath is the absolute path on the local disk
 	LocalPath string
 
+	// parentOrigin of this file
 	parentOrigin *Origin
 }
 
@@ -54,31 +57,27 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 	files, _ := origin.filesystem.ReadDir(startdir)
 	for _, file := range files {
 
+		// This is the path as stored in the remote repo
+		remotePath := filepath.Join(startdir, file.Name())
+
 		if file.IsDir() {
-			// Recurse over file and add there files to originFiles
+			// Recurse over file and add their files to originFiles
 			originFiles = append(originFiles,
 				origin.getWhitelistedFiles(
-					filepath.Join(startdir, file.Name()),
+					remotePath,
 				)...)
 		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
-			// Just add this file to originFiles
-			var originFile OriginFile
-			originFile.RemotePath = filepath.Join(startdir, file.Name())
 
-			originFile.parentOrigin = &origin
+			localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
 
-			originFile.LocalPath = getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, originFile.RemotePath)
-			log.Info(originFile)
+			originFile := OriginFile{
+				RemotePath: remotePath,
+				LocalPath:  localPath,
 
-			// var err error
-			// originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
+				parentOrigin: &origin,
+			}
 
-			// if err != nil {
-			// 	log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
-			// }
-
-			log.Println(originFile.RemotePath)
-
+			// Add this file to originFiles
 			originFiles = append(originFiles, originFile)
 		}
 

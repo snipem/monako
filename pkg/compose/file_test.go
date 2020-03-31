@@ -33,5 +33,10 @@ func TestLocalPath(t *testing.T) {
 	assert.Equal(t,
 		"/tmp/compose/localTarget/filename.md",
 		getLocalFilePath("/tmp/compose", ".", "localTarget", "filename.md"),
-		"Simple setup, always first level")
+		"Local Target folder")
+
+	assert.Equal(t,
+		"/tmp/compose/filename.md",
+		getLocalFilePath("/tmp/compose", ".", "", "filename.md"),
+		"Empty local target folder")
 }
