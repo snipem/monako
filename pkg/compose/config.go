@@ -50,12 +50,12 @@ func LoadConfig(configfilepath string, workingdir string) (config Config, err er
 }
 
 // Compose builds the Monako directory structure
-func (c *Config) Compose() {
+func (config *Config) Compose() {
 
 	// If Origin has now own whitelist, use the Compose Whitelist
-	for _, o := range c.Origins {
+	for _, o := range config.Origins {
 		if o.FileWhitelist == nil {
-			o.FileWhitelist = c.FileWhitelist
+			o.FileWhitelist = config.FileWhitelist
 		}
 		o.CloneDir()
 		o.ComposeDir()
@@ -79,8 +79,8 @@ func (config *Config) CleanUp() {
 }
 
 // setWorkingDir sets the target dir. Standard is relative to the current directory (".")
-func (c *Config) setWorkingDir(targetdir string) {
+func (config *Config) setWorkingDir(targetdir string) {
 	if targetdir != "" {
-		c.HugoWorkingDir = filepath.Join(targetdir, "compose")
+		config.HugoWorkingDir = filepath.Join(targetdir, "compose")
 	}
 }
