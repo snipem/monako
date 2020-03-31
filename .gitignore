@@ -11,7 +11,6 @@ c.out
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-compose
 secrets.env
 *.prod.*
 tmp
@@ -26,3 +25,5 @@ coverage.out.tmp
 
 # Monako bin
 monako
+
+/compose

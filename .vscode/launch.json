@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Main Test",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/cmd/monako/main.go",
+            "args": [
+                "-test.run",
+                "TestMain"
+            ]
+        },
+        {
             "name": "Launch",
             "type": "go",
             "request": "launch",
@@ -14,7 +25,7 @@
             "args": [
                 "-config", "${workspaceFolder}/test/config.local.yaml",
                 "-menu-config","${workspaceFolder}/test/config.menu.local.md",
-                "-target-dir","${workspaceFolder}/compose/"
+                "-working-dir","${workspaceFolder}/working_dir/"
             ]
         }
     ]

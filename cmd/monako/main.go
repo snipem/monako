@@ -7,13 +7,13 @@ import (
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/snipem/monako/internal/config"
 	"github.com/snipem/monako/internal/theme"
 	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/compose"
 	"github.com/snipem/monako/pkg/helpers"
 )
 
-func addWorkarounds(c config.ComposeConfig) {
+func addWorkarounds(c compose.Config) {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
@@ -25,7 +25,7 @@ func main() {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
-	var targetdir = flag.String("target-dir", "", "Target dir for composed site")
+	var workingdir = flag.String("working-dir", ".", "Working dir for composed site")
 	var baseURLflag = flag.String("base-url", "", "Custom base URL")
 	var trace = flag.Bool("trace", false, "Enable trace logging")
 	var failOnError = flag.Bool("fail-on-error", false, "Fail on document conversion errors")
@@ -37,7 +37,7 @@ func main() {
 		log.SetReportCaller(true)
 	}
 
-	config, err := config.LoadConfig(*configfilepath)
+	config, err := compose.LoadConfig(*configfilepath, *workingdir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,10 +49,9 @@ func main() {
 
 	addWorkarounds(config)
 
-	config.SetTargetDir(*targetdir)
 	config.CleanUp()
 
-	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +60,7 @@ func main() {
 
 	config.Compose()
 
-	err = helpers.HugoRun([]string{"--source", config.CompositionDir})
+	err = helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}
