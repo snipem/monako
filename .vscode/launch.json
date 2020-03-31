@@ -25,7 +25,7 @@
             "args": [
                 "-config", "${workspaceFolder}/test/config.local.yaml",
                 "-menu-config","${workspaceFolder}/test/config.menu.local.md",
-                "-target-dir","${workspaceFolder}/working_dir/"
+                "-working-dir","${workspaceFolder}/working_dir/"
             ]
         }
     ]

@@ -25,7 +25,7 @@ type Config struct {
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
-func LoadConfig(configfilepath string, targetdir string) (config Config, err error) {
+func LoadConfig(configfilepath string, workingdir string) (config Config, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
@@ -35,7 +35,7 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 	err = yaml.Unmarshal(source, &config)
 
 	// Set standard composition subdirectory
-	config.setTargetDir(targetdir)
+	config.setWorkingDir(workingdir)
 
 	// As demanded by Hugo
 	config.ContentWorkingDir = filepath.Join(config.HugoWorkingDir, "content")
@@ -52,6 +52,7 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 // Compose builds the Monako directory structure
 func (c *Config) Compose() {
 
+	// If Origin has now own whitelist, use the Compose Whitelist
 	for _, o := range c.Origins {
 		if o.FileWhitelist == nil {
 			o.FileWhitelist = c.FileWhitelist
@@ -77,8 +78,8 @@ func (config *Config) CleanUp() {
 	}
 }
 
-// setTargetDir sets the target dir. Standard is relative to the current directory (".")
-func (c *Config) setTargetDir(targetdir string) {
+// setWorkingDir sets the target dir. Standard is relative to the current directory (".")
+func (c *Config) setWorkingDir(targetdir string) {
 	if targetdir != "" {
 		c.HugoWorkingDir = filepath.Join(targetdir, "compose")
 	}

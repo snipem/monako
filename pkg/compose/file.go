@@ -67,7 +67,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 			originFile.parentOrigin = &origin
 
-			originFile.LocalPath = getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, originFile.RemotePath)
+			originFile.LocalPath = getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, originFile.RemotePath)
 			log.Info(originFile)
 
 			// var err error
@@ -101,7 +101,7 @@ func (file OriginFile) composeFile() {
 
 }
 
-// createParentDir creates the parent directory for the file in the local filesystem
+// createParentDir creates the parent directories for the file in the local filesystem
 func (file OriginFile) createParentDir() {
 	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
 	err := os.MkdirAll(filepath.Dir(file.LocalPath), filemode)
@@ -155,8 +155,8 @@ func (file OriginFile) copyMarkupFile() {
 	}
 }
 
-func getLocalFilePath(composeDir, remoteDocDir string, remoteFile string) string {
+func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteFile string) string {
 	// Since a remoteDocDir is defined, this should not be created in the local filesystem
 	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)
-	return filepath.Join(composeDir, relativeFilePath)
+	return filepath.Join(composeDir, targetDir, relativeFilePath)
 }
