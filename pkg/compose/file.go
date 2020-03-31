@@ -137,6 +137,9 @@ func (file OriginFile) copyMarkupFile() {
 	// }
 
 	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
+	if err != nil {
+		log.Fatalf("Error copying markup file %s", err)
+	}
 
 	var dirty, _ = ioutil.ReadAll(bf)
 	var content []byte

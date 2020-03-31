@@ -61,7 +61,6 @@ func (origin *Origin) CloneDir() {
 		log.Fatal(err)
 	}
 
-	return
 }
 
 // GetFormat determines the markup format of a file by it's filename.
