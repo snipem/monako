@@ -41,8 +41,8 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 	config.ContentWorkingDir = filepath.Join(config.HugoWorkingDir, "content")
 
 	// Set pointer to config for each origin
-	for _, origin := range config.Origins {
-		origin.config = &config
+	for i := range config.Origins {
+		config.Origins[i].config = &config
 	}
 
 	return
