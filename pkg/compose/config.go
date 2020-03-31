@@ -2,9 +2,10 @@ package compose
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"gopkg.in/yaml.v2"
 )
@@ -34,12 +35,16 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 	err = yaml.Unmarshal(source, &config)
 
 	// Set standard composition subdirectory
-	config.HugoWorkingDir = filepath.Join(targetdir, "compose")
+	config.setTargetDir(targetdir)
 
 	// As demanded by Hugo
 	config.ContentWorkingDir = filepath.Join(config.HugoWorkingDir, "content")
 
-	log.Fatal(config)
+	// Set pointer to config for each origin
+	for _, origin := range config.Origins {
+		origin.config = &config
+	}
+
 	return
 
 }
@@ -47,29 +52,34 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 // Compose builds the Monako directory structure
 func (c *Config) Compose() {
 
-	contentDir := filepath.Join(c.HugoWorkingDir, c.ContentWorkingDir)
-
 	for _, o := range c.Origins {
 		if o.FileWhitelist == nil {
 			o.FileWhitelist = c.FileWhitelist
 		}
 		o.CloneDir()
-		o.ComposeDir(contentDir)
+		o.ComposeDir()
 	}
 
 }
 
 // CleanUp removes the compose folder
-func (c *Config) CleanUp() {
-	err := os.RemoveAll(c.HugoWorkingDir)
+func (config *Config) CleanUp() {
+
+	if (config.HugoWorkingDir) == "." {
+		log.WithFields(log.Fields{
+			"Working dir": config.HugoWorkingDir,
+			"BaseURL":     config.BaseURL,
+		}).Fatalf("Hugo working dir can't be .")
+	}
+	err := os.RemoveAll(config.HugoWorkingDir)
 	if err != nil {
-		log.Fatalf("Error while cleaning up: %s", err)
+		log.Fatalf("CleanUp: Error while cleaning up: %s", err)
 	}
 }
 
-// SetTargetDir sets the target dir. Standard is relative to the current directory (".")
-func (c *Config) SetTargetDir(targetdir string) {
+// setTargetDir sets the target dir. Standard is relative to the current directory (".")
+func (c *Config) setTargetDir(targetdir string) {
 	if targetdir != "" {
-		c.HugoWorkingDir = filepath.Clean(targetdir)
+		c.HugoWorkingDir = filepath.Join(targetdir, "compose")
 	}
 }

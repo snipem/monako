@@ -5,11 +5,12 @@ package workarounds
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // AsciidocPostprocessing fixes common errors with Hugo processing vanilla Asciidoc
@@ -108,7 +109,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	os.Setenv("PATH", tempDir+":"+os.Getenv("PATH"))
 
-	log.Printf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
+	log.Debugf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
 
 	return fakeBinary
 

@@ -39,7 +39,7 @@ func TestCopyDir(t *testing.T) {
 		o.SourceDir = "test"
 		o.FileWhitelist = whitelist
 		tempDir := filet.TmpDir(t, "")
-		o.ComposeDir(tempDir)
+		o.ComposeDir()
 		expectedTargetFile := filepath.Join(tempDir, "compose", "test_docs/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)
 
@@ -51,7 +51,7 @@ func TestCopyDir(t *testing.T) {
 		o.SourceDir = "test/test_docs/"
 		o.FileWhitelist = whitelist
 		tempDir := filet.TmpDir(t, "")
-		o.ComposeDir(tempDir)
+		o.ComposeDir()
 		expectedTargetFile := filepath.Join(tempDir, "compose", "/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)
 
@@ -59,27 +59,4 @@ func TestCopyDir(t *testing.T) {
 		assert.Contains(t, string(b), "# Markdown Doc 1")
 	})
 
-}
-
-func TestLocalPath(t *testing.T) {
-
-	assert.Equal(t,
-		"/tmp/compose/filename.md",
-		getLocalFilePath("/tmp/", "compose", ".", "filename.md"),
-		"Simple setup, always first level")
-
-	assert.Equal(t,
-		"/tmp/compose/filename.md",
-		getLocalFilePath("/tmp/", "compose", "docs", "docs/filename.md"),
-		"With remote 'docs' folder")
-
-	assert.Equal(t,
-		"/tmp/compose/docs/filename.md",
-		getLocalFilePath("/tmp/", "compose", ".", "docs/filename.md"),
-		"With remote 'docs' folder, but keep structure")
-
-	assert.Equal(t,
-		"compose/filename.md",
-		getLocalFilePath(".", "compose", ".", "filename.md"),
-		"Path is relative")
 }

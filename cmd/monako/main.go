@@ -49,10 +49,9 @@ func main() {
 
 	addWorkarounds(config)
 
-	config.SetTargetDir(*targetdir)
 	config.CleanUp()
 
-	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.CompositionDir})
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +60,7 @@ func main() {
 
 	config.Compose()
 
-	err = helpers.HugoRun([]string{"--source", config.CompositionDir})
+	err = helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
 	if *failOnError && err != nil {
 		log.Fatal(err)
 	}
