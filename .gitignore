@@ -25,3 +25,5 @@ coverage.out.tmp
 
 # Monako bin
 monako
+
+/compose
