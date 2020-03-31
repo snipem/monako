@@ -146,7 +146,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
 			// Just add this file to originFiles
 			var originFile OriginFile
-			originFile.Path = filepath.Join(startdir, file.Name())
+			originFile.RemotePath = filepath.Join(startdir, file.Name())
 			originFile.parentOrigin = &origin
 
 			// var err error
@@ -156,7 +156,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 			// 	log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
 			// }
 
-			log.Println(originFile.Path)
+			log.Println(originFile.RemotePath)
 
 			originFiles = append(originFiles, originFile)
 		}
@@ -168,7 +168,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 func (file OriginFile) composeFile(rootDir string) {
 
 	sourceDir := file.parentOrigin.SourceDir
-	relativeFilePath := strings.TrimPrefix(file.Path, sourceDir)
+	relativeFilePath := strings.TrimPrefix(file.RemotePath, sourceDir)
 
 	fileDirs := filepath.Dir(relativeFilePath)
 	copyDir := filepath.Join(rootDir, file.parentOrigin.TargetDir, fileDirs)
@@ -190,14 +190,14 @@ func (file OriginFile) composeFile(rootDir string) {
 	default:
 		file.copyRegularFile(targetFilename)
 	}
-	log.Printf("%s -> %s\n", file.Path, targetFilename)
+	log.Printf("%s -> %s\n", file.RemotePath, targetFilename)
 
 }
 
 func (file OriginFile) copyRegularFile(targetFilename string) {
 
 	origin := file.parentOrigin
-	f, err := origin.filesystem.Open(file.Path)
+	f, err := origin.filesystem.Open(file.RemotePath)
 
 	if err != nil {
 		log.Fatal(err)
@@ -221,7 +221,7 @@ func (file OriginFile) copyMarkupFile(targetFilename string) {
 	// 	log.Fatal(err)
 	// }
 
-	bf, err := file.parentOrigin.filesystem.Open(file.Path)
+	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
 
 	var dirty, _ = ioutil.ReadAll(bf)
 	var content []byte
@@ -237,4 +237,10 @@ func (file OriginFile) copyMarkupFile(targetFilename string) {
 	if err != nil {
 		log.Fatalf("Error writing file %s", err)
 	}
+}
+
+func getLocalFilePath(localWorkingdir string, composeDir string, remoteDocDir string, remoteFile string) string {
+	// Since a remoteDocDir is defined, this should not be created in the local filesystem
+	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)
+	return filepath.Join(localWorkingdir, composeDir, relativeFilePath)
 }
