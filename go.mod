@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
+	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
 	github.com/artdarek/go-unzip v1.0.0
 	github.com/bombsimon/wsl/v2 v2.2.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect
