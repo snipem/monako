@@ -9,6 +9,7 @@ require (
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-critic/go-critic v0.4.3 // indirect
+	github.com/go-delve/delve v1.4.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/gohugoio/hugo v0.67.0

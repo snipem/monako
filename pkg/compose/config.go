@@ -1,4 +1,4 @@
-package config
+package compose
 
 import (
 	"io/ioutil"
@@ -6,16 +6,15 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
 
 // ComposeConfig is the root of the Monako config
 type ComposeConfig struct {
-	BaseURL       string           `yaml:"baseURL"`
-	Title         string           `yaml:"title"`
-	Origins       []helpers.Origin `yaml:"origins"`
-	FileWhitelist []string         `yaml:"whitelist"`
+	BaseURL       string   `yaml:"baseURL"`
+	Title         string   `yaml:"title"`
+	Origins       []Origin `yaml:"origins"`
+	FileWhitelist []string `yaml:"whitelist"`
 
 	CompositionDir string
 	ContentDir     string
@@ -35,6 +34,7 @@ func LoadConfig(configfilepath string, targetdir string) (config ComposeConfig, 
 	config.CompositionDir = filepath.Join(targetdir, "compose")
 	// As demanded by Hugo
 	config.ContentDir = "content"
+	log.Fatal(config)
 	return
 
 }

@@ -7,13 +7,13 @@ import (
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/snipem/monako/internal/config"
 	"github.com/snipem/monako/internal/theme"
 	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/compose"
 	"github.com/snipem/monako/pkg/helpers"
 )
 
-func addWorkarounds(c config.ComposeConfig) {
+func addWorkarounds(c compose.ComposeConfig) {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
@@ -37,7 +37,7 @@ func main() {
 		log.SetReportCaller(true)
 	}
 
-	config, err := config.LoadConfig(*configfilepath, *targetdir)
+	config, err := compose.LoadConfig(*configfilepath, *targetdir)
 	if err != nil {
 		log.Fatal(err)
 	}
