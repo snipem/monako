@@ -148,6 +148,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 			var originFile OriginFile
 			originFile.RemotePath = filepath.Join(startdir, file.Name())
 			originFile.parentOrigin = &origin
+			originFile.LocalPath = getLocalFilePath(origin.)
 
 			// var err error
 			// originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)

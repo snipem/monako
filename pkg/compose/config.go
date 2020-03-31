@@ -16,8 +16,11 @@ type Config struct {
 	Origins       []Origin `yaml:"origins"`
 	FileWhitelist []string `yaml:"whitelist"`
 
-	CompositionDir string
-	ContentDir     string
+	// HugoWorkingDir is the working dir for the Composition
+	HugoWorkingDir string
+
+	// ContentWorkingDir is the main working dir and where all the content is stored in
+	ContentWorkingDir string
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
@@ -31,9 +34,11 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 	err = yaml.Unmarshal(source, &config)
 
 	// Set standard composition subdirectory
-	config.CompositionDir = filepath.Join(targetdir, "compose")
+	config.HugoWorkingDir = filepath.Join(targetdir, "compose")
+
 	// As demanded by Hugo
-	config.ContentDir = "content"
+	config.ContentWorkingDir = filepath.Join(config.HugoWorkingDir, "content")
+
 	log.Fatal(config)
 	return
 
@@ -42,7 +47,7 @@ func LoadConfig(configfilepath string, targetdir string) (config Config, err err
 // Compose builds the Monako directory structure
 func (c *Config) Compose() {
 
-	contentDir := filepath.Join(c.CompositionDir, c.ContentDir)
+	contentDir := filepath.Join(c.HugoWorkingDir, c.ContentWorkingDir)
 
 	for _, o := range c.Origins {
 		if o.FileWhitelist == nil {
@@ -56,7 +61,7 @@ func (c *Config) Compose() {
 
 // CleanUp removes the compose folder
 func (c *Config) CleanUp() {
-	err := os.RemoveAll(c.CompositionDir)
+	err := os.RemoveAll(c.HugoWorkingDir)
 	if err != nil {
 		log.Fatalf("Error while cleaning up: %s", err)
 	}
@@ -65,6 +70,6 @@ func (c *Config) CleanUp() {
 // SetTargetDir sets the target dir. Standard is relative to the current directory (".")
 func (c *Config) SetTargetDir(targetdir string) {
 	if targetdir != "" {
-		c.CompositionDir = filepath.Clean(targetdir)
+		c.HugoWorkingDir = filepath.Clean(targetdir)
 	}
 }

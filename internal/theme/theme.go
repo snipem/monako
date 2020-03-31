@@ -17,7 +17,7 @@ const themeName = "monako-book-master"
 // CreateHugoPage extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func CreateHugoPage(composeConfig compose.Config, menuconfig string) {
 
-	dir := filepath.Join(composeConfig.CompositionDir, composeConfig.ContentDir, monakoMenuDirectory)
+	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
 	dst := filepath.Join(dir, "index.md")
 
 	extractTheme(composeConfig)
@@ -73,7 +73,7 @@ BookDateFormat = 'Jan 2, 2006'
 BookSearch = true
 BookComments = true
 	`, composeConfig.BaseURL, composeConfig.Title, themeName, monakoMenuDirectory)
-	return ioutil.WriteFile(filepath.Join(composeConfig.CompositionDir, "config.toml"), []byte(configContent), os.FileMode(0700))
+	return ioutil.WriteFile(filepath.Join(composeConfig.HugoWorkingDir, "config.toml"), []byte(configContent), os.FileMode(0700))
 }
 
 func extractTheme(composeConfig compose.Config) {
@@ -99,7 +99,7 @@ func extractTheme(composeConfig compose.Config) {
 	}
 
 	// TODO Don't use a library that depends on local files
-	uz := unzip.New(tempfilename, filepath.Join(composeConfig.CompositionDir, "themes"))
+	uz := unzip.New(tempfilename, filepath.Join(composeConfig.HugoWorkingDir, "themes"))
 	err = uz.Extract()
 	if err != nil {
 		log.Fatalf("Error extracting theme: %s ", err)
