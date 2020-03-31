@@ -9,8 +9,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ComposeConfig is the root of the Monako config
-type ComposeConfig struct {
+// Config is the root of the Monako config
+type Config struct {
 	BaseURL       string   `yaml:"baseURL"`
 	Title         string   `yaml:"title"`
 	Origins       []Origin `yaml:"origins"`
@@ -21,7 +21,7 @@ type ComposeConfig struct {
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
-func LoadConfig(configfilepath string, targetdir string) (config ComposeConfig, err error) {
+func LoadConfig(configfilepath string, targetdir string) (config Config, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
@@ -40,7 +40,7 @@ func LoadConfig(configfilepath string, targetdir string) (config ComposeConfig, 
 }
 
 // Compose builds the Monako directory structure
-func (c *ComposeConfig) Compose() {
+func (c *Config) Compose() {
 
 	contentDir := filepath.Join(c.CompositionDir, c.ContentDir)
 
@@ -55,7 +55,7 @@ func (c *ComposeConfig) Compose() {
 }
 
 // CleanUp removes the compose folder
-func (c *ComposeConfig) CleanUp() {
+func (c *Config) CleanUp() {
 	err := os.RemoveAll(c.CompositionDir)
 	if err != nil {
 		log.Fatalf("Error while cleaning up: %s", err)
@@ -63,7 +63,7 @@ func (c *ComposeConfig) CleanUp() {
 }
 
 // SetTargetDir sets the target dir. Standard is relative to the current directory (".")
-func (c *ComposeConfig) SetTargetDir(targetdir string) {
+func (c *Config) SetTargetDir(targetdir string) {
 	if targetdir != "" {
 		c.CompositionDir = filepath.Clean(targetdir)
 	}

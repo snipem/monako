@@ -73,9 +73,9 @@ func (origin *Origin) CloneDir() {
 // GetFormat determines the markup format of a file by it's filename.
 // Results can be Markdown and Asciidoc
 func (file OriginFile) GetFormat() string {
-	if helpers.IsMarkdown(file.Path) {
+	if helpers.IsMarkdown(file.RemotePath) {
 		return Markdown
-	} else if helpers.IsAsciidoc(file.Path) {
+	} else if helpers.IsAsciidoc(file.RemotePath) {
 		return Asciidoc
 	} else {
 		return ""
@@ -98,9 +98,13 @@ type Origin struct {
 	filesystem billy.Filesystem
 }
 
+// OriginFile represents a single file of an origin
 type OriginFile struct {
 	Commit *object.Commit
-	Path   string
+	// RemotePath is the path in the origin repository
+	RemotePath string
+	// LocalPath is the absolute path on the local disk
+	LocalPath string
 
 	parentOrigin *Origin
 }
@@ -116,6 +120,7 @@ func (origin Origin) ComposeDir(rootDir string) {
 	}
 }
 
+// NewOrigin returns a new origin with all needed fields
 func NewOrigin(url string, branch string, sourceDir string, targetDir string) *Origin {
 	o := new(Origin)
 	o.URL = url

@@ -13,7 +13,7 @@ import (
 	"github.com/snipem/monako/pkg/helpers"
 )
 
-func addWorkarounds(c compose.ComposeConfig) {
+func addWorkarounds(c compose.Config) {
 	if runtime.GOOS == "windows" {
 		log.Println("Can't apply asciidoc diagram workaround on windows")
 	} else {
