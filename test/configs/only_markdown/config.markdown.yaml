@@ -1,10 +1,9 @@
 ---
     baseURL : "https://example.com/"
-    title : "Local Test Page"
+    title : "Local Test Page - Only Markdown"
   
     whitelist:
       - ".md"
-      - ".adoc"
       - ".jpg"
       - ".jpeg"
       - ".svg"
@@ -14,7 +13,7 @@
     origins:
   
     # Files have to be commited to appear!
-    - src: https://github.com/snipem/monako.git
-      branch: develop
-      docdir: test/test_docs
+    - src: https://github.com/snipem/monako-test.git
+      branch: master
+      docdir: .
       targetdir: docs/test/

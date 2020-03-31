@@ -11,10 +11,8 @@ c.out
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-compose
 secrets.env
 *.prod.*
-monako
 tmp
 internal/theme/bindata.go
 builds
@@ -23,3 +21,9 @@ static
 c.out.tmp
 tmp.empty.css
 empty.css
+coverage.out.tmp
+
+# Monako bin
+monako
+
+/compose

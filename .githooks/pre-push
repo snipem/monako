@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+golangci-lint run
+# Maybe this is obsolete
+golint -set_exit_status ./... 
+make test

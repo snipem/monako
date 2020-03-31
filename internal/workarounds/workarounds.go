@@ -5,10 +5,12 @@ package workarounds
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // AsciidocPostprocessing fixes common errors with Hugo processing vanilla Asciidoc
@@ -43,6 +45,9 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 	return []byte(d)
 }
 
+// AddFakeAsciidoctorBinForDiagramsToPath adds a fake asciidoctor bin to the PATH
+// to trick Hugo into taking this one. This makes it possible to manipulate the parameters
+// for asciidoctor while being called from Hugo.
 func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	url, err := url.Parse(baseURL)
@@ -90,12 +95,12 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	fi
 	`, escapedPath)
 
-	tempDir := os.TempDir() + "/asciidoctor_fake_binary"
+	tempDir := filepath.Join(os.TempDir(), "asciidoctor_fake_binary")
 	err = os.Mkdir(tempDir, os.FileMode(0700))
 	if err != nil && !os.IsExist(err) {
 		log.Fatalf("Error creating asciidoctor fake dir : %s", err)
 	}
-	fakeBinary := tempDir + "/asciidoctor"
+	fakeBinary := filepath.Join(tempDir, "asciidoctor")
 
 	err = ioutil.WriteFile(fakeBinary, []byte(shellscript), os.FileMode(0700))
 	if err != nil {
@@ -104,7 +109,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	os.Setenv("PATH", tempDir+":"+os.Getenv("PATH"))
 
-	log.Printf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
+	log.Debugf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
 
 	return fakeBinary
 
