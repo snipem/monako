@@ -1,6 +1,7 @@
 package compose
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -87,22 +88,8 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 func (file OriginFile) composeFile() {
 
-	// sourceDir := file.parentOrigin.SourceDir
-	// relativeFilePath := strings.TrimPrefix(file.RemotePath, sourceDir)
-
-	// fileDirs := filepath.Dir(relativeFilePath)
-	// copyDir := filepath.Join(rootDir, file.parentOrigin.TargetDir, fileDirs)
-
-	// // log.Printf("Trying to create '%s'", copyDir)
-	// err := os.MkdirAll(copyDir, filemode)
-	// if err != nil {
-	// 	log.Fatalf("Error when creating '%s': %s", copyDir, err)
-	// }
-
-	// var targetFilename = filepath.Join(rootDir, file.parentOrigin.TargetDir, relativeFilePath)
+	file.createParentDir()
 	contentFormat := file.GetFormat()
-
-	// // gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
 
 	switch contentFormat {
 	case Asciidoc, Markdown:
@@ -110,8 +97,17 @@ func (file OriginFile) composeFile() {
 	default:
 		file.copyRegularFile()
 	}
-	log.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
+	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
+}
+
+// createParentDir creates the parent directory for the file in the local filesystem
+func (file OriginFile) createParentDir() {
+	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
+	err := os.MkdirAll(filepath.Dir(file.LocalPath), filemode)
+	if err != nil {
+		log.Fatalf("Error when creating '%s': %s", filepath.Dir(file.LocalPath), err)
+	}
 }
 
 func (file OriginFile) copyRegularFile() {
