@@ -1,6 +1,7 @@
 package compose
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -16,12 +17,15 @@ import (
 
 // OriginFile represents a single file of an origin
 type OriginFile struct {
+
+	// Commit is the commit info about this file
 	Commit *object.Commit
 	// RemotePath is the path in the origin repository
 	RemotePath string
 	// LocalPath is the absolute path on the local disk
 	LocalPath string
 
+	// parentOrigin of this file
 	parentOrigin *Origin
 }
 
@@ -53,31 +57,27 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 	files, _ := origin.filesystem.ReadDir(startdir)
 	for _, file := range files {
 
+		// This is the path as stored in the remote repo
+		remotePath := filepath.Join(startdir, file.Name())
+
 		if file.IsDir() {
-			// Recurse over file and add there files to originFiles
+			// Recurse over file and add their files to originFiles
 			originFiles = append(originFiles,
 				origin.getWhitelistedFiles(
-					filepath.Join(startdir, file.Name()),
+					remotePath,
 				)...)
 		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
-			// Just add this file to originFiles
-			var originFile OriginFile
-			originFile.RemotePath = filepath.Join(startdir, file.Name())
 
-			originFile.parentOrigin = &origin
+			localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
 
-			originFile.LocalPath = getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, originFile.RemotePath)
-			log.Info(originFile)
+			originFile := OriginFile{
+				RemotePath: remotePath,
+				LocalPath:  localPath,
 
-			// var err error
-			// originFile.Commit, err = GetCommitInfo(origin.repo, originFile.Path)
+				parentOrigin: &origin,
+			}
 
-			// if err != nil {
-			// 	log.Fatalf("Can't extract git info for %s: %s", originFile.Path, err)
-			// }
-
-			log.Println(originFile.RemotePath)
-
+			// Add this file to originFiles
 			originFiles = append(originFiles, originFile)
 		}
 
@@ -87,22 +87,8 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 func (file OriginFile) composeFile() {
 
-	// sourceDir := file.parentOrigin.SourceDir
-	// relativeFilePath := strings.TrimPrefix(file.RemotePath, sourceDir)
-
-	// fileDirs := filepath.Dir(relativeFilePath)
-	// copyDir := filepath.Join(rootDir, file.parentOrigin.TargetDir, fileDirs)
-
-	// // log.Printf("Trying to create '%s'", copyDir)
-	// err := os.MkdirAll(copyDir, filemode)
-	// if err != nil {
-	// 	log.Fatalf("Error when creating '%s': %s", copyDir, err)
-	// }
-
-	// var targetFilename = filepath.Join(rootDir, file.parentOrigin.TargetDir, relativeFilePath)
+	file.createParentDir()
 	contentFormat := file.GetFormat()
-
-	// // gitFilepath, _ := filepath.Rel("/", filepath.Join(fs.Root(), file.Name()))
 
 	switch contentFormat {
 	case Asciidoc, Markdown:
@@ -110,8 +96,17 @@ func (file OriginFile) composeFile() {
 	default:
 		file.copyRegularFile()
 	}
-	log.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
+	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
+}
+
+// createParentDir creates the parent directories for the file in the local filesystem
+func (file OriginFile) createParentDir() {
+	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
+	err := os.MkdirAll(filepath.Dir(file.LocalPath), filemode)
+	if err != nil {
+		log.Fatalf("Error when creating '%s': %s", filepath.Dir(file.LocalPath), err)
+	}
 }
 
 func (file OriginFile) copyRegularFile() {
@@ -142,6 +137,9 @@ func (file OriginFile) copyMarkupFile() {
 	// }
 
 	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
+	if err != nil {
+		log.Fatalf("Error copying markup file %s", err)
+	}
 
 	var dirty, _ = ioutil.ReadAll(bf)
 	var content []byte
@@ -159,8 +157,8 @@ func (file OriginFile) copyMarkupFile() {
 	}
 }
 
-func getLocalFilePath(composeDir, remoteDocDir string, remoteFile string) string {
+func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteFile string) string {
 	// Since a remoteDocDir is defined, this should not be created in the local filesystem
 	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)
-	return filepath.Join(composeDir, relativeFilePath)
+	return filepath.Join(composeDir, targetDir, relativeFilePath)
 }
