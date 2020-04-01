@@ -3,6 +3,7 @@ package compose
 // run: make test
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -13,6 +14,7 @@ import (
 	"gopkg.in/src-d/go-billy.v4/memfs"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
@@ -88,4 +90,38 @@ type Origin struct {
 	repo       *git.Repository
 	config     *Config
 	filesystem billy.Filesystem
+}
+
+// GetCommitInfo returns the Commit Info for a given file of the repository
+// identified by it's filename
+func (origin *Origin) GetCommitInfo(filename string) (*object.Commit, error) {
+
+	r := origin.repo
+	// TODO what is wrong here?
+	cIter, err := r.Log(&git.LogOptions{
+		FileName: &filename,
+		All:      true,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("Error while opening %s from git log: %s", filename, err)
+	}
+
+	var returnCommit *object.Commit
+
+	err = cIter.ForEach(func(commit *object.Commit) error {
+		if commit == nil {
+			return errors.New("Commit is nil")
+		}
+		returnCommit = commit
+		return nil
+	},
+	)
+	defer cIter.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return returnCommit, nil
 }
