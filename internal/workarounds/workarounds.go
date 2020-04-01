@@ -64,17 +64,16 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
 
+	// TODO: Use variables
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
-	if [ -f /usr/local/bin/asciidoctor ]; then
-	  ad="/usr/local/bin/asciidoctor"
-	else
-	  ad="/usr/bin/asciidoctor"
-	fi
+
+	# Use first non fake-binary in path as asciidoctorbin
+	ad=$(which -a asciidoctor | grep -v monako_asciidoctor_fake_binary | head -n 1)
 
 	# Use empty css to trick asciidoctor into using none without error
 	echo "" > empty.css
-	
+
 	$ad -B . \
 		-r asciidoctor-diagram \
 		-a nofooter \
@@ -86,6 +85,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	# For some reason static is not parsed with integrated Hugo
 	mkdir -p compose/public/diagram
 	
+	# Hopefully this will also be fixed by https://github.com/gohugoio/hugo/pull/6561
 	if ls *.svg >/dev/null 2>&1; then
 	  mv -f *.svg compose/public/diagram
 	fi
@@ -95,7 +95,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	fi
 	`, escapedPath)
 
-	tempDir := filepath.Join(os.TempDir(), "asciidoctor_fake_binary")
+	tempDir := filepath.Join(os.TempDir(), "monako_asciidoctor_fake_binary")
 	err = os.Mkdir(tempDir, os.FileMode(0700))
 	if err != nil && !os.IsExist(err) {
 		log.Fatalf("Error creating asciidoctor fake dir : %s", err)
