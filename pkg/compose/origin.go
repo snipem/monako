@@ -17,8 +17,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
-var filemode = os.FileMode(0700)
-
 // Asciidoc is a const for identifying Asciidoc Documents
 const Asciidoc = "ASCIIDOC"
 
@@ -29,7 +27,7 @@ const Markdown = "MARKDOWN"
 // A virtual filesystem is returned containing the cloned files.
 func (origin *Origin) CloneDir() {
 
-	log.Printf("Cloning in to %s with branch %s", origin.URL, origin.Branch)
+	fmt.Printf("Cloning in to '%s' with branch '%s'\n", origin.URL, origin.Branch)
 
 	origin.filesystem = memfs.New()
 
@@ -39,7 +37,7 @@ func (origin *Origin) CloneDir() {
 	password := os.Getenv(origin.EnvPassword)
 
 	if username != "" && password != "" {
-		log.Printf("Using username and password")
+		log.Printf("Using username and password stored in env variables\n")
 		basicauth = http.BasicAuth{
 			Username: username,
 			Password: password,
@@ -55,11 +53,11 @@ func (origin *Origin) CloneDir() {
 		Auth:          &basicauth,
 	})
 
-	origin.repo = repo
-
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	origin.repo = repo
 
 }
 

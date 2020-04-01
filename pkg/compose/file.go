@@ -15,6 +15,8 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
+const standardFilemode = os.FileMode(0700)
+
 // OriginFile represents a single file of an origin
 type OriginFile struct {
 
@@ -34,6 +36,10 @@ type OriginFile struct {
 // information
 func (origin Origin) ComposeDir() {
 	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
+
+	if len(origin.Files) == 0 {
+		fmt.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
+	}
 
 	for _, file := range origin.Files {
 		file.composeFile()
@@ -58,6 +64,8 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 	for _, file := range files {
 
 		// This is the path as stored in the remote repo
+		// This can only be gathered here, because of recursing through
+		// the file system
 		remotePath := filepath.Join(startdir, file.Name())
 
 		if file.IsDir() {
@@ -77,7 +85,7 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 				parentOrigin: &origin,
 			}
 
-			// Add this file to originFiles
+			// Add the current file to the list of files returned
 			originFiles = append(originFiles, originFile)
 		}
 
@@ -103,7 +111,7 @@ func (file OriginFile) composeFile() {
 // createParentDir creates the parent directories for the file in the local filesystem
 func (file OriginFile) createParentDir() {
 	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
-	err := os.MkdirAll(filepath.Dir(file.LocalPath), filemode)
+	err := os.MkdirAll(filepath.Dir(file.LocalPath), standardFilemode)
 	if err != nil {
 		log.Fatalf("Error when creating '%s': %s", filepath.Dir(file.LocalPath), err)
 	}
@@ -131,6 +139,8 @@ func (file OriginFile) copyRegularFile() {
 func (file OriginFile) copyMarkupFile() {
 
 	// TODO: Only use strings not []byte
+
+	// TODO: Add GetCommitInfo function
 	// commitinfo, err := GetCommitInfo(g, gitFilepath)
 	// if err != nil {
 	// 	log.Fatal(err)
@@ -150,13 +160,19 @@ func (file OriginFile) copyMarkupFile() {
 	} else if contentFormat == Asciidoc {
 		content = workarounds.AsciidocPostprocessing(dirty)
 	}
+
+	// TODO: Add ExpandFrontmatter function
 	// content = []byte(ExpandFrontmatter(string(content), gitFilepath, file.Commit))
-	err = ioutil.WriteFile(file.LocalPath, content, filemode)
+
+	err = ioutil.WriteFile(file.LocalPath, content, standardFilemode)
 	if err != nil {
 		log.Fatalf("Error writing file %s", err)
 	}
 }
 
+// getLocalFilePath returns the desired local file path for a remote file in the local filesystem.
+// It is based on the local absolute composeDir, the remoteDocDir to strip it's path from the local file,
+// the target dir to generate the local path and the file name itself
 func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteFile string) string {
 	// Since a remoteDocDir is defined, this should not be created in the local filesystem
 	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)

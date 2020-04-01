@@ -9,6 +9,7 @@ import (
 	"github.com/alecthomas/assert"
 )
 
+// TestLocalPath tests if the local file path calculation for remote files is correct
 func TestLocalPath(t *testing.T) {
 
 	equalPath(t,
@@ -42,6 +43,9 @@ func TestLocalPath(t *testing.T) {
 		"Empty local target folder")
 }
 
+// equalPath is like assert.Equal but with ignoring operation system specifc pathes
+// This enables pathes to be compared on Unix "/" and Windows "\" systems, while being expected
+// in either format.
 func equalPath(t *testing.T, expected string, actual string, msg string) {
 
 	assert.Equal(t,

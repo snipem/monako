@@ -28,13 +28,13 @@ secrets:
 	touch config/secrets.env && source config/secrets.env
 
 test:
-	go test -v -covermode=count -coverprofile=coverage.out.tmp ./...
+	go test -covermode=count -coverprofile=coverage.out.tmp ./...
+	# -coverpkg=./...  also calculates the whole coverage, for example code that was involded by the main test
 	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
 	rm coverage.out.tmp
 
 test_deps:
 	go get golang.org/x/tools/cmd/cover
-	go get github.com/mattn/goveralls
 
 test_data:
 	git clone https://github.com/snipem/monako-test.git /tmp/testdata/monako-test

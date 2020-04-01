@@ -64,7 +64,7 @@ startLevel = 1
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings
 BookToC = true
-BookLogo = 'logo.png'
+BookLogo = '%s'
 BookMenuBundle = '/%s'
 BookSection = 'docs'
 #BookRepo = 'https://github.com/alex-shpak/hugo-book'
@@ -72,7 +72,7 @@ BookSection = 'docs'
 BookDateFormat = 'Jan 2, 2006'
 BookSearch = true
 BookComments = true
-	`, composeConfig.BaseURL, composeConfig.Title, themeName, monakoMenuDirectory)
+	`, composeConfig.BaseURL, composeConfig.Title, themeName, composeConfig.Logo, monakoMenuDirectory)
 	return ioutil.WriteFile(filepath.Join(composeConfig.HugoWorkingDir, "config.toml"), []byte(configContent), os.FileMode(0700))
 }
 

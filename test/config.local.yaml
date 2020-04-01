@@ -1,20 +1,21 @@
 ---
-    baseURL : "https://example.com/"
-    title : "Local Test Page"
-  
-    whitelist:
-      - ".md"
-      - ".adoc"
-      - ".jpg"
-      - ".jpeg"
-      - ".svg"
-      - ".gif"
-      - ".png"
-  
-    origins:
-  
-    # Files have to be commited to appear!
-    - src: https://github.com/snipem/monako.git
-      branch: develop
-      docdir: test/test_docs
-      targetdir: docs/test/
+  baseURL : "https://example.com/"
+  title : "Local Test Page"
+  logo : "docs/test/profile.png"
+
+  whitelist:
+    - ".md"
+    - ".adoc"
+    - ".jpg"
+    - ".jpeg"
+    - ".svg"
+    - ".gif"
+    - ".png"
+
+  origins:
+
+  # Files have to be commited to appear!
+  - src: https://github.com/snipem/monako-test.git
+    branch: master
+    docdir: .
+    targetdir: docs/test/
