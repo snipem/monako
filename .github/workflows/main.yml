@@ -31,11 +31,8 @@ jobs:
       uses: actions/setup-ruby@v1.0.0
     
     - name: Install asciidoctor
-      run: gem install --verbose asciidoctor asciidoctor-diagram
+      run: gem install asciidoctor asciidoctor-diagram
     
-    - name: debug
-      run: which asciidoctor
-
     - name: Checkout code
       uses: actions/checkout@v2
 
