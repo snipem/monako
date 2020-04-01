@@ -215,10 +215,16 @@ headless: true
 	`)
 
 	pathMonakoConfig := "../../test/configs/testgenerated/config.testgenerated.yaml"
-	ioutil.WriteFile(pathMonakoConfig, []byte(monakoConfig), os.FileMode(0600))
+	err := ioutil.WriteFile(pathMonakoConfig, []byte(monakoConfig), os.FileMode(0600))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	pathMenuConfig := "../../test/configs/testgenerated/menu.testgenerated.md"
-	ioutil.WriteFile(pathMenuConfig, []byte(menuConfig), os.FileMode(0600))
+	err = ioutil.WriteFile(pathMenuConfig, []byte(menuConfig), os.FileMode(0600))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return pathMonakoConfig, pathMenuConfig
 }
