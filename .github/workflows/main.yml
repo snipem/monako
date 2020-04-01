@@ -1,6 +1,12 @@
 # run: ga .github/workflows/main.yml && privatcommit -m "Working" && gps && gsleep 1s && open "https://github.com/snipem/monako/actions"
 name: Build Monako
-on: [pull_request] # only run on pull requests for now
+
+on:
+  pull_request: 
+  push:
+    branches:
+      - master
+
 # on: [push, pull_request]
 jobs:
   test:
