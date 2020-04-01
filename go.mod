@@ -5,11 +5,15 @@ go 1.12
 require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
 	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
-	github.com/artdarek/go-unzip v1.0.0
+	github.com/bradfitz/iter v0.0.0-20191230175014-e8f45d346db8 // indirect
+	github.com/c4milo/unpackit v0.0.0-20170704181138-4ed373e9ef1c
+	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gohugoio/hugo v0.67.0
 	github.com/golang/protobuf v1.3.2 // indirect
+	github.com/hooklift/assert v0.0.0-20170704181755-9d1defd6d214 // indirect
+	github.com/klauspost/pgzip v1.2.3 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
@@ -19,6 +23,7 @@ require (
 	github.com/spf13/cobra v0.0.7 // indirect
 	github.com/spf13/viper v1.6.2 // indirect
 	github.com/stretchr/testify v1.5.1
+	github.com/ulikunitz/xz v0.5.7 // indirect
 	github.com/yuin/goldmark v1.1.25 // indirect
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
