@@ -83,7 +83,7 @@ func TestMain(t *testing.T) {
 
 	})
 
-	t.Run("Check contents of served page", func(t *testing.T) {
+	t.Run("Check contents of served page markdown", func(t *testing.T) {
 
 		content, err := getContent(ts, "/docs/test/test_doc_markdown/index.html")
 		assert.NoError(t, err, "HTTP Call failed")
@@ -91,6 +91,17 @@ func TestMain(t *testing.T) {
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
 		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
 		assert.Contains(t, content, "<h3 id=\"markdown-doc-3\">Markdown Doc 3</h3>", "Check rendered Markdown")
+
+	})
+
+	t.Run("Check contents of served page asciidoc", func(t *testing.T) {
+
+		content, err := getContent(ts, "/docs/test/test_doc_asciidoc/index.html")
+		assert.NoError(t, err, "HTTP Call failed")
+
+		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
+		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
+		assert.Contains(t, content, "<a href=\"#_asciidoc_second_level\">Asciidoc Second Level</a>", "Check rendered Asciidoc")
 
 	})
 
@@ -185,10 +196,11 @@ func writeConfig(repo string) (string, string) {
 	monakoConfig := fmt.Sprintf(`
 ---
     baseURL : "https://example.com/"
-    title : "Local Test Page - Only Markdown"
+    title : "Local Test Page"
   
     whitelist:
       - ".md"
+      - ".adoc"
       - ".jpg"
       - ".jpeg"
       - ".svg"
