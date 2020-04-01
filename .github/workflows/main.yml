@@ -21,25 +21,34 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
-    - name: setup env
+    - name: Setup env
       shell: bash
       run: |
         echo "::set-env name=GOPATH::${{ github.workspace }}/../go"
         echo "::add-path::${{ github.workspace }}/../go/bin"
 
+    - name: Setup Ruby for use with actions
+      uses: actions/setup-ruby@v1.0.0
+    
+    - name: Install asciidoctor
+      run: gem install --verbose asciidoctor asciidoctor-diagram
+    
+    - name: debug
+      run: which asciidoctor
+
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: dependencies
+    - name: Dependencies
       run: make --always-make deps test_deps
 
     - name: Fetch Theme
       run: make --always-make theme
 
-    - name: test
+    - name: Test
       run: make --always-make test
 
-    - name: build
+    - name: Build
       run: make --always-make build
       
     - name: Codecov
