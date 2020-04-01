@@ -1,6 +1,7 @@
 ---
   baseURL : "https://example.com/"
   title : "My Projects"
+  logo : "docs/monako/profile.png"
 
   whitelist:
     - ".md"
@@ -12,6 +13,11 @@
     - ".png"
 
   origins:
+
+  - src: https://github.com/snipem/monako-test
+    branch: master
+    docdir: .
+    targetdir: docs/monako
 
   - src: https://github.com/snipem/commute-tube
     branch: master

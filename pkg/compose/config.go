@@ -15,6 +15,7 @@ type Config struct {
 	BaseURL       string   `yaml:"baseURL"`
 	Title         string   `yaml:"title"`
 	Origins       []Origin `yaml:"origins"`
+	Logo          string   `yaml:"logo"`
 	FileWhitelist []string `yaml:"whitelist"`
 
 	// HugoWorkingDir is the working dir for the Composition

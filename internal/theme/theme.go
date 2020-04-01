@@ -1,13 +1,14 @@
 package theme
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/artdarek/go-unzip"
+	"github.com/c4milo/unpackit"
 	"github.com/snipem/monako/pkg/compose"
 )
 
@@ -49,6 +50,9 @@ baseURL = '%s'
 title = '%s'
 theme = '%s'
 
+# Because of this bug: https://github.com/gohugoio/hugo/issues/4841
+timeout = 60000
+
 # Book configuration
 disablePathToLower = true
 enableGitInfo = false
@@ -64,7 +68,7 @@ startLevel = 1
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings
 BookToC = true
-BookLogo = 'logo.png'
+BookLogo = '%s'
 BookMenuBundle = '/%s'
 BookSection = 'docs'
 #BookRepo = 'https://github.com/alex-shpak/hugo-book'
@@ -72,7 +76,7 @@ BookSection = 'docs'
 BookDateFormat = 'Jan 2, 2006'
 BookSearch = true
 BookComments = true
-	`, composeConfig.BaseURL, composeConfig.Title, themeName, monakoMenuDirectory)
+	`, composeConfig.BaseURL, composeConfig.Title, themeName, composeConfig.Logo, monakoMenuDirectory)
 	return ioutil.WriteFile(filepath.Join(composeConfig.HugoWorkingDir, "config.toml"), []byte(configContent), os.FileMode(0700))
 }
 
@@ -81,28 +85,12 @@ func extractTheme(composeConfig compose.Config) {
 	if err != nil {
 		log.Fatalf("Error loading theme %s", err)
 	}
+	byteReader := bytes.NewReader(themezip)
 
-	// TODO Don't use local filesystem, keep it in memory
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "monako-theme-")
+	destPath, err := unpackit.Unpack(byteReader, filepath.Join(composeConfig.HugoWorkingDir, "themes"))
 	if err != nil {
-		log.Fatalf("Cannot create temporary file %s", err)
-	}
-	_, err = tmpFile.Write(themezip)
-	if err != nil {
-		log.Fatalf("Error temporary theme zip file %s", err)
+		log.Fatalf("Error extracting theme: %s", err)
 	}
 
-	tempfilename := tmpFile.Name()
-
-	if err != nil {
-		log.Fatalf("Error writing temp theme %s", err)
-	}
-
-	// TODO Don't use a library that depends on local files
-	uz := unzip.New(tempfilename, filepath.Join(composeConfig.HugoWorkingDir, "themes"))
-	err = uz.Extract()
-	if err != nil {
-		log.Fatalf("Error extracting theme: %s ", err)
-	}
-	os.RemoveAll(tempfilename)
+	log.Printf("Extracted %s", destPath)
 }

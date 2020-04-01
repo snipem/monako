@@ -24,12 +24,15 @@ func TestMain(t *testing.T) {
 
 	targetDir := filet.TmpDir(t, "")
 
+	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
+
 	os.Args = []string{
 		"monako",
 		"-fail-on-error",
 		"-working-dir", targetDir,
-		"-config", "../../test/configs/only_markdown/config.markdown.yaml",
-		"-menu-config", "../../test/configs/only_markdown/config.menu.markdown.md"}
+		"-config", monakoConfig,
+		"-menu-config", menuConfig}
+	t.Logf("Running Monako with %s", os.Args)
 	main()
 
 	t.Run("Check for Hugo input files", func(t *testing.T) {
@@ -68,7 +71,7 @@ func TestMain(t *testing.T) {
 			log.Fatal(err)
 		}
 
-		// TODO For some reason imgages seem to be ignored in urls
+		// TODO For some reason images seem to be ignored in urls
 		for _, url := range urls {
 			if strings.HasPrefix(url.String(), ts.URL) {
 				// t.Logf("Checking for local served url %s", url.String())
@@ -80,7 +83,7 @@ func TestMain(t *testing.T) {
 
 	})
 
-	t.Run("Check contents of served page", func(t *testing.T) {
+	t.Run("Check contents of served page markdown", func(t *testing.T) {
 
 		content, err := getContent(ts, "/docs/test/test_doc_markdown/index.html")
 		assert.NoError(t, err, "HTTP Call failed")
@@ -88,6 +91,17 @@ func TestMain(t *testing.T) {
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
 		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
 		assert.Contains(t, content, "<h3 id=\"markdown-doc-3\">Markdown Doc 3</h3>", "Check rendered Markdown")
+
+	})
+
+	t.Run("Check contents of served page asciidoc", func(t *testing.T) {
+
+		content, err := getContent(ts, "/docs/test/test_doc_asciidoc/index.html")
+		assert.NoError(t, err, "HTTP Call failed")
+
+		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
+		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
+		assert.Contains(t, content, "<a href=\"#_asciidoc_second_level\">Asciidoc Second Level</a>", "Check rendered Asciidoc")
 
 	})
 
@@ -163,4 +177,66 @@ func getURLKeyValuesFromHTML(content string, key string, baseURL string) ([]*url
 		}
 	}
 
+}
+
+// writeConfig writes a temporary config for a repo in the local test folders
+// of this project and returns the path to the monakoConfig and menuConfig
+// Also if the MONAKO_TEST_REPO environment variable is set, it will use this
+// environment variable for the repository stored in the Monako config.
+func writeConfig(repo string) (string, string) {
+
+	var testRepo string
+
+	if os.Getenv("MONAKO_TEST_REPO") != "" {
+		testRepo = os.Getenv("MONAKO_TEST_REPO")
+	} else {
+		testRepo = repo
+	}
+
+	monakoConfig := fmt.Sprintf(`
+---
+    baseURL : "https://example.com/"
+    title : "Local Test Page"
+  
+    whitelist:
+      - ".md"
+      - ".adoc"
+      - ".jpg"
+      - ".jpeg"
+      - ".svg"
+      - ".gif"
+      - ".png"
+  
+    origins:
+  
+    # Files have to be commited to appear!
+    - src: %s
+      branch: master
+      docdir: .
+      targetdir: docs/test/
+`, testRepo)
+
+	menuConfig := fmt.Sprintf(`
+---
+headless: true
+---
+
+- **Test docs**
+	- [Markdown]({{<relref "test_doc_markdown.md">}})
+<br />
+	`)
+
+	pathMonakoConfig := "../../test/configs/testgenerated/config.testgenerated.yaml"
+	err := ioutil.WriteFile(pathMonakoConfig, []byte(monakoConfig), os.FileMode(0600))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pathMenuConfig := "../../test/configs/testgenerated/menu.testgenerated.md"
+	err = ioutil.WriteFile(pathMenuConfig, []byte(menuConfig), os.FileMode(0600))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pathMonakoConfig, pathMenuConfig
 }

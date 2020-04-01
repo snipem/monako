@@ -25,19 +25,23 @@ theme: clean
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 secrets:
-	touch config/secrets.env && source config/secrets.env	
+	touch config/secrets.env && source config/secrets.env
 
 test:
 	go test -covermode=count -coverprofile=coverage.out.tmp ./...
+	# -coverpkg=./...  also calculates the whole coverage, for example code that was involded by the main test
 	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
 	rm coverage.out.tmp
 
-coverage: test
-	${GOPATH}/bin/goveralls -coverprofile=coverage.out -service=github -repotoken ${COVERALLS_TOKEN}
-
 test_deps:
 	go get golang.org/x/tools/cmd/cover
-	go get github.com/mattn/goveralls
+
+test_data:
+	git clone https://github.com/snipem/monako-test.git /tmp/testdata/monako-test
+
+# Use this for local tests, uses the locally cloned test data from test_data step
+test_local:
+	MONAKO_TEST_REPO="/tmp/testdata/monako-test" $(MAKE) test
 
 run_prd: build secrets
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
@@ -54,7 +58,9 @@ run_local: build
 	$(MAKE) serve
 
 compose:
-	./monako -config configs/config.monako.yaml \
+	./monako \
+		-fail-on-error \
+		-config configs/config.monako.yaml \
 		-menu-config configs/config.menu.md
 
 serve:

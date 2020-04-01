@@ -60,3 +60,31 @@ func TestCopyDir(t *testing.T) {
 	})
 
 }
+
+func TestGitCommiter(t *testing.T) {
+	t.Skip("Not yet implemented")
+	fileName := "README.md"
+
+	ci, err := o.GetCommitInfo(fileName)
+
+	assert.NoError(t, err, "Could not retrieve commit info")
+	assert.Contains(t, ci.Committer.Email, "@")
+
+}
+
+func TestGitCommiterFileNotFound(t *testing.T) {
+	t.Skip("Not yet implemented")
+	fileName := "Not existing file...."
+	_, err := o.GetCommitInfo(fileName)
+
+	assert.Error(t, err, "Expect error for non existing file")
+}
+
+func TestGitCommiterSubfolder(t *testing.T) {
+	t.Skip("Not yet implemented")
+	fileName := "test/config.menu.local.md"
+	ci, err := o.GetCommitInfo(fileName)
+
+	assert.NoError(t, err, "Could not retrieve commit info")
+	assert.Contains(t, ci.Committer.Email, "@")
+}
