@@ -22,12 +22,25 @@ func TestAsciiDocImageFix(t *testing.T) {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, want)
 	}
 
-	t.Run("Doubluequotes", func(t *testing.T) {
+	t.Run("Double colons", func(t *testing.T) {
 
 		needToClean := "image::image2.png[image,width=634,height=346]"
 
 		clean = string(AsciidocPostprocessing([]byte(needToClean)))
 		want := "image::../image2.png[image,width=634,height=346]"
+
+		if clean != want {
+			t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, want)
+		}
+
+	})
+
+	t.Run("Double colons with absolute url, do nothing", func(t *testing.T) {
+
+		needToClean := "image::http://absolute/url/image2.png[image,width=634,height=346]"
+
+		clean = string(AsciidocPostprocessing([]byte(needToClean)))
+		want := "image::http://absolute/url/image2.png[image,width=634,height=346]"
 
 		if clean != want {
 			t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, want)

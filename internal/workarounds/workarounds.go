@@ -21,9 +21,17 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 	var d = string(dirty)
 
 	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+
+	// Preserve
+	d = strings.ReplaceAll(d, "image::http", "image+______http")
 	d = strings.ReplaceAll(d, "image:http", "image_______http")
+
+	// Replace
 	d = strings.ReplaceAll(d, "image:", "image:../")
+
+	// Restore
 	d = strings.ReplaceAll(d, "image_______http", "image:http")
+	d = strings.ReplaceAll(d, "image+______http", "image::http")
 
 	// Fix for colons being moved
 	d = strings.ReplaceAll(d, "image:../:", "image::../")
