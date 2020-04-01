@@ -50,6 +50,9 @@ baseURL = '%s'
 title = '%s'
 theme = '%s'
 
+# Because of this bug: https://github.com/gohugoio/hugo/issues/4841
+timeout = 60000
+
 # Book configuration
 disablePathToLower = true
 enableGitInfo = false
