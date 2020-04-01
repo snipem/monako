@@ -24,6 +24,10 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 	d = strings.ReplaceAll(d, "image:http", "image_______http")
 	d = strings.ReplaceAll(d, "image:", "image:../")
 	d = strings.ReplaceAll(d, "image_______http", "image:http")
+
+	// Fix for colons being moved
+	d = strings.ReplaceAll(d, "image:../:", "image::../")
+
 	return []byte(d)
 }
 
