@@ -58,7 +58,9 @@ run_local: build
 	$(MAKE) serve
 
 compose:
-	./monako -config configs/config.monako.yaml \
+	./monako \
+		-fail-on-error \
+		-config configs/config.monako.yaml \
 		-menu-config configs/config.menu.md
 
 serve:
