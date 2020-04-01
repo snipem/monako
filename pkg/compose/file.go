@@ -104,7 +104,7 @@ func (file OriginFile) composeFile() {
 	default:
 		file.copyRegularFile()
 	}
-	fmt.Printf(" %s -> %s\n", file.RemotePath, file.LocalPath)
+	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
 }
 
