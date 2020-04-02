@@ -4,6 +4,7 @@ package compose
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
@@ -40,7 +41,10 @@ func TestCleanUp(t *testing.T) {
 		"testfile.txt")
 
 	// Create the test data because it is not existing yet
-	os.Mkdir(config.HugoWorkingDir, standardFilemode)
+	err = os.Mkdir(config.HugoWorkingDir, standardFilemode)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	t.Logf("Using temp file %s", tmpFile)
 	_ = ioutil.WriteFile(tmpFile, []byte("none"), standardFilemode)

@@ -26,7 +26,7 @@ type Config struct {
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
-func LoadConfig(configfilepath string, workingdir string) (config Config, err error) {
+func LoadConfig(configfilepath string, workingdir string) (config *Config, err error) {
 
 	source, err := ioutil.ReadFile(configfilepath)
 	if err != nil {
@@ -34,6 +34,9 @@ func LoadConfig(configfilepath string, workingdir string) (config Config, err er
 	}
 
 	err = yaml.Unmarshal(source, &config)
+	if err != nil {
+		return nil, err
+	}
 
 	config.initConfig(workingdir)
 
