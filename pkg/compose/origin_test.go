@@ -38,7 +38,7 @@ func TestCopyDir(t *testing.T) {
 	t.Run("start in single directory 'test'", func(t *testing.T) {
 		o.SourceDir = "test"
 		o.FileWhitelist = whitelist
-		tempDir := filet.TmpDir(t, "")
+		tempDir := filet.TmpDir(t, os.TempDir())
 		o.ComposeDir()
 		expectedTargetFile := filepath.Join(tempDir, "compose", "test_docs/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)
@@ -50,7 +50,7 @@ func TestCopyDir(t *testing.T) {
 	t.Run("start in deeper directory 'test/test_docs/'", func(t *testing.T) {
 		o.SourceDir = "test/test_docs/"
 		o.FileWhitelist = whitelist
-		tempDir := filet.TmpDir(t, "")
+		tempDir := filet.TmpDir(t, os.TempDir())
 		o.ComposeDir()
 		expectedTargetFile := filepath.Join(tempDir, "compose", "/test_doc_markdown.md")
 		b, err := ioutil.ReadFile(expectedTargetFile)

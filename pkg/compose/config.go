@@ -35,6 +35,15 @@ func LoadConfig(configfilepath string, workingdir string) (config Config, err er
 
 	err = yaml.Unmarshal(source, &config)
 
+	config.initConfig(workingdir)
+
+	return config, nil
+
+}
+
+// initConfig does necessary init steps on a newly created or read config
+func (config *Config) initConfig(workingdir string) {
+
 	// Set standard composition subdirectory
 	config.setWorkingDir(workingdir)
 
@@ -43,10 +52,8 @@ func LoadConfig(configfilepath string, workingdir string) (config Config, err er
 
 	// Set pointer to config for each origin
 	for i := range config.Origins {
-		config.Origins[i].config = &config
+		config.Origins[i].config = config
 	}
-
-	return
 
 }
 
@@ -77,11 +84,19 @@ func (config *Config) CleanUp() {
 	if err != nil {
 		log.Fatalf("CleanUp: Error while cleaning up: %s", err)
 	}
+
+	// Recreate hugo dir and content subdir
+	err = os.MkdirAll(config.ContentWorkingDir, standardFilemode)
+	if err != nil {
+		log.Fatalf("CleanUp: Error while recreating content dir: %s", err)
+	}
+
+	log.Infof("Cleaned up: %s", config.HugoWorkingDir)
 }
 
 // setWorkingDir sets the target dir. Standard is relative to the current directory (".")
-func (config *Config) setWorkingDir(targetdir string) {
-	if targetdir != "" {
-		config.HugoWorkingDir = filepath.Join(targetdir, "compose")
+func (config *Config) setWorkingDir(workingdir string) {
+	if workingdir != "" {
+		config.HugoWorkingDir = filepath.Join(workingdir, "compose")
 	}
 }

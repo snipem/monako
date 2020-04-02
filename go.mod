@@ -4,7 +4,6 @@ go 1.12
 
 require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
-	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
 	github.com/bradfitz/iter v0.0.0-20191230175014-e8f45d346db8 // indirect
 	github.com/c4milo/unpackit v0.0.0-20170704181138-4ed373e9ef1c
 	github.com/dsnet/compress v0.0.1 // indirect
