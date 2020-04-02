@@ -88,12 +88,6 @@ func (config *Config) CleanUp() {
 		log.Fatalf("CleanUp: Error while cleaning up: %s", err)
 	}
 
-	// Recreate hugo dir and content subdir
-	err = os.MkdirAll(config.ContentWorkingDir, standardFilemode)
-	if err != nil {
-		log.Fatalf("CleanUp: Error while recreating content dir: %s", err)
-	}
-
 	log.Infof("Cleaned up: %s", config.HugoWorkingDir)
 }
 
