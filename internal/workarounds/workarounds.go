@@ -20,8 +20,12 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 
 	var d = string(dirty)
 
-	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+	// TODO: These workarounds will be removed when the asciidoc fix for pathes arrives in Hugo
+	// https://github.com/gohugoio/hugo/pull/6561
+	// This workaround is still needed as long as we're relying on the asciidoctor diagram fix
+	// since the diagram fix does not work with "ugly" urls
 
+	// Really quick and dirty. There is a problem with Go regexp look ahead
 	// Preserve
 	d = strings.ReplaceAll(d, "image::http", "image+______http")
 	d = strings.ReplaceAll(d, "image:http", "image_______http")
@@ -35,6 +39,10 @@ func AsciidocPostprocessing(dirty []byte) []byte {
 
 	// Fix for colons being moved
 	d = strings.ReplaceAll(d, "image:../:", "image::../")
+
+	// Fix for ./ syntax. It's getting uglier
+	d = strings.ReplaceAll(d, "image::.././", "image::../")
+	d = strings.ReplaceAll(d, "image:.././", "image:../")
 
 	return []byte(d)
 }
@@ -86,6 +94,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	# Use empty css to trick asciidoctor into using none without error
 	echo "" > empty.css
 
+	# This trick only works with the relative dir workarounds
 	$ad -B . \
 		-r asciidoctor-diagram \
 		-a nofooter \

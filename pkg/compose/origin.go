@@ -3,7 +3,6 @@ package compose
 // run: make test
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -97,27 +96,17 @@ type Origin struct {
 func (origin *Origin) GetCommitInfo(filename string) (*object.Commit, error) {
 
 	r := origin.repo
-	// TODO what is wrong here?
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &filename,
 		All:      true,
 	})
+	defer cIter.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("Error while opening %s from git log: %s", filename, err)
 	}
 
-	var returnCommit *object.Commit
-
-	err = cIter.ForEach(func(commit *object.Commit) error {
-		if commit == nil {
-			return errors.New("Commit is nil")
-		}
-		returnCommit = commit
-		return nil
-	},
-	)
-	defer cIter.Close()
+	returnCommit, err := cIter.Next()
 
 	if err != nil {
 		return nil, err

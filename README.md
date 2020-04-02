@@ -18,7 +18,7 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 
 Monako abstracts the complexity of collecting documentation from a configurable amount of Git repositories (origins).
 
-Monako uses Hugo as a static site generator. To the user Hugo is abstracted.
+Monako uses Hugo as a static site generator but hides it to the user.
 
 ## Usage
 
@@ -97,13 +97,6 @@ A Docker image is available from [Dockerhub](https://hub.docker.com/repository/d
 ## Development
 
 Init with `make init`
-
-## TODOs
-
-* Fail on build fail to prevent false deployment to production
-* Reduce uncritical warnings by Asciidoctor
-* Whats up with the double slashes on copying?
-* Add last commit hash to checkout log
 
 ## Improvements
 

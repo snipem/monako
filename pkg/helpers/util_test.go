@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/alecthomas/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
