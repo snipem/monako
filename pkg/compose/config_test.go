@@ -1,9 +1,11 @@
 package compose
 
+// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test ./pkg/compose/
 // run: go test -v ./pkg/compose/
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/Flaque/filet"
@@ -32,7 +34,34 @@ func TestGetTestConfig(t *testing.T) {
 	})
 }
 
+func TestCompose(t *testing.T) {
+	config, _, err := getTestConfig(t)
+	assert.NoError(t, err)
+
+	config.Compose()
+
+	wantFiles := []string{
+		"docs/monako-test/README.md",
+		"docs/monako-test/profile.png",
+		"docs/monako-test/subfolder/subfolderprofile.png",
+		"docs/monako-test/subfolder/test_doc_asciidoc_include_me_subfolder.adoc",
+	}
+
+	for _, wantFile := range wantFiles {
+		assert.FileExists(t, filepath.Join(config.ContentWorkingDir, wantFile))
+	}
+
+}
+
 func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
+
+	var testRepo string
+
+	if os.Getenv("MONAKO_TEST_REPO") != "" {
+		testRepo = os.Getenv("MONAKO_TEST_REPO")
+	} else {
+		testRepo = "https://github.com/snipem/monako-test.git"
+	}
 
 	tempdir = filet.TmpDir(t, os.TempDir())
 
@@ -41,7 +70,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
 		FileWhitelist: []string{".md", ".adoc", ".png"},
 		Title:         "Test Config Title",
 		Origins: []Origin{
-			*NewOrigin("https://github.com/snipem/monako-test.git", "master", ".", "docs/monako-test"),
+			*NewOrigin(testRepo, "master", ".", "docs/monako-test"),
 		},
 	}
 
