@@ -1,6 +1,5 @@
 package compose
 
-// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test ./pkg/compose/
 // run: go test -v ./pkg/compose/
 
 import (
