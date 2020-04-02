@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch single test function",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/pkg/compose/origin.go",
+            "args": [
+                "-test.run",
+                "TestGitCommiter"
+            ]
+        },
+        {
             "name": "Launch Main Test",
             "type": "go",
             "request": "launch",
@@ -16,7 +27,7 @@
             ]
         },
         {
-            "name": "Launch",
+            "name": "Go Launch Main",
             "type": "go",
             "request": "launch",
             "mode": "auto",

@@ -1,6 +1,6 @@
 package compose
 
-// run: go test -v ./pkg/compose
+// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test ./pkg/compose/
 
 import (
 	"io/ioutil"
@@ -62,7 +62,6 @@ func TestCopyDir(t *testing.T) {
 }
 
 func TestGitCommiter(t *testing.T) {
-	t.Skip("Not yet implemented")
 	fileName := "README.md"
 
 	ci, err := o.GetCommitInfo(fileName)
@@ -73,7 +72,6 @@ func TestGitCommiter(t *testing.T) {
 }
 
 func TestGitCommiterFileNotFound(t *testing.T) {
-	t.Skip("Not yet implemented")
 	fileName := "Not existing file...."
 	_, err := o.GetCommitInfo(fileName)
 
@@ -81,7 +79,6 @@ func TestGitCommiterFileNotFound(t *testing.T) {
 }
 
 func TestGitCommiterSubfolder(t *testing.T) {
-	t.Skip("Not yet implemented")
 	fileName := "test/config.menu.local.md"
 	ci, err := o.GetCommitInfo(fileName)
 
