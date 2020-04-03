@@ -1,6 +1,6 @@
 package compose
 
-// run: go test -v ./pkg/compose/
+// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test -v ./pkg/compose/
 
 import (
 	"os"
@@ -58,6 +58,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
 
 	if os.Getenv("MONAKO_TEST_REPO") != "" {
 		testRepo = os.Getenv("MONAKO_TEST_REPO")
+		t.Logf("Using local test repo: %s", testRepo)
 	} else {
 		testRepo = "https://github.com/snipem/monako-test.git"
 	}

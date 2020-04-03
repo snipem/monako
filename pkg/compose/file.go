@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -119,7 +121,7 @@ func (file *OriginFile) composeFile() {
 	default:
 		file.copyRegularFile()
 	}
-	log.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
+	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
 }
 
@@ -225,17 +227,23 @@ func (file *OriginFile) ExpandFrontmatter(content string) string {
 	return fmt.Sprintf(`---
 %s
 
-gitRemote : "%s"
-gitPath : "%s"
-gitLastCommitDate : "%s"
-gitLastCommitAuthor : "%s"
-gitLastCommitAuthorEmail : "%s"
+MonakoGitRemote : "%s"
+MonakoGitRemotePath : "%s"
+MonakoGitURL : "%s"
+MonakoGitLastCommitDate : "%s"
+MonakoGitLastCommitAuthor : "%s"
+MonakoGitLastCommitAuthorEmail : "%s"
 ---
 
 `+content,
 		getOldFrontMatter(content),
-		"",
+		file.parentOrigin.URL,
 		file.RemotePath,
+		getWebLinkForGit(
+			file.parentOrigin.URL,
+			file.parentOrigin.Branch,
+			file.RemotePath,
+		),
 		file.Commit.Author.When.Format("Mon Jan 2 15:04:05 -0700 MST 2006"),
 		file.Commit.Author.Name,
 		file.Commit.Author.Email)
@@ -244,7 +252,18 @@ gitLastCommitAuthorEmail : "%s"
 
 func getOldFrontMatter(content string) string {
 	// TODO Convert from toml, yaml, etc
-	return `
-fakeOldFrontmatter : "FIXME"
-`
+	return `fakeOldFrontmatter : "FIXME"`
+}
+
+func getWebLinkForGit(gitUrl string, branch string, remotePath string) string {
+
+	// TODO Maybe return nothing if it's a ssh or file repository
+	// URLs for checkout have .git suffix
+	gitUrl = strings.TrimSuffix(gitUrl, ".git")
+	u, err := url.Parse(gitUrl)
+	if err != nil {
+		log.Fatal("Can't parse url: %s", gitUrl)
+	}
+	u.Path = path.Join(u.Path, "blob", branch, remotePath)
+	return u.String()
 }

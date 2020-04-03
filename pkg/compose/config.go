@@ -102,7 +102,6 @@ func (config *Config) setWorkingDir(workingdir string) {
 
 func Init(configfilepath string, menuconfig string, workingdir string, baseURL string) (config *Config) {
 
-	log.SetReportCaller(true)
 	config, err := LoadConfig(configfilepath, workingdir)
 	if err != nil {
 		log.Fatal(err)

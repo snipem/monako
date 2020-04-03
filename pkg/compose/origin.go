@@ -27,7 +27,7 @@ const Markdown = "MARKDOWN"
 // A virtual filesystem is returned containing the cloned files.
 func (origin *Origin) CloneDir() {
 
-	log.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
+	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
 
 	origin.filesystem = memfs.New()
 
@@ -37,7 +37,7 @@ func (origin *Origin) CloneDir() {
 	password := os.Getenv(origin.EnvPassword)
 
 	if username != "" && password != "" {
-		log.Printf("Using username and password stored in env variables\n")
+		fmt.Printf("Using username and password stored in env variables\n")
 		basicauth = http.BasicAuth{
 			Username: username,
 			Password: password,
