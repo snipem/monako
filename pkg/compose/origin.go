@@ -27,7 +27,7 @@ const Markdown = "MARKDOWN"
 // A virtual filesystem is returned containing the cloned files.
 func (origin *Origin) CloneDir() {
 
-	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
+	log.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
 
 	origin.filesystem = memfs.New()
 

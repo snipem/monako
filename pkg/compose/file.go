@@ -39,7 +39,7 @@ func (origin *Origin) ComposeDir() {
 	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
 
 	if len(origin.Files) == 0 {
-		fmt.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
+		log.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
 	}
 
 	for _, file := range origin.Files {
@@ -119,7 +119,7 @@ func (file *OriginFile) composeFile() {
 	default:
 		file.copyRegularFile()
 	}
-	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
+	log.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
 }
 
