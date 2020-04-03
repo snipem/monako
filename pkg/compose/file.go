@@ -35,7 +35,7 @@ type OriginFile struct {
 // ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func (origin Origin) ComposeDir() {
+func (origin *Origin) ComposeDir() {
 	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
 
 	if len(origin.Files) == 0 {
@@ -57,7 +57,7 @@ func NewOrigin(url string, branch string, sourceDir string, targetDir string) *O
 	return o
 }
 
-func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
+func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 	var originFiles []OriginFile
 
@@ -108,7 +108,7 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 	return originFile
 }
 
-func (file OriginFile) composeFile() {
+func (file *OriginFile) composeFile() {
 
 	file.createParentDir()
 	contentFormat := file.GetFormat()
@@ -124,7 +124,7 @@ func (file OriginFile) composeFile() {
 }
 
 // createParentDir creates the parent directories for the file in the local filesystem
-func (file OriginFile) createParentDir() {
+func (file *OriginFile) createParentDir() {
 	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
 	err := os.MkdirAll(filepath.Dir(file.LocalPath), standardFilemode)
 	if err != nil {
@@ -132,7 +132,7 @@ func (file OriginFile) createParentDir() {
 	}
 }
 
-func (file OriginFile) copyRegularFile() {
+func (file *OriginFile) copyRegularFile() {
 
 	origin := file.parentOrigin
 	f, err := origin.filesystem.Open(file.RemotePath)
@@ -153,15 +153,13 @@ func (file OriginFile) copyRegularFile() {
 
 // getCommitInfo returns the Commit Info for a given file of the repository
 // identified by it's filename
-func (file OriginFile) getCommitInfo() (*object.Commit, error) {
+func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 
 	r := file.parentOrigin.repo
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &file.RemotePath,
-		All:      true,
 		Order:    git.LogOrderCommitterTime,
 	})
-	defer cIter.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("Error while opening %s from git log: %s", file.RemotePath, err)
@@ -171,12 +169,15 @@ func (file OriginFile) getCommitInfo() (*object.Commit, error) {
 
 	if err != nil {
 		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
+	} else {
+		log.Debugf("Git Commit found for %s, %s", file.RemotePath, returnCommit)
 	}
+	defer cIter.Close()
 
 	return returnCommit, nil
 }
 
-func (file OriginFile) copyMarkupFile() {
+func (file *OriginFile) copyMarkupFile() {
 
 	// TODO: Only use strings not []byte
 

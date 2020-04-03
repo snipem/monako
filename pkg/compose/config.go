@@ -66,12 +66,12 @@ func (config *Config) initConfig(workingdir string) {
 func (config *Config) Compose() {
 
 	// If Origin has now own whitelist, use the Compose Whitelist
-	for _, o := range config.Origins {
-		if o.FileWhitelist == nil {
-			o.FileWhitelist = config.FileWhitelist
+	for i := range config.Origins {
+		if config.Origins[i].FileWhitelist == nil {
+			config.Origins[i].FileWhitelist = config.FileWhitelist
 		}
-		o.CloneDir()
-		o.ComposeDir()
+		config.Origins[i].CloneDir()
+		config.Origins[i].ComposeDir()
 	}
 
 }
@@ -102,6 +102,7 @@ func (config *Config) setWorkingDir(workingdir string) {
 
 func Init(configfilepath string, menuconfig string, workingdir string, baseURL string) (config *Config) {
 
+	log.SetReportCaller(true)
 	config, err := LoadConfig(configfilepath, workingdir)
 	if err != nil {
 		log.Fatal(err)
