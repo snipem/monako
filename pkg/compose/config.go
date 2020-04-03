@@ -100,6 +100,8 @@ func (config *Config) setWorkingDir(workingdir string) {
 	}
 }
 
+// Init loads the Monako config, adds Workarounds, cleans up the working dir,
+// runs Hugo for initializing the workign dir
 func Init(configfilepath string, menuconfig string, workingdir string, baseURL string) (config *Config) {
 
 	config, err := LoadConfig(configfilepath, workingdir)
