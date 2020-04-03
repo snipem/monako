@@ -100,7 +100,7 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 
 	commitinfo, err := originFile.getCommitInfo()
 	if err != nil {
-		log.Infof("Can't extract Commit Info for '%s'", err)
+		log.Warnf("Can't extract Commit Info for '%s'", err)
 	}
 
 	originFile.Commit = commitinfo
@@ -159,6 +159,7 @@ func (file OriginFile) getCommitInfo() (*object.Commit, error) {
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &file.RemotePath,
 		All:      true,
+		Order:    git.LogOrderCommitterTime,
 	})
 	defer cIter.Close()
 
@@ -216,7 +217,7 @@ func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteF
 func (file *OriginFile) ExpandFrontmatter(content string) string {
 
 	if file.Commit == nil {
-		log.Info("Git Info is not set, returning without adding it")
+		log.Debug("Git Info is not set, returning without adding it")
 		return content
 	}
 

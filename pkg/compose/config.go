@@ -4,9 +4,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	log "github.com/sirupsen/logrus"
-
+	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
 
@@ -95,5 +97,50 @@ func (config *Config) CleanUp() {
 func (config *Config) setWorkingDir(workingdir string) {
 	if workingdir != "" {
 		config.HugoWorkingDir = filepath.Join(workingdir, "compose")
+	}
+}
+
+func Init(configfilepath string, menuconfig string, workingdir string, baseURL string) (config *Config) {
+
+	config, err := LoadConfig(configfilepath, workingdir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO Move to loadconfig parameters
+	if baseURL != "" {
+		// Overwrite config base url if it is set as parameter
+		config.BaseURL = baseURL
+	}
+
+	addWorkarounds(config)
+
+	config.CleanUp()
+
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createHugoPage(config, menuconfig)
+
+	return config
+
+}
+
+func (config *Config) Run() error {
+
+	err := helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func addWorkarounds(c *Config) {
+	if runtime.GOOS == "windows" {
+		log.Println("Can't apply asciidoc diagram workaround on windows")
+	} else {
+		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(c.BaseURL)
 	}
 }
