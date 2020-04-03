@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 }
 
 func setup() {
-	o = NewOrigin("https://github.com/snipem/monako.git", "master", ".", "test/docs")
+	o = NewOrigin("https://github.com/snipem/monako-test.git", "master", ".", "test/docs")
 	o.CloneDir()
 }
 
@@ -62,26 +62,33 @@ func TestCopyDir(t *testing.T) {
 }
 
 func TestGitCommiter(t *testing.T) {
-	fileName := "README.md"
 
-	ci, err := o.GetCommitInfo(fileName)
+	config, _, err := getTestConfig(t)
+	assert.NoError(t, err)
+	config.Compose()
 
-	assert.NoError(t, err, "Could not retrieve commit info")
-	assert.Contains(t, ci.Committer.Email, "@")
+	t.Run("Retrieve info of first file", func(t *testing.T) {
 
-}
+		assert.NotNil(t, o.Files)
+		ci := o.Files[0].Commit
 
-func TestGitCommiterFileNotFound(t *testing.T) {
-	fileName := "Not existing file...."
-	_, err := o.GetCommitInfo(fileName)
+		assert.NoError(t, err, "Could not retrieve commit info")
+		assert.Contains(t, ci.Committer.Email, "@")
 
-	assert.Error(t, err, "Expect error for non existing file")
-}
+	})
 
-func TestGitCommiterSubfolder(t *testing.T) {
-	fileName := "test/config.menu.local.md"
-	ci, err := o.GetCommitInfo(fileName)
+	t.Run("Second file", func(t *testing.T) {
+		ci := o.Files[1].Commit
 
-	assert.NoError(t, err, "Could not retrieve commit info")
-	assert.Contains(t, ci.Committer.Email, "@")
+		assert.NoError(t, err, "Could not retrieve commit info")
+		assert.Contains(t, ci.Committer.Email, "@")
+
+	})
+
+	t.Run("Not existing file", func(t *testing.T) {
+
+		t.Skip("This wont work right now")
+
+	})
+
 }

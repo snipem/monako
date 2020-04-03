@@ -12,6 +12,7 @@ import (
 
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
+	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
@@ -70,27 +71,41 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 		if file.IsDir() {
 			// Recurse over file and add their files to originFiles
-			originFiles = append(originFiles,
+			originFiles = append(
+				originFiles,
 				origin.getWhitelistedFiles(
 					remotePath,
 				)...)
 		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
 
-			localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
-
-			originFile := OriginFile{
-				RemotePath: remotePath,
-				LocalPath:  localPath,
-
-				parentOrigin: &origin,
-			}
-
 			// Add the current file to the list of files returned
-			originFiles = append(originFiles, originFile)
+			originFiles = append(
+				originFiles,
+				origin.newFile(remotePath))
 		}
 
 	}
 	return originFiles
+}
+
+func (origin *Origin) newFile(remotePath string) OriginFile {
+	localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
+
+	originFile := OriginFile{
+		RemotePath: remotePath,
+		LocalPath:  localPath,
+
+		parentOrigin: origin,
+	}
+
+	commitinfo, err := originFile.getCommitInfo()
+	if err != nil {
+		log.Infof("Can't extract Commit Info for '%s'", err)
+	}
+
+	originFile.Commit = commitinfo
+
+	return originFile
 }
 
 func (file OriginFile) composeFile() {
@@ -136,15 +151,33 @@ func (file OriginFile) copyRegularFile() {
 
 }
 
+// getCommitInfo returns the Commit Info for a given file of the repository
+// identified by it's filename
+func (file OriginFile) getCommitInfo() (*object.Commit, error) {
+
+	r := file.parentOrigin.repo
+	cIter, err := r.Log(&git.LogOptions{
+		FileName: &file.RemotePath,
+		All:      true,
+	})
+	defer cIter.Close()
+
+	if err != nil {
+		return nil, fmt.Errorf("Error while opening %s from git log: %s", file.RemotePath, err)
+	}
+
+	returnCommit, err := cIter.Next()
+
+	if err != nil {
+		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
+	}
+
+	return returnCommit, nil
+}
+
 func (file OriginFile) copyMarkupFile() {
 
 	// TODO: Only use strings not []byte
-
-	// TODO: Add GetCommitInfo function
-	// commitinfo, err := GetCommitInfo(g, gitFilepath)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
 	if err != nil {
@@ -162,7 +195,7 @@ func (file OriginFile) copyMarkupFile() {
 	}
 
 	// TODO: Add ExpandFrontmatter function
-	// content = []byte(ExpandFrontmatter(string(content), gitFilepath, file.Commit))
+	content = []byte(file.ExpandFrontmatter(string(content)))
 
 	err = ioutil.WriteFile(file.LocalPath, content, standardFilemode)
 	if err != nil {
@@ -177,4 +210,39 @@ func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteF
 	// Since a remoteDocDir is defined, this should not be created in the local filesystem
 	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)
 	return filepath.Join(composeDir, targetDir, relativeFilePath)
+}
+
+// ExpandFrontmatter expands the existing frontmatter with the parameters given
+func (file *OriginFile) ExpandFrontmatter(content string) string {
+
+	if file.Commit == nil {
+		log.Info("Git Info is not set, returning without adding it")
+		return content
+	}
+
+	return fmt.Sprintf(`---
+%s
+
+gitRemote : "%s"
+gitPath : "%s"
+gitLastCommitDate : "%s"
+gitLastCommitAuthor : "%s"
+gitLastCommitAuthorEmail : "%s"
+---
+
+`+content,
+		getOldFrontMatter(content),
+		"",
+		file.RemotePath,
+		file.Commit.Author.When.Format("Mon Jan 2 15:04:05 -0700 MST 2006"),
+		file.Commit.Author.Name,
+		file.Commit.Author.Email)
+
+}
+
+func getOldFrontMatter(content string) string {
+	// TODO Convert from toml, yaml, etc
+	return `
+fakeOldFrontmatter : "FIXME"
+`
 }
