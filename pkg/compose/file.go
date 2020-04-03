@@ -234,12 +234,12 @@ func (file *OriginFile) ExpandFrontmatter(content string) string {
 	return fmt.Sprintf(`---
 %s
 
-MonakoGitRemote: "%s"
-MonakoGitRemotePath: "%s"
-MonakoGitURL: "%s"
-MonakoGitLastCommitDate: "%s"
-MonakoGitLastCommitAuthor: "%s"
-MonakoGitLastCommitAuthorEmail: "%s"
+MonakoGitRemote: %s
+MonakoGitRemotePath: %s
+MonakoGitURL: %s
+MonakoGitLastCommitDate: %s
+MonakoGitLastCommitAuthor: %s
+MonakoGitLastCommitAuthorEmail: %s
 ---
 
 `+body,
@@ -266,9 +266,6 @@ func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 		// No fronmatter found
 		return "", content
 	}
-
-	fmt.Printf("The front matter is:\n%#v\n", f)
-	fmt.Printf("The body is:\n%q\n", body)
 
 	marshalledFrontmatter, err := yaml.Marshal(f)
 
