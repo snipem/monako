@@ -262,7 +262,7 @@ func getWebLinkForGit(gitUrl string, branch string, remotePath string) string {
 	gitUrl = strings.TrimSuffix(gitUrl, ".git")
 	u, err := url.Parse(gitUrl)
 	if err != nil {
-		log.Fatal("Can't parse url: %s", gitUrl)
+		log.Fatalf("Can't parse url: %s", gitUrl)
 	}
 	u.Path = path.Join(u.Path, "blob", branch, remotePath)
 	return u.String()
