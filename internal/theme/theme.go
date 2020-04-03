@@ -8,6 +8,7 @@ import (
 	"github.com/c4milo/unpackit"
 )
 
+// ExtractTheme extracts the Monako Theme to the Hugo Working Directory
 func ExtractTheme(hugoWorkingDir string) {
 	themezip, err := Asset("tmp/theme.zip")
 	if err != nil {

@@ -171,9 +171,11 @@ func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 
 	if err != nil {
 		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
-	} else {
-		log.Debugf("Git Commit found for %s, %s", file.RemotePath, returnCommit)
 	}
+
+	log.Debugf("Git Commit found for %s, %s", file.RemotePath, returnCommit)
+
+	// This has to be here, otherwise the iterator will return garbage
 	defer cIter.Close()
 
 	return returnCommit, nil
@@ -255,14 +257,14 @@ func getOldFrontMatter(content string) string {
 	return `fakeOldFrontmatter : "FIXME"`
 }
 
-func getWebLinkForGit(gitUrl string, branch string, remotePath string) string {
+func getWebLinkForGit(gitURL string, branch string, remotePath string) string {
 
 	// TODO Maybe return nothing if it's a ssh or file repository
 	// URLs for checkout have .git suffix
-	gitUrl = strings.TrimSuffix(gitUrl, ".git")
-	u, err := url.Parse(gitUrl)
+	gitURL = strings.TrimSuffix(gitURL, ".git")
+	u, err := url.Parse(gitURL)
 	if err != nil {
-		log.Fatalf("Can't parse url: %s", gitUrl)
+		log.Fatalf("Can't parse url: %s", gitURL)
 	}
 	u.Path = path.Join(u.Path, "blob", branch, remotePath)
 	return u.String()
