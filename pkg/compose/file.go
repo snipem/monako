@@ -280,6 +280,9 @@ func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 	}
 
 	contentMarshaled, err := yaml.Marshal(contentFrontmatter.FrontMatter)
+	if err != nil {
+		log.Fatalf("Error while marshalling frontmatter to YAML: %s", err)
+	}
 
 	return string(contentMarshaled), string(contentFrontmatter.Content)
 }
