@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// CommandLineFlags contains all the flags and settings made via the command line in main
 type CommandLineFlags struct {
 	ConfigFilePath     string
 	MenuConfigFilePath string
