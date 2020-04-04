@@ -10,17 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// CommandLineFlags contains all the flags and settings made via the command line in main
-type CommandLineFlags struct {
-	ConfigFilePath     string
-	MenuConfigFilePath string
-	WorkingDir         string
-	BaseURL            string
-	Trace              bool
-	FailOnHugoError    bool
-}
-
-func parseCommandLine() (cliSettings CommandLineFlags) {
+func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 
 	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
 	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
@@ -31,10 +21,10 @@ func parseCommandLine() (cliSettings CommandLineFlags) {
 
 	flag.Parse()
 
-	return CommandLineFlags{
+	return compose.CommandLineSettings{
 		ConfigFilePath:     *configfilepath,
 		MenuConfigFilePath: *menuconfigfilepath,
-		WorkingDir:         *workingdir,
+		ContentWorkingDir:  *workingdir,
 		BaseURL:            *baseURL,
 		Trace:              *trace,
 		FailOnHugoError:    *failOnHugoError,
@@ -50,11 +40,7 @@ func main() {
 		log.SetReportCaller(true)
 	}
 
-	config := compose.Init(
-		cliSettings.ConfigFilePath,
-		cliSettings.MenuConfigFilePath,
-		cliSettings.WorkingDir,
-		cliSettings.BaseURL)
+	config := compose.Init(cliSettings)
 
 	config.Compose()
 
