@@ -239,7 +239,8 @@ MonakoGitRemote: %s
 MonakoGitRemotePath: %s
 MonakoGitURL: %s
 MonakoGitLastCommitHash: %s
-MonakoGitLastCommitDate: %s
+MonakoGitURLCommit: %s
+lastMod: %s
 MonakoGitLastCommitAuthor: %s
 MonakoGitLastCommitAuthorEmail: %s
 ---
@@ -248,12 +249,18 @@ MonakoGitLastCommitAuthorEmail: %s
 		oldFrontmatter,
 		file.parentOrigin.URL,
 		file.RemotePath,
-		getWebLinkForGit(
+		getWebLinkForFileInGit(
 			file.parentOrigin.URL,
 			file.parentOrigin.Branch,
 			file.RemotePath,
 		),
 		file.Commit.Hash,
+		getWebLinkForGitCommit(
+			file.parentOrigin.URL,
+			file.Commit.Hash.String(),
+		),
+		// Use lastMod because other variables won't be parsed as date by Hugo
+		// Resulting in no date format functions on the file
 		file.Commit.Author.When.Format(time.RFC3339),
 		file.Commit.Author.Name,
 		file.Commit.Author.Email)
@@ -271,7 +278,7 @@ func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 	return string(contentMarshaled), string(contentFrontmatter.Content)
 }
 
-func getWebLinkForGit(gitURL string, branch string, remotePath string) string {
+func getWebLinkForFileInGit(gitURL string, branch string, remotePath string) string {
 
 	// TODO Maybe return nothing if it's a ssh or file repository
 	// URLs for checkout have .git suffix
@@ -281,5 +288,19 @@ func getWebLinkForGit(gitURL string, branch string, remotePath string) string {
 		log.Fatalf("Can't parse url: %s", gitURL)
 	}
 	u.Path = path.Join(u.Path, "blob", branch, remotePath)
+	return u.String()
+}
+
+func getWebLinkForGitCommit(gitURL string, commitID string) string {
+
+	// TODO Maybe return nothing if it's a ssh or file repository
+	// URLs for checkout have .git suffix
+	gitURL = strings.TrimSuffix(gitURL, ".git")
+	u, err := url.Parse(gitURL)
+	if err != nil {
+		log.Fatalf("Can't parse url: %s", gitURL)
+	}
+
+	u.Path = path.Join(u.Path, "commit", commitID)
 	return u.String()
 }
