@@ -259,6 +259,7 @@ MonakoGitLastCommitAuthorEmail: %s
 
 func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 	// TODO Convert from toml, yaml, etc
+	// FIXME This library wont help because of https://github.com/gernest/front/pull/3
 	m := front.NewMatter()
 	m.Handle("---", front.YAMLHandler)
 	f, body, err := m.Parse(strings.NewReader(content))
