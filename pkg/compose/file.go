@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gohugoio/hugo/parser/pageparser"
 	log "github.com/sirupsen/logrus"
@@ -250,7 +251,7 @@ MonakoGitLastCommitAuthorEmail: %s
 			file.parentOrigin.Branch,
 			file.RemotePath,
 		),
-		file.Commit.Author.When.Format("Mon Jan 2 15:04:05 -0700 MST 2006"),
+		file.Commit.Author.When.Format(time.RFC3339),
 		file.Commit.Author.Name,
 		file.Commit.Author.Email)
 
