@@ -102,6 +102,21 @@ func equalPath(t *testing.T, expected string, actual string, msg string) {
 
 func TestFrontmatterExpanding(t *testing.T) {
 
+	t.Run("No Frontmatter", func(t *testing.T) {
+		content := `=== Body Content
+123`
+		frontmatter, body := splitFrontmatterAndBody(content)
+		assert.Equal(t,
+			`=== Body Content
+123`,
+			body,
+			"",
+		)
+
+		assert.Nil(t, frontmatter)
+
+	})
+
 	t.Run("Frontmatter with simple file", func(t *testing.T) {
 		content := `---
 simple: content
