@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/workarounds"
@@ -115,7 +114,7 @@ func Init(configfilepath string, menuconfig string, workingdir string, baseURL s
 		config.BaseURL = baseURL
 	}
 
-	addWorkarounds(config)
+	workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
 
 	config.CleanUp()
 
@@ -138,12 +137,4 @@ func (config *Config) Run() error {
 		return err
 	}
 	return nil
-}
-
-func addWorkarounds(c *Config) {
-	if runtime.GOOS == "windows" {
-		log.Println("Can't apply asciidoc diagram workaround on windows")
-	} else {
-		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(c.BaseURL)
-	}
 }
