@@ -238,6 +238,7 @@ func (file *OriginFile) ExpandFrontmatter(content string) string {
 MonakoGitRemote: %s
 MonakoGitRemotePath: %s
 MonakoGitURL: %s
+MonakoGitLastCommitHash: %s
 MonakoGitLastCommitDate: %s
 MonakoGitLastCommitAuthor: %s
 MonakoGitLastCommitAuthorEmail: %s
@@ -252,6 +253,7 @@ MonakoGitLastCommitAuthorEmail: %s
 			file.parentOrigin.Branch,
 			file.RemotePath,
 		),
+		file.Commit.Hash,
 		file.Commit.Author.When.Format(time.RFC3339),
 		file.Commit.Author.Name,
 		file.Commit.Author.Email)
