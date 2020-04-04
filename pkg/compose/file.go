@@ -72,7 +72,8 @@ func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
 		// This is the path as stored in the remote repo
 		// This can only be gathered here, because of recursing through
 		// the file system
-		remotePath := filepath.Join(startdir, file.Name())
+		// Use path here to support unixoid Git paths
+		remotePath := path.Join(startdir, file.Name())
 
 		if file.IsDir() {
 			// Recurse over file and add their files to originFiles
