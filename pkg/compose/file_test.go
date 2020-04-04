@@ -1,6 +1,6 @@
 package compose
 
-// run: go test -v ./pkg/compose
+// run: go test  ./pkg/compose -run TestFrontmatterExpanding
 
 import (
 	"io/ioutil"
@@ -98,4 +98,90 @@ func equalPath(t *testing.T, expected string, actual string, msg string) {
 		filepath.ToSlash(actual),
 		msg,
 	)
+}
+
+func TestFrontmatterExpanding(t *testing.T) {
+
+	t.Run("No Frontmatter", func(t *testing.T) {
+		content := `=== Body Content
+123`
+		frontmatter, body := splitFrontmatterAndBody(content)
+		assert.Equal(t,
+			`=== Body Content
+123`,
+			body,
+			"",
+		)
+
+		assert.Empty(t, frontmatter)
+
+	})
+
+	t.Run("Frontmatter with simple file", func(t *testing.T) {
+		content := `---
+simple: content
+content: linetwo
+---
+
+=== Body Content
+123`
+		frontmatter, body := splitFrontmatterAndBody(content)
+		assert.Equal(t,
+			`
+=== Body Content
+123`,
+			body,
+			"",
+		)
+
+		assert.Contains(t, frontmatter, "simple: content\n")
+		assert.Contains(t, frontmatter, "content: linetwo\n")
+
+	})
+
+	t.Run("Frontmatter garbled file with frontmatter style control signs", func(t *testing.T) {
+		content := `---
+simple: content
+content: linetwo
+---
+
+=== Body Content
+123
+Here be the --- control signs
+---
+Also on new line`
+
+		frontmatter, body := splitFrontmatterAndBody(content)
+		assert.Equal(t,
+			`
+=== Body Content
+123
+Here be the --- control signs
+---
+Also on new line`,
+			body,
+			"",
+		)
+
+		assert.Contains(t, frontmatter, "simple: content\n")
+		assert.Contains(t, frontmatter, "content: linetwo\n")
+
+	})
+
+	t.Run("Frontmatter TOML to YAML", func(t *testing.T) {
+		content := `+++
+simple = "content"
+content = "linetwo"
++++
+
+=== Body Content
+123
+Here be the +++ control signs
++++
+Also on new line`
+
+		frontmatter, _ := splitFrontmatterAndBody(content)
+		assert.Contains(t, frontmatter, "simple: content\n")
+		assert.Contains(t, frontmatter, "content: linetwo\n")
+	})
 }

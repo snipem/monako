@@ -6,7 +6,8 @@ import (
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
-
+	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
 
@@ -64,12 +65,12 @@ func (config *Config) initConfig(workingdir string) {
 func (config *Config) Compose() {
 
 	// If Origin has now own whitelist, use the Compose Whitelist
-	for _, o := range config.Origins {
-		if o.FileWhitelist == nil {
-			o.FileWhitelist = config.FileWhitelist
+	for i := range config.Origins {
+		if config.Origins[i].FileWhitelist == nil {
+			config.Origins[i].FileWhitelist = config.FileWhitelist
 		}
-		o.CloneDir()
-		o.ComposeDir()
+		config.Origins[i].CloneDir()
+		config.Origins[i].ComposeDir()
 	}
 
 }
@@ -96,4 +97,44 @@ func (config *Config) setWorkingDir(workingdir string) {
 	if workingdir != "" {
 		config.HugoWorkingDir = filepath.Join(workingdir, "compose")
 	}
+}
+
+// Init loads the Monako config, adds Workarounds, cleans up the working dir,
+// runs Hugo for initializing the workign dir
+func Init(configfilepath string, menuconfig string, workingdir string, baseURL string) (config *Config) {
+
+	config, err := LoadConfig(configfilepath, workingdir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO Move to loadconfig parameters
+	if baseURL != "" {
+		// Overwrite config base url if it is set as parameter
+		config.BaseURL = baseURL
+	}
+
+	workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+
+	config.CleanUp()
+
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createHugoPage(config, menuconfig)
+
+	return config
+
+}
+
+// Run runs Hugo with the composed Monako source
+func (config *Config) Run() error {
+
+	err := helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
+	if err != nil {
+		return err
+	}
+	return nil
 }

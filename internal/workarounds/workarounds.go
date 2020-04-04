@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -69,6 +70,11 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 // to trick Hugo into taking this one. This makes it possible to manipulate the parameters
 // for asciidoctor while being called from Hugo.
 func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
+
+	if runtime.GOOS == "windows" {
+		log.Println("Can't apply asciidoctor diagram workaround on Windows")
+		return ""
+	}
 
 	url, err := url.Parse(baseURL)
 	if err != nil {

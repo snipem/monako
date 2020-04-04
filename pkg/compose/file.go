@@ -4,15 +4,21 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/gohugoio/hugo/parser/pageparser"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
+	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
+	"gopkg.in/yaml.v2"
 )
 
 const standardFilemode = os.FileMode(0700)
@@ -34,11 +40,11 @@ type OriginFile struct {
 // ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func (origin Origin) ComposeDir() {
+func (origin *Origin) ComposeDir() {
 	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
 
 	if len(origin.Files) == 0 {
-		fmt.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
+		log.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
 	}
 
 	for _, file := range origin.Files {
@@ -56,7 +62,7 @@ func NewOrigin(url string, branch string, sourceDir string, targetDir string) *O
 	return o
 }
 
-func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
+func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
 
 	var originFiles []OriginFile
 
@@ -66,34 +72,49 @@ func (origin Origin) getWhitelistedFiles(startdir string) []OriginFile {
 		// This is the path as stored in the remote repo
 		// This can only be gathered here, because of recursing through
 		// the file system
-		remotePath := filepath.Join(startdir, file.Name())
+		// Use path here to support unixoid Git paths
+		remotePath := path.Join(startdir, file.Name())
 
 		if file.IsDir() {
 			// Recurse over file and add their files to originFiles
-			originFiles = append(originFiles,
+			originFiles = append(
+				originFiles,
 				origin.getWhitelistedFiles(
 					remotePath,
 				)...)
 		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
 
-			localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
-
-			originFile := OriginFile{
-				RemotePath: remotePath,
-				LocalPath:  localPath,
-
-				parentOrigin: &origin,
-			}
-
 			// Add the current file to the list of files returned
-			originFiles = append(originFiles, originFile)
+			originFiles = append(
+				originFiles,
+				origin.newFile(remotePath))
 		}
 
 	}
 	return originFiles
 }
 
-func (file OriginFile) composeFile() {
+func (origin *Origin) newFile(remotePath string) OriginFile {
+	localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
+
+	originFile := OriginFile{
+		RemotePath: remotePath,
+		LocalPath:  localPath,
+
+		parentOrigin: origin,
+	}
+
+	commitinfo, err := originFile.getCommitInfo()
+	if err != nil {
+		log.Warnf("Can't extract Commit Info for '%s'", err)
+	}
+
+	originFile.Commit = commitinfo
+
+	return originFile
+}
+
+func (file *OriginFile) composeFile() {
 
 	file.createParentDir()
 	contentFormat := file.GetFormat()
@@ -109,7 +130,7 @@ func (file OriginFile) composeFile() {
 }
 
 // createParentDir creates the parent directories for the file in the local filesystem
-func (file OriginFile) createParentDir() {
+func (file *OriginFile) createParentDir() {
 	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
 	err := os.MkdirAll(filepath.Dir(file.LocalPath), standardFilemode)
 	if err != nil {
@@ -117,7 +138,7 @@ func (file OriginFile) createParentDir() {
 	}
 }
 
-func (file OriginFile) copyRegularFile() {
+func (file *OriginFile) copyRegularFile() {
 
 	origin := file.parentOrigin
 	f, err := origin.filesystem.Open(file.RemotePath)
@@ -136,15 +157,37 @@ func (file OriginFile) copyRegularFile() {
 
 }
 
-func (file OriginFile) copyMarkupFile() {
+// getCommitInfo returns the Commit Info for a given file of the repository
+// identified by it's filename
+func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
+
+	r := file.parentOrigin.repo
+	cIter, err := r.Log(&git.LogOptions{
+		FileName: &file.RemotePath,
+		Order:    git.LogOrderCommitterTime,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("Error while opening %s from git log: %s", file.RemotePath, err)
+	}
+
+	returnCommit, err := cIter.Next()
+
+	if err != nil {
+		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
+	}
+
+	log.Debugf("Git Commit found for %s, %s", file.RemotePath, returnCommit)
+
+	// This has to be here, otherwise the iterator will return garbage
+	defer cIter.Close()
+
+	return returnCommit, nil
+}
+
+func (file *OriginFile) copyMarkupFile() {
 
 	// TODO: Only use strings not []byte
-
-	// TODO: Add GetCommitInfo function
-	// commitinfo, err := GetCommitInfo(g, gitFilepath)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
 	if err != nil {
@@ -162,7 +205,7 @@ func (file OriginFile) copyMarkupFile() {
 	}
 
 	// TODO: Add ExpandFrontmatter function
-	// content = []byte(ExpandFrontmatter(string(content), gitFilepath, file.Commit))
+	content = []byte(file.ExpandFrontmatter(string(content)))
 
 	err = ioutil.WriteFile(file.LocalPath, content, standardFilemode)
 	if err != nil {
@@ -177,4 +220,96 @@ func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteF
 	// Since a remoteDocDir is defined, this should not be created in the local filesystem
 	relativeFilePath := strings.TrimPrefix(remoteFile, remoteDocDir)
 	return filepath.Join(composeDir, targetDir, relativeFilePath)
+}
+
+// ExpandFrontmatter expands the existing frontmatter with the parameters given
+func (file *OriginFile) ExpandFrontmatter(content string) string {
+
+	if file.Commit == nil {
+		log.Debug("Git Info is not set, returning without adding it")
+		return content
+	}
+
+	oldFrontmatter, body := splitFrontmatterAndBody(content)
+
+	return fmt.Sprintf(`---
+%s
+
+MonakoGitRemote: %s
+MonakoGitRemotePath: %s
+MonakoGitURL: %s
+MonakoGitLastCommitHash: %s
+MonakoGitURLCommit: %s
+lastMod: %s
+MonakoGitLastCommitAuthor: %s
+MonakoGitLastCommitAuthorEmail: %s
+---
+
+`+body,
+		oldFrontmatter,
+		file.parentOrigin.URL,
+		file.RemotePath,
+		getWebLinkForFileInGit(
+			file.parentOrigin.URL,
+			file.parentOrigin.Branch,
+			file.RemotePath,
+		),
+		file.Commit.Hash,
+		getWebLinkForGitCommit(
+			file.parentOrigin.URL,
+			file.Commit.Hash.String(),
+		),
+		// Use lastMod because other variables won't be parsed as date by Hugo
+		// Resulting in no date format functions on the file
+		file.Commit.Author.When.Format(time.RFC3339),
+		file.Commit.Author.Name,
+		file.Commit.Author.Email)
+
+}
+
+func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
+	// TODO Convert from toml, yaml, etc
+	contentFrontmatter, err := pageparser.ParseFrontMatterAndContent(strings.NewReader(content))
+	if err != nil {
+		log.Fatalf("Error while splitting frontmatter: %s", err)
+	}
+
+	// No frontmatter found, return old content
+	if contentFrontmatter.Content == nil {
+		return "", content
+	}
+
+	contentMarshaled, err := yaml.Marshal(contentFrontmatter.FrontMatter)
+	if err != nil {
+		log.Fatalf("Error while marshalling frontmatter to YAML: %s", err)
+	}
+
+	return string(contentMarshaled), string(contentFrontmatter.Content)
+}
+
+func getWebLinkForFileInGit(gitURL string, branch string, remotePath string) string {
+
+	// TODO Maybe return nothing if it's a ssh or file repository
+	// URLs for checkout have .git suffix
+	gitURL = strings.TrimSuffix(gitURL, ".git")
+	u, err := url.Parse(gitURL)
+	if err != nil {
+		log.Fatalf("Can't parse url: %s", gitURL)
+	}
+	u.Path = path.Join(u.Path, "blob", branch, remotePath)
+	return u.String()
+}
+
+func getWebLinkForGitCommit(gitURL string, commitID string) string {
+
+	// TODO Maybe return nothing if it's a ssh or file repository
+	// URLs for checkout have .git suffix
+	gitURL = strings.TrimSuffix(gitURL, ".git")
+	u, err := url.Parse(gitURL)
+	if err != nil {
+		log.Fatalf("Can't parse url: %s", gitURL)
+	}
+
+	u.Path = path.Join(u.Path, "commit", commitID)
+	return u.String()
 }

@@ -41,6 +41,20 @@ func TestMain(t *testing.T) {
 		assert.FileExists(t, filepath.Join(targetDir, "compose/content/monako_menu_directory/index.md"), "Menu is not present")
 	})
 
+	t.Run("Check for Frontmatter Markdown", func(t *testing.T) {
+		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/content/docs/test/test_doc_markdown.md"))
+		assert.NoError(t, err)
+		content := string(contentBytes)
+		assert.Contains(t, content, "MonakoGitRemote: ")
+	})
+
+	t.Run("Check for Frontmatter Asciidoc", func(t *testing.T) {
+		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/content/docs/test/test_doc_asciidoc.adoc"))
+		assert.NoError(t, err)
+		content := string(contentBytes)
+		assert.Contains(t, content, "MonakoGitRemote: ")
+	})
+
 	t.Run("Check for generated test doc markdown page", func(t *testing.T) {
 		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"), "Generated Test doc does not exist")
 
