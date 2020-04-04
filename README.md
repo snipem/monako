@@ -76,6 +76,14 @@ A Docker image is available from [Dockerhub](https://hub.docker.com/repository/d
   ...
 ```
 
+### Configuration of Documents
+
+Hide Git links. Add to frontmatter:
+
+```yaml
+MonakoGitLinks = false
+```
+
 ### Screenshot
 
 ![Screenshot of a documentation site built with Monako](https://github.com/snipem/monako/raw/master/assets/screenshot.png)
