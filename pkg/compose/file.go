@@ -273,6 +273,12 @@ func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 	if err != nil {
 		log.Fatalf("Error while splitting frontmatter: %s", err)
 	}
+
+	// No frontmatter found, return old content
+	if contentFrontmatter.Content == nil {
+		return "", content
+	}
+
 	contentMarshaled, err := yaml.Marshal(contentFrontmatter.FrontMatter)
 
 	return string(contentMarshaled), string(contentFrontmatter.Content)

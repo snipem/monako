@@ -113,7 +113,7 @@ func TestFrontmatterExpanding(t *testing.T) {
 			"",
 		)
 
-		assert.Nil(t, frontmatter)
+		assert.Empty(t, frontmatter)
 
 	})
 
