@@ -112,7 +112,8 @@ content: linetwo
 123`
 		frontmatter, body := splitFrontmatterAndBody(content)
 		assert.Equal(t,
-			`=== Body Content
+			`
+=== Body Content
 123`,
 			body,
 			"",
@@ -137,7 +138,8 @@ Also on new line`
 
 		frontmatter, body := splitFrontmatterAndBody(content)
 		assert.Equal(t,
-			`=== Body Content
+			`
+=== Body Content
 123
 Here be the --- control signs
 ---
@@ -149,5 +151,22 @@ Also on new line`,
 		assert.Contains(t, frontmatter, "simple: content\n")
 		assert.Contains(t, frontmatter, "content: linetwo\n")
 
+	})
+
+	t.Run("Frontmatter TOML to YAML", func(t *testing.T) {
+		content := `+++
+simple = "content"
+content = "linetwo"
++++
+
+=== Body Content
+123
+Here be the +++ control signs
++++
+Also on new line`
+
+		frontmatter, _ := splitFrontmatterAndBody(content)
+		assert.Contains(t, frontmatter, "simple: content\n")
+		assert.Contains(t, frontmatter, "content: linetwo\n")
 	})
 }

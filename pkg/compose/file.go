@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gohugoio/hugo/parser/pageparser"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
@@ -17,8 +18,6 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"gopkg.in/yaml.v2"
-
-	"github.com/gernest/front"
 )
 
 const standardFilemode = os.FileMode(0700)
@@ -259,18 +258,13 @@ MonakoGitLastCommitAuthorEmail: %s
 
 func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 	// TODO Convert from toml, yaml, etc
-	// FIXME This library wont help because of https://github.com/gernest/front/pull/3
-	m := front.NewMatter()
-	m.Handle("---", front.YAMLHandler)
-	f, body, err := m.Parse(strings.NewReader(content))
+	contentFrontmatter, err := pageparser.ParseFrontMatterAndContent(strings.NewReader(content))
 	if err != nil {
-		// No fronmatter found
-		return "", content
+		log.Fatalf("Error while splitting frontmatter: %s", err)
 	}
+	contentMarshaled, err := yaml.Marshal(contentFrontmatter.FrontMatter)
 
-	marshalledFrontmatter, err := yaml.Marshal(f)
-
-	return string(marshalledFrontmatter), body
+	return string(contentMarshaled), string(contentFrontmatter.Content)
 }
 
 func getWebLinkForGit(gitURL string, branch string, remotePath string) string {
