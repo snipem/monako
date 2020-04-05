@@ -81,7 +81,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 
 func TestInit(t *testing.T) {
 	localFolder := "tmp/testdata"
-	commandLineBaseURL := "Should Overwrite config"
+	commandLineBaseURL := "http://overwrite.config"
 	menuConfigFile := filet.TmpFile(t, os.TempDir(), "# Empty Menu")
 
 	config := Init(CommandLineSettings{
