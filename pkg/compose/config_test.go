@@ -78,3 +78,29 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 
 	return config, tempdir
 }
+
+func TestInit(t *testing.T) {
+	localFolder := "tmp/testdata"
+	commandLineBaseURL := "Should Overwrite config"
+	menuConfigFile := filet.TmpFile(t, os.TempDir(), "# Empty Menu")
+
+	config := Init(CommandLineSettings{
+		ConfigFilePath:     "../../test/config.local.yaml",
+		MenuConfigFilePath: menuConfigFile.Name(),
+		BaseURL:            commandLineBaseURL,
+		ContentWorkingDir:  localFolder,
+		FailOnHugoError:    true,
+		Trace:              true,
+	})
+
+	assert.NotNil(t, config)
+	assert.Equal(t, commandLineBaseURL, config.BaseURL)
+
+	t.Run("Run Hugo", func(t *testing.T) {
+
+		err := config.Run()
+		assert.NoError(t, err)
+
+	})
+
+}
