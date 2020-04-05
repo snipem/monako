@@ -33,15 +33,14 @@ func TestLoadConfig(t *testing.T) {
 }
 
 func TestCleanUp(t *testing.T) {
-	config, _, err := getTestConfig(t)
-	assert.NoError(t, err)
+	config, _ := getTestConfig(t)
 
 	tmpFile := filepath.Join(
 		config.HugoWorkingDir,
 		"testfile.txt")
 
 	// Create the test data because it is not existing yet
-	err = os.Mkdir(config.HugoWorkingDir, standardFilemode)
+	err := os.Mkdir(config.HugoWorkingDir, standardFilemode)
 	if err != nil {
 		log.Fatal(err)
 	}

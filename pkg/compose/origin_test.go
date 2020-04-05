@@ -10,8 +10,7 @@ import (
 
 func TestGitCommiter(t *testing.T) {
 
-	config, _, err := getTestConfig(t)
-	assert.NoError(t, err)
+	config, _ := getTestConfig(t)
 	config.Compose()
 	origins := config.Origins
 	firstOrigin := origins[0]
@@ -21,7 +20,6 @@ func TestGitCommiter(t *testing.T) {
 		assert.NotNil(t, firstOrigin.Files)
 		ci := firstOrigin.Files[0].Commit
 
-		assert.NoError(t, err, "Could not retrieve commit info")
 		assert.Contains(t, ci.Committer.Email, "@")
 
 	})
@@ -29,7 +27,6 @@ func TestGitCommiter(t *testing.T) {
 	t.Run("Second file", func(t *testing.T) {
 		ci := firstOrigin.Files[1].Commit
 
-		assert.NoError(t, err, "Could not retrieve commit info")
 		assert.Contains(t, ci.Committer.Email, "@")
 
 	})

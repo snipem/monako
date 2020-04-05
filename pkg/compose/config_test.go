@@ -12,9 +12,8 @@ import (
 )
 
 func TestGetTestConfig(t *testing.T) {
-	config, workingdir, err := getTestConfig(t)
+	config, workingdir := getTestConfig(t)
 	assert.DirExists(t, workingdir)
-	assert.NoError(t, err)
 	assert.NotNil(t, config)
 
 	t.Run("Check if init was right", func(t *testing.T) {
@@ -34,8 +33,7 @@ func TestGetTestConfig(t *testing.T) {
 }
 
 func TestCompose(t *testing.T) {
-	config, _, err := getTestConfig(t)
-	assert.NoError(t, err)
+	config, _ := getTestConfig(t)
 
 	config.Compose()
 
@@ -52,7 +50,7 @@ func TestCompose(t *testing.T) {
 
 }
 
-func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
+func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 
 	var testRepo string
 
@@ -76,5 +74,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
 
 	config.initConfig(tempdir)
 
-	return config, tempdir, nil
+	assert.DirExists(t, tempdir)
+
+	return config, tempdir
 }
