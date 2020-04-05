@@ -13,8 +13,8 @@ import (
 const monakoMenuDirectory = "monako_menu_directory"
 const themeName = "monako-book-master"
 
-// createHugoPage extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
-func createHugoPage(composeConfig *Config, menuconfig string) {
+// createMonakoStructureInHugoFolder extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
+func createMonakoStructureInHugoFolder(composeConfig *Config, menuconfig string) {
 
 	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
 	dst := filepath.Join(dir, "index.md")
@@ -26,7 +26,7 @@ func createHugoPage(composeConfig *Config, menuconfig string) {
 		log.Fatal(err)
 	}
 
-	err = os.Mkdir(dir, os.FileMode(0744))
+	err = os.MkdirAll(dir, os.FileMode(0744))
 	if err != nil {
 		log.Fatalf("Error menu dir %s", err)
 	}
@@ -83,5 +83,16 @@ BookComments = true
 MonakoGitLinks = true
 
 	`, composeConfig.BaseURL, composeConfig.Title, themeName, composeConfig.Logo, monakoMenuDirectory)
-	return ioutil.WriteFile(filepath.Join(composeConfig.HugoWorkingDir, "config.toml"), []byte(configContent), os.FileMode(0700))
+
+	err := os.MkdirAll(composeConfig.HugoWorkingDir, standardFilemode)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(filepath.Join(composeConfig.HugoWorkingDir, "config.toml"), []byte(configContent), standardFilemode)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

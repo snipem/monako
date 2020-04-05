@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/pkg/compose/origin.go",
             "args": [
                 "-test.run",
-                "TestGitCommiter"
+                "TestCreatePage"
             ]
         },
         {

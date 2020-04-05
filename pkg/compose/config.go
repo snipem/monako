@@ -139,7 +139,7 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		log.Fatal(err)
 	}
 
-	createHugoPage(config, cliSettings.MenuConfigFilePath)
+	createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
 
 	return config
 
