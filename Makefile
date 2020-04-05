@@ -36,7 +36,7 @@ test:
 test_deps:
 	go get golang.org/x/tools/cmd/cover
 
-test_data:
+test_local_clone:
 	git clone https://github.com/snipem/monako-test.git /tmp/testdata/monako-test
 
 # Use this for local tests, uses the locally cloned test data from test_data step

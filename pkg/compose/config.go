@@ -6,7 +6,8 @@ import (
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
-
+	"github.com/snipem/monako/internal/workarounds"
+	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
 
@@ -18,11 +19,27 @@ type Config struct {
 	Logo          string   `yaml:"logo"`
 	FileWhitelist []string `yaml:"whitelist"`
 
-	// HugoWorkingDir is the working dir for the Composition
+	// HugoWorkingDir is the working dir for the Composition. For example "your/dir/compose"
 	HugoWorkingDir string
 
-	// ContentWorkingDir is the main working dir and where all the content is stored in
+	// ContentWorkingDir is the main working dir and where all the content is stored in. For example "your/dir/"
 	ContentWorkingDir string
+}
+
+// CommandLineSettings contains all the flags and settings made via the command line in main
+type CommandLineSettings struct {
+	// ConfigFilePath is the path to the Monako config
+	ConfigFilePath string
+	// MenuConfigFilePath is the path to the Menu config
+	MenuConfigFilePath string
+	// ContentWorkingDir is the directory where files should be created. Home of the compose folder.
+	ContentWorkingDir string
+	// BaseURL is the BaseURL of the site
+	BaseURL string
+	// Trace activates function name based logging
+	Trace bool
+	// FailOnHugoError will fail Monako when there are Hugo errors during build
+	FailOnHugoError bool
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
@@ -64,12 +81,12 @@ func (config *Config) initConfig(workingdir string) {
 func (config *Config) Compose() {
 
 	// If Origin has now own whitelist, use the Compose Whitelist
-	for _, o := range config.Origins {
-		if o.FileWhitelist == nil {
-			o.FileWhitelist = config.FileWhitelist
+	for i := range config.Origins {
+		if config.Origins[i].FileWhitelist == nil {
+			config.Origins[i].FileWhitelist = config.FileWhitelist
 		}
-		o.CloneDir()
-		o.ComposeDir()
+		config.Origins[i].CloneDir()
+		config.Origins[i].ComposeDir()
 	}
 
 }
@@ -96,4 +113,44 @@ func (config *Config) setWorkingDir(workingdir string) {
 	if workingdir != "" {
 		config.HugoWorkingDir = filepath.Join(workingdir, "compose")
 	}
+}
+
+// Init loads the Monako config, adds Workarounds, cleans up the working dir,
+// runs Hugo for initializing the workign dir
+func Init(cliSettings CommandLineSettings) (config *Config) {
+
+	config, err := LoadConfig(cliSettings.ConfigFilePath, cliSettings.ContentWorkingDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO Move to loadconfig parameters
+	if cliSettings.BaseURL != "" {
+		// Overwrite config base url if it is set as parameter
+		config.BaseURL = cliSettings.BaseURL
+	}
+
+	workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+
+	config.CleanUp()
+
+	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
+
+	return config
+
+}
+
+// Run runs Hugo with the composed Monako source
+func (config *Config) Run() error {
+
+	err := helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
+	if err != nil {
+		return err
+	}
+	return nil
 }

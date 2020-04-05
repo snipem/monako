@@ -2,7 +2,13 @@ package workarounds
 
 // run: make test
 
-import "testing"
+import (
+	"os/exec"
+	"runtime"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestAsciiDocImageFix(t *testing.T) {
 
@@ -107,4 +113,20 @@ func TestMarkdownFixInnerLinks(t *testing.T) {
 	if clean != noNeedToClean {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
 	}
+}
+
+func TestFakeAsciidoctorBin(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Can't test this on Windows")
+	}
+	fakePath := AddFakeAsciidoctorBinForDiagramsToPath("localhost")
+
+	assert.FileExists(t, fakePath)
+
+	// This is how Hugo does it: https://github.com/gohugoio/hugo/blob/master/markup/asciidoc/convert.go#L90
+	// We wont to trick Hugo into the same behaviour
+	resolvedPath, err := exec.LookPath("asciidoctor")
+	assert.NoError(t, err)
+	assert.Equal(t, fakePath, resolvedPath)
+
 }

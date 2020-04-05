@@ -1,6 +1,6 @@
 package compose
 
-// run: go test -v ./pkg/compose/
+// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test -v ./pkg/compose/
 
 import (
 	"os"
@@ -12,9 +12,8 @@ import (
 )
 
 func TestGetTestConfig(t *testing.T) {
-	config, workingdir, err := getTestConfig(t)
+	config, workingdir := getTestConfig(t)
 	assert.DirExists(t, workingdir)
-	assert.NoError(t, err)
 	assert.NotNil(t, config)
 
 	t.Run("Check if init was right", func(t *testing.T) {
@@ -34,8 +33,7 @@ func TestGetTestConfig(t *testing.T) {
 }
 
 func TestCompose(t *testing.T) {
-	config, _, err := getTestConfig(t)
-	assert.NoError(t, err)
+	config, _ := getTestConfig(t)
 
 	config.Compose()
 
@@ -52,12 +50,13 @@ func TestCompose(t *testing.T) {
 
 }
 
-func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
+func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 
 	var testRepo string
 
 	if os.Getenv("MONAKO_TEST_REPO") != "" {
 		testRepo = os.Getenv("MONAKO_TEST_REPO")
+		t.Logf("Using local test repo: %s", testRepo)
 	} else {
 		testRepo = "https://github.com/snipem/monako-test.git"
 	}
@@ -75,5 +74,33 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string, err error) {
 
 	config.initConfig(tempdir)
 
-	return config, tempdir, nil
+	assert.DirExists(t, tempdir)
+
+	return config, tempdir
+}
+
+func TestInit(t *testing.T) {
+	localFolder := "tmp/testdata"
+	commandLineBaseURL := "http://overwrite.config"
+	menuConfigFile := filet.TmpFile(t, os.TempDir(), "# Empty Menu")
+
+	config := Init(CommandLineSettings{
+		ConfigFilePath:     "../../test/config.local.yaml",
+		MenuConfigFilePath: menuConfigFile.Name(),
+		BaseURL:            commandLineBaseURL,
+		ContentWorkingDir:  localFolder,
+		FailOnHugoError:    true,
+		Trace:              true,
+	})
+
+	assert.NotNil(t, config)
+	assert.Equal(t, commandLineBaseURL, config.BaseURL)
+
+	t.Run("Run Hugo", func(t *testing.T) {
+
+		err := config.Run()
+		assert.NoError(t, err)
+
+	})
+
 }
