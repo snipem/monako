@@ -87,6 +87,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		path = ""
 	}
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
+	escapedPath = strings.ReplaceAll(escapedPath, "\"", "\\\"")
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
 

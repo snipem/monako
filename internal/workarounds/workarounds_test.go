@@ -3,6 +3,7 @@ package workarounds
 // run: make test
 
 import (
+	"io/ioutil"
 	"os/exec"
 	"runtime"
 	"testing"
@@ -119,7 +120,7 @@ func TestFakeAsciidoctorBin(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("Can't test this on Windows")
 	}
-	fakePath := AddFakeAsciidoctorBinForDiagramsToPath("localhost")
+	fakePath := AddFakeAsciidoctorBinForDiagramsToPath("http://complexbasepath/path/bla")
 
 	assert.FileExists(t, fakePath)
 
@@ -128,5 +129,9 @@ func TestFakeAsciidoctorBin(t *testing.T) {
 	resolvedPath, err := exec.LookPath("asciidoctor")
 	assert.NoError(t, err)
 	assert.Equal(t, fakePath, resolvedPath)
+
+	read, err := ioutil.ReadFile(fakePath)
+	assert.NoError(t, err)
+	assert.Contains(t, string(read), "\\/path\\/bla")
 
 }
