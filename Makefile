@@ -9,7 +9,6 @@ clean:
 
 deps:
 	go mod download
-	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
 	gem install asciidoctor asciidoctor-diagram
