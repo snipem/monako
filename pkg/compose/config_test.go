@@ -1,13 +1,16 @@
 package compose
 
-// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test -v ./pkg/compose/
+// run: HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/Flaque/filet"
+	"github.com/snipem/monako/pkg/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,7 +53,30 @@ func TestCompose(t *testing.T) {
 
 }
 
-func getTestConfig(t *testing.T) (config *Config, tempdir string) {
+func TestHugeRepositories(t *testing.T) {
+
+	if os.Getenv("HUGE_REPOS_TEST") == "" {
+		t.Skip("HUGO_REPOS_TEST is not set")
+	}
+
+	helpers.Trace()
+
+	start := time.Now()
+	config, _ := getTestConfig(t, *NewOrigin(
+		"https://github.com/gohugoio/hugoDocs",
+		"master",
+		"content/en/about/security-model",
+		"huge/test/docs",
+	))
+	config.Compose()
+
+	fmt.Printf("took %v\n", time.Since(start))
+
+}
+
+// getLocalOrRemoteRepo returns a local or remote test remote to https://github.com/snipem/monako-test.git
+// depending on if the MONAKO_TEST_REPO env variable is set or not
+func getLocalOrRemoteRepo(t *testing.T) *Origin {
 
 	var testRepo string
 
@@ -60,6 +86,21 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 	} else {
 		testRepo = "https://github.com/snipem/monako-test.git"
 	}
+	return NewOrigin(testRepo, "master", ".", "docs/monako-test")
+
+}
+
+// getTestConfig returns a test config with a variable list of origins. If no origin is set
+// as a parameter an example configuration is returned
+func getTestConfig(t *testing.T, origins ...Origin) (config *Config, tempdir string) {
+
+	var testOrigins []Origin
+
+	if origins == nil {
+		testOrigins = append(testOrigins, *getLocalOrRemoteRepo(t))
+	} else {
+		testOrigins = origins
+	}
 
 	tempdir = filet.TmpDir(t, os.TempDir())
 
@@ -67,9 +108,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 		BaseURL:       "http://exampleurl.com",
 		FileWhitelist: []string{".md", ".adoc", ".png"},
 		Title:         "Test Config Title",
-		Origins: []Origin{
-			*NewOrigin(testRepo, "master", ".", "docs/monako-test"),
-		},
+		Origins:       testOrigins,
 	}
 
 	config.initConfig(tempdir)
