@@ -36,6 +36,7 @@ func main() {
 	cliSettings := parseCommandLine()
 
 	if cliSettings.Trace {
+		log.SetLevel(logrus.DebugLevel)
 		// Add line and filename to log
 		log.SetReportCaller(true)
 	}
