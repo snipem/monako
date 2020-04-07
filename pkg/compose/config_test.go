@@ -50,7 +50,9 @@ func TestCompose(t *testing.T) {
 
 }
 
-func getTestConfig(t *testing.T) (config *Config, tempdir string) {
+// getLocalOrRemoteRepo returns a local or remote test remote to https://github.com/snipem/monako-test.git
+// depending on if the MONAKO_TEST_REPO env variable is set or not
+func getLocalOrRemoteRepo(t *testing.T) *Origin {
 
 	var testRepo string
 
@@ -60,6 +62,21 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 	} else {
 		testRepo = "https://github.com/snipem/monako-test.git"
 	}
+	return NewOrigin(testRepo, "master", ".", "docs/monako-test")
+
+}
+
+// getTestConfig returns a test config with a variable list of origins. If no origin is set
+// as a parameter an example configuration is returned
+func getTestConfig(t *testing.T, origins ...Origin) (config *Config, tempdir string) {
+
+	var testOrigins []Origin
+
+	if origins == nil {
+		testOrigins = append(testOrigins, *getLocalOrRemoteRepo(t))
+	} else {
+		testOrigins = origins
+	}
 
 	tempdir = filet.TmpDir(t, os.TempDir())
 
@@ -67,9 +84,7 @@ func getTestConfig(t *testing.T) (config *Config, tempdir string) {
 		BaseURL:       "http://exampleurl.com",
 		FileWhitelist: []string{".md", ".adoc", ".png"},
 		Title:         "Test Config Title",
-		Origins: []Origin{
-			*NewOrigin(testRepo, "master", ".", "docs/monako-test"),
-		},
+		Origins:       testOrigins,
 	}
 
 	config.initConfig(tempdir)
