@@ -161,6 +161,8 @@ func (file *OriginFile) copyRegularFile() {
 // identified by it's filename
 func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 
+	log.Debugf("Getting commit info for %s", file.RemotePath)
+
 	r := file.parentOrigin.repo
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &file.RemotePath,

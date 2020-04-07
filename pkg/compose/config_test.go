@@ -1,13 +1,16 @@
 package compose
 
-// run: MONAKO_TEST_REPO="/tmp/testdata/monako-test" go test -v ./pkg/compose/
+// run: HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/Flaque/filet"
+	"github.com/snipem/monako/pkg/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,6 +50,27 @@ func TestCompose(t *testing.T) {
 	for _, wantFile := range wantFiles {
 		assert.FileExists(t, filepath.Join(config.ContentWorkingDir, wantFile))
 	}
+
+}
+
+func TestHugeRepositories(t *testing.T) {
+
+	if os.Getenv("HUGE_REPOS_TEST") == "" {
+		t.Skip("HUGO_REPOS_TEST is not set")
+	}
+
+	helpers.Trace()
+
+	start := time.Now()
+	config, _ := getTestConfig(t, *NewOrigin(
+		"https://github.com/gohugoio/hugoDocs",
+		"master",
+		"content/en/about/security-model",
+		"huge/test/docs",
+	))
+	config.Compose()
+
+	fmt.Printf("took %v\n", time.Since(start))
 
 }
 

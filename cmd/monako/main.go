@@ -6,6 +6,7 @@ import (
 	"flag"
 
 	"github.com/snipem/monako/pkg/compose"
+	"github.com/snipem/monako/pkg/helpers"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -36,9 +37,7 @@ func main() {
 	cliSettings := parseCommandLine()
 
 	if cliSettings.Trace {
-		log.SetLevel(logrus.DebugLevel)
-		// Add line and filename to log
-		log.SetReportCaller(true)
+		helpers.Trace()
 	}
 
 	config := compose.Init(cliSettings)
