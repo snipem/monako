@@ -91,6 +91,9 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	escapedPath = strings.ReplaceAll(escapedPath, "\"", "\\\"")
 
 	originalAsciidoctorPath, err := exec.LookPath("asciidoctor")
+	if err != nil {
+		log.Fatal("No asciidoctor executable found")
+	}
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
 
