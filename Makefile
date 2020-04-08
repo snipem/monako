@@ -43,6 +43,10 @@ test_local_clone:
 test_local:
 	MONAKO_TEST_REPO="/tmp/testdata/monako-test" $(MAKE) test
 
+# Test for testing huge repositories with lots of commits
+test_huge:
+	HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+
 run_prd: build secrets
 		env | grep USER
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \

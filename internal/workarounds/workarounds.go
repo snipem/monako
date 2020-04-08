@@ -94,6 +94,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	// TODO: Use variables
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
+	set -e
 
 	# Use first non fake-binary in path as asciidoctorbin
 	ad=$(which -a asciidoctor | grep -v monako_asciidoctor_fake_binary | head -n 1)

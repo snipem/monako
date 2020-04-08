@@ -28,6 +28,7 @@ const Markdown = "MARKDOWN"
 func (origin *Origin) CloneDir() {
 
 	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
+	log.Debugf("Start cloning of %s", origin.URL)
 
 	origin.filesystem = memfs.New()
 
@@ -58,6 +59,7 @@ func (origin *Origin) CloneDir() {
 	}
 
 	origin.repo = repo
+	log.Debugf("Start cloning of %s", origin.URL)
 
 }
 
