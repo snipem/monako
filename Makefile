@@ -25,7 +25,7 @@ theme: clean
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 secrets:
-	touch config/secrets.env && source config/secrets.env
+	touch configs/secrets.env && source configs/secrets.env
 
 test:
 	go test -covermode=count -coverprofile=coverage.out.tmp ./...
@@ -44,6 +44,7 @@ test_local:
 	MONAKO_TEST_REPO="/tmp/testdata/monako-test" $(MAKE) test
 
 run_prd: build secrets
+		env | grep USER
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \
 			-menu-config ~/work/mopro/architecture/documentation/conf/menu.prod.md \
 			-base-url http://localhost:8000
