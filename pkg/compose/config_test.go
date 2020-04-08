@@ -1,9 +1,8 @@
 package compose
 
-// run: HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+// run: MONAKO_HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -55,23 +54,38 @@ func TestCompose(t *testing.T) {
 
 func TestHugeRepositories(t *testing.T) {
 
-	if os.Getenv("HUGE_REPOS_TEST") == "" {
-		t.Skip("HUGO_REPOS_TEST is not set")
+	if os.Getenv("MONAKO_HUGE_REPOS_TEST") == "" {
+		t.Skip("MONAKO_HUGE_REPOS_TEST is not set")
 	}
 
 	helpers.Trace()
 
 	start := time.Now()
 	config, _ := getTestConfig(t, *NewOrigin(
-		"https://github.com/gohugoio/hugoDocs",
+		// local path is $HOME/temp/hugo for hugo source code with lots of commits
+		filepath.Join(os.Getenv("HOME"), "temp", "hugo"),
 		"master",
-		"content/en/about/security-model",
+		"",
 		"huge/test/docs",
 	))
+
 	config.Compose()
 
-	fmt.Printf("took %v\n", time.Since(start))
+	t.Logf("took %v\n", time.Since(start))
 
+}
+
+func TestDeactivatedCommitInfo(t *testing.T) {
+	config, _ := getTestConfig(t)
+	// Standard must be false
+	assert.False(t, config.DisableCommitInfo)
+	config.DisableCommitInfo = true
+
+	config.Compose()
+	for i := range config.Origins[0].Files {
+		// Commit must be nil
+		assert.Nil(t, config.Origins[0].Files[i].Commit)
+	}
 }
 
 // getLocalOrRemoteRepo returns a local or remote test remote to https://github.com/snipem/monako-test.git

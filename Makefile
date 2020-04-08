@@ -45,7 +45,7 @@ test_local:
 
 # Test for testing huge repositories with lots of commits
 test_huge:
-	HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+	MONAKO_HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
 
 run_prd: build secrets
 		./monako -config ~/work/mopro/architecture/documentation/conf/config.prod.yaml \

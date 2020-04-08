@@ -211,6 +211,7 @@ func writeConfig(repo string) (string, string) {
 ---
     baseURL : "https://example.com/"
     title : "Local Test Page"
+    disableCommitInfo: false
   
     whitelist:
       - ".md"
