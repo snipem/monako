@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -89,6 +90,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
 	escapedPath = strings.ReplaceAll(escapedPath, "\"", "\\\"")
 
+	originalAsciidoctorPath, err := exec.LookPath("asciidoctor")
+
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
 
 	// TODO: Use variables
@@ -96,14 +99,11 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	set -e
 
-	# Use first non fake-binary in path as asciidoctorbin
-	ad=$(which -a asciidoctor | grep -v monako_asciidoctor_fake_binary | head -n 1)
-
 	# Use empty css to trick asciidoctor into using none without error
 	echo "" > empty.css
 
 	# This trick only works with the relative dir workarounds
-	$ad -B . \
+	%s -B . \
 		-r asciidoctor-diagram \
 		-a nofooter \
 		-a stylesheet=empty.css \
@@ -122,7 +122,7 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	if ls *.png >/dev/null 2>&1; then
 	  mv -f *.png compose/public/diagram
 	fi
-	`, escapedPath)
+	`, originalAsciidoctorPath, escapedPath)
 
 	tempDir := filepath.Join(os.TempDir(), "monako_asciidoctor_fake_binary")
 	err = os.Mkdir(tempDir, os.FileMode(0700))
