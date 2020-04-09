@@ -1,20 +1,11 @@
 package helpers
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMain(m *testing.M) {
-	// Setup git clone of repo
-	setup()
-	os.Exit(m.Run())
-}
-
-func setup() {
-}
 func TestIsMarkdown(t *testing.T) {
 	assert.True(t, IsMarkdown("markdown.md"), "Check should be true")
 	assert.True(t, IsMarkdown("markdown.MD"), "Check should be true")
