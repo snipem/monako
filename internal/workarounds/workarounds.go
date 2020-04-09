@@ -72,7 +72,13 @@ func MarkdownPostprocessing(dirty []byte) []byte {
 func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	if runtime.GOOS == "windows" {
-		log.Println("Can't apply asciidoctor diagram workaround on Windows")
+		log.Warn("Can't apply asciidoctor diagram workaround on Windows")
+		return ""
+	}
+
+	_, isGithubWorkflow := os.LookupEnv("GITHUB_WORKFLOW")
+	if isGithubWorkflow {
+		log.Warn("Don't apply workaround on Github Actions, cause its flaky")
 		return ""
 	}
 
