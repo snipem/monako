@@ -104,8 +104,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	set -e
 	# be verbose and log to logfile
-	exec 19>>asciidoctor.log
-	BASH_XTRACEFD=19
+	# FIXME this will make every other error useless
+	exec 2>>asciidoctor.log
 
 	set -x
 

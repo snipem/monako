@@ -60,4 +60,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: asciidoctor.log
-        path: asciidoctor.log
+        path: cmd/monako/asciidoctor.log
