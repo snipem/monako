@@ -88,7 +88,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		path = ""
 	}
 	escapedPath := strings.ReplaceAll(path, "/", "\\/")
-	escapedPath = strings.ReplaceAll(escapedPath, "\"", "\\\"")
 
 	originalAsciidoctorPath, _ := exec.LookPath("asciidoctor")
 	// Ignore error otherwise runs with no asciidoctor installed will fail
