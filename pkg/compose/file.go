@@ -172,7 +172,7 @@ func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 	// Problem seems to be the longer the file hasn't been in the log, the longer it takes to retrieve it
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &file.RemotePath,
-		Order:    git.LogOrderDefault,
+		Order:    git.LogOrderCommitterTime,
 	})
 
 	if err != nil {
