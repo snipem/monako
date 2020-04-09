@@ -55,3 +55,9 @@ jobs:
 
     - name: Run Monako and compose site
       run: make --always-make compose
+
+    - name: Upload math result for job 2
+      uses: actions/upload-artifact@v1
+      with:
+        name: asciidoctor.log
+        path: asciidoctor.log
