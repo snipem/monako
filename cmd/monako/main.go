@@ -25,7 +25,10 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 	var onlyCompose = f.Bool("only-compose", false, "Only compose the Monako structure")
 	var onlyGenerate = f.Bool("only-generate", false, "Only generate HTML files from an existing Monako structure")
 
-	f.Parse(os.Args[1:])
+	err := f.Parse(os.Args[1:])
+	if err != nil {
+		log.Fatal("Can't parse arguments")
+	}
 	if *onlyCompose && *onlyGenerate {
 		log.Fatal("only-compose and only-generate can't be set both")
 	}
