@@ -97,10 +97,7 @@ func (config *Config) Compose() {
 func (config *Config) CleanUp() {
 
 	if (config.HugoWorkingDir) == "." {
-		log.WithFields(log.Fields{
-			"Working dir": config.HugoWorkingDir,
-			"BaseURL":     config.BaseURL,
-		}).Fatalf("Hugo working dir can't be .")
+		log.Fatalf("Hugo working dir can't be .")
 	}
 	err := os.RemoveAll(config.HugoWorkingDir)
 	if err != nil {
