@@ -76,12 +76,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		return ""
 	}
 
-	_, isGithubWorkflow := os.LookupEnv("GITHUB_WORKFLOW")
-	if isGithubWorkflow {
-		log.Warn("Don't apply workaround on Github Actions, cause its flaky")
-		return ""
-	}
-
 	url, err := url.Parse(baseURL)
 	if err != nil {
 		log.Fatal(err)

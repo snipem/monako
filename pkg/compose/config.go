@@ -130,7 +130,11 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		config.BaseURL = cliSettings.BaseURL
 	}
 
-	workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+	if _, isGithub := os.LookupEnv("GITHUB_WORKFLOW"); isGithub {
+		log.Warn("Don't apply workaround on Github Actions, cause its flaky")
+	} else {
+		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+	}
 
 	config.CleanUp()
 

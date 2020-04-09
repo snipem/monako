@@ -4,7 +4,6 @@ package workarounds
 
 import (
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"runtime"
 	"testing"
@@ -120,10 +119,6 @@ func TestMarkdownFixInnerLinks(t *testing.T) {
 func TestFakeAsciidoctorBin(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("Can't test this on Windows")
-	}
-	_, isGithubWorkflow := os.LookupEnv("GITHUB_WORKFLOW")
-	if isGithubWorkflow {
-		t.Skip("Don't run this test on Github Actions")
 	}
 
 	fakePath := AddFakeAsciidoctorBinForDiagramsToPath("http://complexbasepath/path/bla")
