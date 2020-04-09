@@ -68,4 +68,4 @@ jobs:
       if: always()
       with:
         name: test_adocs
-        path: cmd/monako/docs/test/subfolder/
+        path: cmd/monako/asciidoctor.log.adoc
