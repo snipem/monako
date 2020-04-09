@@ -33,6 +33,10 @@ Usage of monako:
         Fail on document conversion errors
   -menu-config string
         Menu file for monako-book theme (default "config.menu.md")
+  -only-compose
+        Only compose the Monako structure
+  -only-generate
+        Only generate HTML files from an existing Monako structure
   -trace
         Enable trace logging
 ```

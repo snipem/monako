@@ -149,9 +149,9 @@ func TestInit(t *testing.T) {
 	assert.NotNil(t, config)
 	assert.Equal(t, commandLineBaseURL, config.BaseURL)
 
-	t.Run("Run Hugo", func(t *testing.T) {
+	t.Run("Generate HTML with Hugo", func(t *testing.T) {
 
-		err := config.Run()
+		err := config.Generate()
 		assert.NoError(t, err)
 
 	})

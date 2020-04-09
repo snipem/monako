@@ -126,6 +126,55 @@ func TestMain(t *testing.T) {
 	}
 }
 
+func TestMainSplitCalls(t *testing.T) {
+
+	targetDir := filet.TmpDir(t, "")
+
+	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
+
+	os.Args = []string{
+		"monako",
+		"-only-compose",
+		"-fail-on-error",
+		"-working-dir", targetDir,
+		"-config", monakoConfig,
+		"-menu-config", menuConfig}
+	t.Logf("Running Monako with %s", os.Args)
+	main()
+
+	assert.DirExists(t, filepath.Join(targetDir, "compose"))
+	assert.NoDirExists(t, filepath.Join(targetDir, "compose", "public"))
+
+	os.Args = []string{
+		"monako",
+		"-only-generate",
+		"-fail-on-error",
+		"-working-dir", targetDir,
+		"-config", monakoConfig,
+		"-menu-config", menuConfig}
+	t.Logf("Running Monako with %s", os.Args)
+	main()
+	assert.DirExists(t, filepath.Join(targetDir, "compose", "public"))
+}
+
+func TestFailOnNoComposeBeforeGenerate(t *testing.T) {
+
+	t.Skip("Does not work since fatal can not be intercepted")
+	targetDir := filet.TmpDir(t, "")
+
+	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
+	os.Args = []string{
+		"monako",
+		"-only-generate",
+		"-fail-on-error",
+		"-working-dir", targetDir,
+		"-config", monakoConfig,
+		"-menu-config", menuConfig}
+	t.Logf("Running Monako with %s", os.Args)
+	main()
+	assert.NoDirExists(t, filepath.Join(targetDir, "compose", "public"))
+}
+
 func getContent(ts *httptest.Server, url string) (string, error) {
 	// res, err := http.Get(ts.URL)
 	res, err := http.Get(ts.URL + url)

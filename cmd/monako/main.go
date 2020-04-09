@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/snipem/monako/pkg/compose"
 	"github.com/snipem/monako/pkg/helpers"
@@ -13,14 +14,21 @@ import (
 
 func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 
-	var configfilepath = flag.String("config", "config.monako.yaml", "Configuration file")
-	var menuconfigfilepath = flag.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
-	var workingdir = flag.String("working-dir", ".", "Working dir for composed site")
-	var baseURL = flag.String("base-url", "", "Custom base URL")
-	var trace = flag.Bool("trace", false, "Enable trace logging")
-	var failOnHugoError = flag.Bool("fail-on-error", false, "Fail on document conversion errors")
+	f := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
-	flag.Parse()
+	var configfilepath = f.String("config", "config.monako.yaml", "Configuration file")
+	var menuconfigfilepath = f.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
+	var workingdir = f.String("working-dir", ".", "Working dir for composed site")
+	var baseURL = f.String("base-url", "", "Custom base URL")
+	var trace = f.Bool("trace", false, "Enable trace logging")
+	var failOnHugoError = f.Bool("fail-on-error", false, "Fail on document conversion errors")
+	var onlyCompose = f.Bool("only-compose", false, "Only compose the Monako structure")
+	var onlyGenerate = f.Bool("only-generate", false, "Only generate HTML files from an existing Monako structure")
+
+	f.Parse(os.Args[1:])
+	if *onlyCompose && *onlyGenerate {
+		log.Fatal("only-compose and only-generate can't be set both")
+	}
 
 	return compose.CommandLineSettings{
 		ConfigFilePath:     *configfilepath,
@@ -29,6 +37,8 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 		BaseURL:            *baseURL,
 		Trace:              *trace,
 		FailOnHugoError:    *failOnHugoError,
+		OnlyCompose:        *onlyCompose,
+		OnlyGenerate:       *onlyGenerate,
 	}
 }
 
@@ -41,12 +51,15 @@ func main() {
 	}
 
 	config := compose.Init(cliSettings)
+	if !cliSettings.OnlyGenerate {
+		config.Compose()
+	}
 
-	config.Compose()
-
-	err := config.Run()
-	if cliSettings.FailOnHugoError && err != nil {
-		log.Fatal(err)
+	if !cliSettings.OnlyCompose {
+		err := config.Generate()
+		if cliSettings.FailOnHugoError && err != nil {
+			log.Fatal(err)
+		}
 	}
 
 }

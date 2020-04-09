@@ -42,6 +42,10 @@ type CommandLineSettings struct {
 	Trace bool
 	// FailOnHugoError will fail Monako when there are Hugo errors during build
 	FailOnHugoError bool
+	// OnlyCompose will only compose files but not generate HTML
+	OnlyCompose bool
+	// OnlyGenerate will only generate HTML files but not compose them
+	OnlyGenerate bool
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
@@ -114,8 +118,7 @@ func (config *Config) setWorkingDir(workingdir string) {
 	}
 }
 
-// Init loads the Monako config, adds Workarounds, cleans up the working dir,
-// runs Hugo for initializing the workign dir
+// Init loads the Monako config, adds Workarounds, runs Hugo for initializing the workign dir
 func Init(cliSettings CommandLineSettings) (config *Config) {
 
 	config, err := LoadConfig(cliSettings.ConfigFilePath, cliSettings.ContentWorkingDir)
@@ -135,21 +138,28 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
 	}
 
-	config.CleanUp()
+	if !cliSettings.OnlyGenerate {
+		// Dont do these steps if only generate
+		config.CleanUp()
 
-	err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
-	if err != nil {
-		log.Fatal(err)
+		err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
 	}
-
-	createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
 
 	return config
 
 }
 
-// Run runs Hugo with the composed Monako source
-func (config *Config) Run() error {
+// Generate runs Hugo on the composed Monako source
+func (config *Config) Generate() error {
+
+	if _, err := os.Stat(config.HugoWorkingDir); os.IsNotExist(err) {
+		log.Fatalf("%s does not exist, run monako only-generate before?", config.HugoWorkingDir)
+	}
 
 	err := helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
 	if err != nil {
