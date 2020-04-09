@@ -58,6 +58,7 @@ jobs:
 
     - name: Upload math result for job 2
       uses: actions/upload-artifact@v1
+      if: always()
       with:
         name: asciidoctor.log
         path: cmd/monako/asciidoctor.log
