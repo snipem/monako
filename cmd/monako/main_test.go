@@ -28,7 +28,7 @@ func TestMain(t *testing.T) {
 
 	os.Args = []string{
 		"monako",
-		"-fail-on-error",
+		// "-fail-on-error",
 		"-working-dir", targetDir,
 		"-config", monakoConfig,
 		"-menu-config", menuConfig}

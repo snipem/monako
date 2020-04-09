@@ -103,6 +103,8 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	set -e
+	# be verbose
+	set -x
 
 	# Use empty css to trick asciidoctor into using none without error
 	echo "" > empty.css
