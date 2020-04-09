@@ -56,9 +56,16 @@ jobs:
     - name: Run Monako and compose site
       run: make --always-make compose
 
-    - name: Upload math result for job 2
+    - name: Persist log
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: asciidoctor.log
         path: cmd/monako/asciidoctor.log
+
+    - name: Persist artifacts
+      uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: test_adocs
+        path: cmd/monako/docs/test/subfolder/
