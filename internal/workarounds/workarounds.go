@@ -119,8 +119,9 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 		-a stylesheet=empty.css \
 		--safe \
 		--trace \
-		- | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/" |
-		tee asciidoctor.log.adoc
+		- | sed -E -e "s/img src=\"([^/]+)\"/img src=\"%s\/diagram\/\1\"/" > asciidoctor.log.adoc
+
+	cat asciidoctor.log.adoc
 
 	# For some reason static is not parsed with integrated Hugo
 	mkdir -p compose/public/diagram
