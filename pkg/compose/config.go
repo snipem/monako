@@ -19,6 +19,8 @@ type Config struct {
 	Logo          string   `yaml:"logo"`
 	FileWhitelist []string `yaml:"whitelist"`
 
+	DisableCommitInfo bool `yaml:"disableCommitInfo"`
+
 	// HugoWorkingDir is the working dir for the Composition. For example "your/dir/compose"
 	HugoWorkingDir string
 

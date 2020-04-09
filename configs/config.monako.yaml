@@ -3,6 +3,8 @@
   title : "My Projects"
   logo : "docs/monako/profile.png"
 
+  disableCommitInfo: false
+
   whitelist:
     - ".md"
     - ".adoc"

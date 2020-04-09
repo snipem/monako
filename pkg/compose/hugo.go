@@ -81,8 +81,9 @@ BookComments = true
 
 # Monako
 MonakoGitLinks = true
+MonakoDisableGitCommit = %v
 
-	`, composeConfig.BaseURL, composeConfig.Title, themeName, composeConfig.Logo, monakoMenuDirectory)
+	`, composeConfig.BaseURL, composeConfig.Title, themeName, composeConfig.Logo, monakoMenuDirectory, composeConfig.DisableCommitInfo)
 
 	err := os.MkdirAll(composeConfig.HugoWorkingDir, standardFilemode)
 	if err != nil {

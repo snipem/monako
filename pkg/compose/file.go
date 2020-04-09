@@ -1,5 +1,7 @@
 package compose
 
+// run: MONAKO_HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+
 import (
 	"fmt"
 	"io"
@@ -104,12 +106,14 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 		parentOrigin: origin,
 	}
 
-	commitinfo, err := originFile.getCommitInfo()
-	if err != nil {
-		log.Warnf("Can't extract Commit Info for '%s'", err)
-	}
+	if !origin.config.DisableCommitInfo {
 
-	originFile.Commit = commitinfo
+		commitinfo, err := originFile.getCommitInfo()
+		if err != nil {
+			log.Warnf("Can't extract Commit Info for '%s'", err)
+		}
+		originFile.Commit = commitinfo
+	}
 
 	return originFile
 }
@@ -163,7 +167,9 @@ func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 
 	log.Debugf("Getting commit info for %s", file.RemotePath)
 
+	start := time.Now()
 	r := file.parentOrigin.repo
+	// Problem seems to be the longer the file hasn't been in the log, the longer it takes to retrieve it
 	cIter, err := r.Log(&git.LogOptions{
 		FileName: &file.RemotePath,
 		Order:    git.LogOrderCommitterTime,
@@ -174,6 +180,7 @@ func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
 	}
 
 	returnCommit, err := cIter.Next()
+	log.Debugf("Git Log took %s", time.Since(start))
 
 	if err != nil {
 		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
@@ -206,7 +213,6 @@ func (file *OriginFile) copyMarkupFile() {
 		content = workarounds.AsciidocPostprocessing(dirty)
 	}
 
-	// TODO: Add ExpandFrontmatter function
 	content = []byte(file.ExpandFrontmatter(string(content)))
 
 	err = ioutil.WriteFile(file.LocalPath, content, standardFilemode)
