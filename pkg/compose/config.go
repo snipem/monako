@@ -142,11 +142,6 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		// Dont do these steps if only generate
 		config.CleanUp()
 
-		err = helpers.HugoRun([]string{"--quiet", "new", "site", config.HugoWorkingDir})
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
 	}
 

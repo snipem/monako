@@ -34,6 +34,14 @@ func extractTheme(hugoWorkingDir string) {
 // createMonakoStructureInHugoFolder extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func createMonakoStructureInHugoFolder(composeConfig *Config, menuconfig string) {
 
+	var foldersToCreate = []string{"content", "themes"}
+	for _, folder := range foldersToCreate {
+		err := os.MkdirAll(filepath.Join(composeConfig.ContentWorkingDir, folder), standardFilemode)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
 	dst := filepath.Join(dir, "index.md")
 
