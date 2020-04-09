@@ -39,85 +39,6 @@ type OriginFile struct {
 	parentOrigin *Origin
 }
 
-// ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
-// The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
-// information
-func (origin *Origin) ComposeDir() {
-	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
-
-	if len(origin.Files) == 0 {
-		log.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
-	}
-
-	for _, file := range origin.Files {
-		file.composeFile()
-	}
-}
-
-// NewOrigin returns a new origin with all needed fields
-func NewOrigin(url string, branch string, sourceDir string, targetDir string) *Origin {
-	o := new(Origin)
-	o.URL = url
-	o.Branch = branch
-	o.SourceDir = sourceDir
-	o.TargetDir = targetDir
-	return o
-}
-
-func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
-
-	var originFiles []OriginFile
-
-	files, _ := origin.filesystem.ReadDir(startdir)
-	for _, file := range files {
-
-		// This is the path as stored in the remote repo
-		// This can only be gathered here, because of recursing through
-		// the file system
-		// Use path here to support unixoid Git paths
-		remotePath := path.Join(startdir, file.Name())
-
-		if file.IsDir() {
-			// Recurse over file and add their files to originFiles
-			originFiles = append(
-				originFiles,
-				origin.getWhitelistedFiles(
-					remotePath,
-				)...)
-		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
-
-			// Add the current file to the list of files returned
-			originFiles = append(
-				originFiles,
-				origin.newFile(remotePath))
-		}
-
-	}
-	return originFiles
-}
-
-func (origin *Origin) newFile(remotePath string) OriginFile {
-	localPath := getLocalFilePath(origin.config.ContentWorkingDir, origin.SourceDir, origin.TargetDir, remotePath)
-
-	originFile := OriginFile{
-		RemotePath: remotePath,
-		LocalPath:  localPath,
-
-		parentOrigin: origin,
-	}
-
-	if !origin.config.DisableCommitInfo {
-
-		commitinfo, err := originFile.getCommitInfo()
-		if err != nil {
-			log.Warnf("Can't extract Commit Info for '%s'", err)
-		}
-		originFile.Commit = commitinfo
-	}
-
-	return originFile
-}
-
 func (file *OriginFile) composeFile() {
 
 	file.createParentDir()
@@ -131,6 +52,18 @@ func (file *OriginFile) composeFile() {
 	}
 	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
+}
+
+// GetFormat determines the markup format of a file by it's filename.
+// Results can be Markdown and Asciidoc
+func (file OriginFile) GetFormat() string {
+	if helpers.IsMarkdown(file.RemotePath) {
+		return Markdown
+	} else if helpers.IsAsciidoc(file.RemotePath) {
+		return Asciidoc
+	} else {
+		return ""
+	}
 }
 
 // createParentDir creates the parent directories for the file in the local filesystem

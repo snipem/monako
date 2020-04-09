@@ -1,11 +1,13 @@
 package compose
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/c4milo/unpackit"
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/theme"
 )
@@ -13,13 +15,29 @@ import (
 const monakoMenuDirectory = "monako_menu_directory"
 const themeName = "monako-book-master"
 
+// extractTheme extracts the Monako Theme to the Hugo Working Directory
+func extractTheme(hugoWorkingDir string) {
+	themezip, err := theme.Asset("tmp/theme.zip")
+	if err != nil {
+		log.Fatalf("Error loading theme %s", err)
+	}
+	byteReader := bytes.NewReader(themezip)
+
+	destPath, err := unpackit.Unpack(byteReader, filepath.Join(hugoWorkingDir, "themes"))
+	if err != nil {
+		log.Fatalf("Error extracting theme: %s", err)
+	}
+
+	log.Printf("Extracted %s", destPath)
+}
+
 // createMonakoStructureInHugoFolder extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
 func createMonakoStructureInHugoFolder(composeConfig *Config, menuconfig string) {
 
 	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
 	dst := filepath.Join(dir, "index.md")
 
-	theme.ExtractTheme(composeConfig.HugoWorkingDir)
+	extractTheme(composeConfig.HugoWorkingDir)
 
 	err := createHugoConfig(composeConfig)
 	if err != nil {
