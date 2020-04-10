@@ -19,7 +19,6 @@ jobs:
     - name: Dependencies
       run: make --always-make deps theme
 
-    steps:
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v1
       with:
