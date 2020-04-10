@@ -18,6 +18,7 @@ type Config struct {
 	Origins       []Origin `yaml:"origins"`
 	Logo          string   `yaml:"logo"`
 	FileWhitelist []string `yaml:"whitelist"`
+	FileBlacklist []string `yaml:"blacklist"`
 
 	DisableCommitInfo bool `yaml:"disableCommitInfo"`
 
@@ -90,6 +91,9 @@ func (config *Config) Compose() {
 	for i := range config.Origins {
 		if config.Origins[i].FileWhitelist == nil {
 			config.Origins[i].FileWhitelist = config.FileWhitelist
+		}
+		if config.Origins[i].FileBlacklist == nil {
+			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
 		config.Origins[i].CloneDir()
 		config.Origins[i].ComposeDir()

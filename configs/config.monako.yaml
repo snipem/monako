@@ -20,6 +20,8 @@
     branch: master
     docdir: .
     targetdir: docs/monako
+    blacklist:
+      - "example_blacklisted_doc.adoc"
 
   - src: https://github.com/snipem/commute-tube
     branch: master

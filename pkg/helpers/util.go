@@ -7,10 +7,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FileIsWhitelisted returns true if the filename is in the whitelisted based on its suffix
-func FileIsWhitelisted(filename string, whitelist []string) bool {
-	for _, whitelisted := range whitelist {
-		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(whitelisted)) {
+// FileIsListed returns true if the filename is in the list based on its suffix
+func FileIsListed(filename string, list []string) bool {
+	for _, listed := range list {
+		if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(listed)) {
 			return true
 		}
 	}

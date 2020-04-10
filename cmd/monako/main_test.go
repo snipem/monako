@@ -41,6 +41,14 @@ func TestMain(t *testing.T) {
 		assert.FileExists(t, filepath.Join(targetDir, "compose/content/monako_menu_directory/index.md"), "Menu is not present")
 	})
 
+	t.Run("Check for whitelisted files", func(t *testing.T) {
+		assert.FileExists(t, filepath.Join(targetDir, "compose/content/docs/test/test_doc_asciidoc.adoc"))
+	})
+
+	t.Run("Check for blacklisted files", func(t *testing.T) {
+		assert.NoFileExists(t, filepath.Join(targetDir, "compose/content/docs/test/test_doc_asciidoc_include_me.adoc"))
+	})
+
 	t.Run("Check for Frontmatter Markdown", func(t *testing.T) {
 		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/content/docs/test/test_doc_markdown.md"))
 		assert.NoError(t, err)
@@ -278,6 +286,8 @@ func writeConfig(repo string) (string, string) {
       branch: master
       docdir: .
       targetdir: docs/test/
+      blacklist:
+        - "test_doc_asciidoc_include_me.adoc"
 `, testRepo)
 
 	menuConfig := fmt.Sprintf(`

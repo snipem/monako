@@ -21,14 +21,14 @@ func TestIsAsciidoc(t *testing.T) {
 	assert.False(t, IsAsciidoc("somefolderwith.adoc-init/somefile.tmp"), "Asciidoc not detected correctly")
 }
 
-func TestFileIsWhitelisted(t *testing.T) {
-	assert.True(t, FileIsWhitelisted("filename.txt", []string{"txt"}))
-	assert.False(t, FileIsWhitelisted("filename.sh", []string{"txt"}))
+func TestFileIsWhiteOrBlacklisted(t *testing.T) {
+	assert.True(t, FileIsListed("filename.txt", []string{"txt"}))
+	assert.False(t, FileIsListed("filename.sh", []string{"txt"}))
 
-	assert.True(t, FileIsWhitelisted("filename.md", []string{"md", "adoc"}))
-	assert.True(t, FileIsWhitelisted("filename.adoc", []string{"md", "adoc"}))
-	assert.False(t, FileIsWhitelisted("filename.adoc", []string{}))
-	assert.False(t, FileIsWhitelisted("filename.adoc", []string{"md"}))
+	assert.True(t, FileIsListed("filename.md", []string{"md", "adoc"}))
+	assert.True(t, FileIsListed("filename.adoc", []string{"md", "adoc"}))
+	assert.False(t, FileIsListed("filename.adoc", []string{}))
+	assert.False(t, FileIsListed("filename.adoc", []string{"md"}))
 }
 
 func TestHugoRun(t *testing.T) {

@@ -73,6 +73,7 @@ type Origin struct {
 	SourceDir     string   `yaml:"docdir,omitempty"`
 	TargetDir     string   `yaml:"targetdir,omitempty"`
 	FileWhitelist []string `yaml:"whitelist,omitempty"`
+	FileBlacklist []string `yaml:"blacklist,omitempty"`
 
 	Files []OriginFile
 
@@ -85,7 +86,7 @@ type Origin struct {
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
 func (origin *Origin) ComposeDir() {
-	origin.Files = origin.getWhitelistedFiles(origin.SourceDir)
+	origin.Files = origin.getMatchingFiles(origin.SourceDir)
 
 	if len(origin.Files) == 0 {
 		log.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
@@ -106,7 +107,7 @@ func NewOrigin(url string, branch string, sourceDir string, targetDir string) *O
 	return o
 }
 
-func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
+func (origin *Origin) getMatchingFiles(startdir string) []OriginFile {
 
 	var originFiles []OriginFile
 
@@ -123,10 +124,11 @@ func (origin *Origin) getWhitelistedFiles(startdir string) []OriginFile {
 			// Recurse over file and add their files to originFiles
 			originFiles = append(
 				originFiles,
-				origin.getWhitelistedFiles(
+				origin.getMatchingFiles(
 					remotePath,
 				)...)
-		} else if helpers.FileIsWhitelisted(file.Name(), origin.FileWhitelist) {
+		} else if helpers.FileIsListed(file.Name(), origin.FileWhitelist) &&
+			!helpers.FileIsListed(file.Name(), origin.FileBlacklist) {
 
 			// Add the current file to the list of files returned
 			originFiles = append(
