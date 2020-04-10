@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         go-version: [1.14.x]
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
@@ -23,6 +23,12 @@ jobs:
       run: |
         echo "::set-env name=GOPATH::${{ github.workspace }}/../go"
         echo "::add-path::${{ github.workspace }}/../go/bin"
+
+    - name: Setup Ruby for use with actions
+      uses: actions/setup-ruby@v1.0.0
+    
+    - name: Install asciidoctor
+      run: gem install asciidoctor asciidoctor-diagram
         
     - name: Checkout code
       uses: actions/checkout@v2
