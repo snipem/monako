@@ -230,14 +230,27 @@ func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
 
 func getWebLinkForFileInGit(gitURL string, branch string, remotePath string) string {
 
-	// TODO Maybe return nothing if it's a ssh or file repository
 	// URLs for checkout have .git suffix
 	gitURL = strings.TrimSuffix(gitURL, ".git")
 	u, err := url.Parse(gitURL)
+
 	if err != nil {
-		log.Fatalf("Can't parse url: %s", gitURL)
+		return ""
 	}
-	u.Path = path.Join(u.Path, "blob", branch, remotePath)
+
+	if !strings.Contains(u.Scheme, "http") {
+		return ""
+	}
+
+	// This works for Github and Gitlab
+	middlePath := "blob"
+
+	// Bitbucket does it differently
+	if strings.Contains(u.Host, "bitbucket") {
+		middlePath = "src"
+	}
+
+	u.Path = path.Join(u.Path, middlePath, branch, remotePath)
 	return u.String()
 }
 
