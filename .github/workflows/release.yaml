@@ -28,7 +28,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Dependencies
-      run: make --always-make deps theme
+      run: make --always-make deps theme test
       
     - name: Reset go.mod and go.sum
       run: git checkout -- go.mod go.sum
