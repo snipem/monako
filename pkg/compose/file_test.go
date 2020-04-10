@@ -173,3 +173,36 @@ func TestGetWebLink(t *testing.T) {
 		})
 	}
 }
+
+func TestGetCommitWebLink(t *testing.T) {
+
+	cases := []struct {
+		gitURL, commitID, Expected string
+	}{
+		{"https://github.com/snipem/monako-test.git",
+			"b744ffe4761cb3a282dcb30ac23b129ec19c9a53",
+			"https://github.com/snipem/monako-test/commit/b744ffe4761cb3a282dcb30ac23b129ec19c9a53"},
+
+		{"https://gitlab.com/snipem/monako-test.git",
+			"1559b863ff3a9cc1c077ebc480215fd54b621693",
+			"https://gitlab.com/snipem/monako-test/commit/1559b863ff3a9cc1c077ebc480215fd54b621693"},
+
+		{"https://bitbucket.org/snipem/monako-test.git",
+			"e99f32612df02ee18de15bd42326a10e4195be3d",
+			"https://bitbucket.org/snipem/monako-test/commits/e99f32612df02ee18de15bd42326a10e4195be3d"},
+
+		{"/file/local",
+			"commitID4711",
+			""},
+
+		{"git@github.com:snipem/monako-test.git",
+			"commitID4711",
+			""},
+	}
+
+	for _, tc := range cases {
+		t.Run(fmt.Sprintf("%s, %s -> %s", tc.gitURL, tc.commitID, tc.Expected), func(t *testing.T) {
+			assert.Equal(t, tc.Expected, getWebLinkForGitCommit(tc.gitURL, tc.commitID))
+		})
+	}
+}
