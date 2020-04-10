@@ -1,8 +1,11 @@
 package helpers
 
+// run: go test ./pkg/helpers/
+
 import (
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,4 +19,25 @@ func TestIsAsciidoc(t *testing.T) {
 	assert.True(t, IsAsciidoc("asciidoc.adoc"), "Check should be true")
 	assert.True(t, IsAsciidoc("asciidoc.ADOC"), "Check should be true")
 	assert.False(t, IsAsciidoc("somefolderwith.adoc-init/somefile.tmp"), "Asciidoc not detected correctly")
+}
+
+func TestFileIsWhitelisted(t *testing.T) {
+	assert.True(t, FileIsWhitelisted("filename.txt", []string{"txt"}))
+	assert.False(t, FileIsWhitelisted("filename.sh", []string{"txt"}))
+
+	assert.True(t, FileIsWhitelisted("filename.md", []string{"md", "adoc"}))
+	assert.True(t, FileIsWhitelisted("filename.adoc", []string{"md", "adoc"}))
+	assert.False(t, FileIsWhitelisted("filename.adoc", []string{}))
+	assert.False(t, FileIsWhitelisted("filename.adoc", []string{"md"}))
+}
+
+func TestHugoRun(t *testing.T) {
+	assert.NoError(t, HugoRun([]string{"version"}))
+	assert.Error(t, HugoRun([]string{"unknown-flag-by-monako-test-case"}))
+}
+
+func TestTrace(t *testing.T) {
+	assert.NotEqual(t, logrus.GetLevel(), logrus.DebugLevel)
+	Trace()
+	assert.Equal(t, logrus.GetLevel(), logrus.DebugLevel)
 }
