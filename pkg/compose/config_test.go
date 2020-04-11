@@ -1,6 +1,6 @@
 package compose
 
-// run: MONAKO_HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+// run: make benchmark
 
 import (
 	"os"
@@ -50,7 +50,7 @@ func TestCompose(t *testing.T) {
 
 }
 
-func BenchmarkHugeRepositories(b *testing.B) {
+func BenchmarkHugoRepository(b *testing.B) {
 
 	origin := NewOrigin(
 		// local path is $HOME/temp/hugo for hugo source code with lots of commits
@@ -62,7 +62,9 @@ func BenchmarkHugeRepositories(b *testing.B) {
 
 	origin.CloneDir()
 
-	b.Run("Get Commit Info", func(b *testing.B) {
+	// Don't fetch commit info early
+	origin.config = &Config{DisableCommitInfo: true}
+	b.Run("Get Commit Info for Hugo", func(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
 			_, err := getCommitInfo("README.md", origin.repo)
@@ -70,6 +72,41 @@ func BenchmarkHugeRepositories(b *testing.B) {
 
 			// Older commit long time no change, far behind in git log
 			_, err = getCommitInfo("docs/archetypes/default.md", origin.repo)
+			assert.NoError(b, err)
+		}
+
+	})
+
+}
+
+func BenchmarkSlowRepository(b *testing.B) {
+
+	// Use env vars, these folders are secret because of client project
+	slowRepoFolder := os.Getenv("MONAKO_SLOW_REPO_FOLDER")
+	slowRepoFile1 := os.Getenv("MONAKO_SLOW_REPO_FILE1")
+	slowRepoFile2 := os.Getenv("MONAKO_SLOW_REPO_FILE2")
+
+	origin := NewOrigin(
+		// local path is $HOME/temp/hugo for hugo source code with lots of commits
+		filepath.Join(os.Getenv("HOME"), slowRepoFolder),
+		"develop",
+		"",
+		"huge/test/docs",
+	)
+
+	// Don't fetch commit info early
+	origin.config = &Config{DisableCommitInfo: true}
+	origin.CloneDir()
+
+	b.Run("Get Commit Info", func(b *testing.B) {
+
+		for n := 0; n < b.N; n++ {
+
+			_, err := getCommitInfo(slowRepoFile1, origin.repo)
+			assert.NoError(b, err)
+
+			// Older commit long time no change, far behind in git log
+			_, err = getCommitInfo(slowRepoFile2, origin.repo)
 			assert.NoError(b, err)
 		}
 
