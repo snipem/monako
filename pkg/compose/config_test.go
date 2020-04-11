@@ -6,10 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/Flaque/filet"
-	"github.com/snipem/monako/pkg/helpers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,26 +50,26 @@ func TestCompose(t *testing.T) {
 
 }
 
-func TestHugeRepositories(t *testing.T) {
+func BenchmarkHugeRepositories(b *testing.B) {
 
-	if os.Getenv("MONAKO_HUGE_REPOS_TEST") == "" {
-		t.Skip("MONAKO_HUGE_REPOS_TEST is not set")
-	}
-
-	helpers.Trace()
-
-	start := time.Now()
-	config, _ := getTestConfig(t, *NewOrigin(
+	origin := NewOrigin(
 		// local path is $HOME/temp/hugo for hugo source code with lots of commits
 		filepath.Join(os.Getenv("HOME"), "temp", "hugo"),
 		"master",
 		"",
 		"huge/test/docs",
-	))
+	)
 
-	config.Compose()
+	origin.CloneDir()
 
-	t.Logf("took %v\n", time.Since(start))
+	b.Run("Get Commit Info", func(b *testing.B) {
+
+		for n := 0; n < b.N; n++ {
+			_, err := getCommitInfo("README.md", origin.repo)
+			assert.NoError(b, err)
+		}
+
+	})
 
 }
 

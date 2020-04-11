@@ -152,7 +152,7 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 
 	if !origin.config.DisableCommitInfo {
 
-		commitinfo, err := originFile.getCommitInfo()
+		commitinfo, err := getCommitInfo(remotePath, origin.repo)
 		if err != nil {
 			log.Warnf("Can't extract Commit Info for '%s'", err)
 		}

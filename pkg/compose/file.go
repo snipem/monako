@@ -96,30 +96,33 @@ func (file *OriginFile) copyRegularFile() {
 
 // getCommitInfo returns the Commit Info for a given file of the repository
 // identified by it's filename
-func (file *OriginFile) getCommitInfo() (*object.Commit, error) {
+func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, error) {
 
-	log.Debugf("Getting commit info for %s", file.RemotePath)
+	log.Debugf("Getting commit info for %s", remotePath)
+
+	if repo == nil {
+		return nil, fmt.Errorf("Repository is nil")
+	}
 
 	start := time.Now()
-	r := file.parentOrigin.repo
 	// Problem seems to be the longer the file hasn't been in the log, the longer it takes to retrieve it
-	cIter, err := r.Log(&git.LogOptions{
-		FileName: &file.RemotePath,
+	cIter, err := repo.Log(&git.LogOptions{
+		FileName: &remotePath,
 		Order:    git.LogOrderCommitterTime,
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Error while opening %s from git log: %s", file.RemotePath, err)
+		return nil, fmt.Errorf("Error while opening %s from git log: %s", remotePath, err)
 	}
 
 	returnCommit, err := cIter.Next()
 	log.Debugf("Git Log took %s", time.Since(start))
 
 	if err != nil {
-		return nil, fmt.Errorf("File not found in git log: '%s'", file.RemotePath)
+		return nil, fmt.Errorf("File not found in git log: '%s'", remotePath)
 	}
 
-	log.Debugf("Git Commit found for %s, %s", file.RemotePath, returnCommit)
+	log.Debugf("Git Commit found for %s, %s", remotePath, returnCommit)
 
 	// This has to be here, otherwise the iterator will return garbage
 	defer cIter.Close()

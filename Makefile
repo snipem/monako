@@ -43,9 +43,8 @@ test_local_clone:
 test_local:
 	MONAKO_TEST_REPO="/tmp/testdata/monako-test" $(MAKE) test
 
-# Test for testing huge repositories with lots of commits
-test_huge:
-	MONAKO_HUGE_REPOS_TEST=true go test -v ./pkg/compose/ -run TestHugeRepositories
+benchmark:
+	go test -v ./pkg/compose/ -run=BenchmarkHugeRepositories -bench=Benchmark. -benchtime=10s
 
 run_prd: build secrets
 		env | grep USER
