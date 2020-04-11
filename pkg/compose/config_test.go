@@ -50,7 +50,7 @@ func TestCompose(t *testing.T) {
 
 }
 
-func BenchmarkHugoRepository(b *testing.B) {
+func BenchmarkHugoRepositorySingleFiles(b *testing.B) {
 
 	origin := NewOrigin(
 		// local path is $HOME/temp/hugo for hugo source code with lots of commits
@@ -79,7 +79,7 @@ func BenchmarkHugoRepository(b *testing.B) {
 
 }
 
-func BenchmarkSlowRepository(b *testing.B) {
+func BenchmarkSlowRepositorySingleFiles(b *testing.B) {
 
 	// Use env vars, these folders are secret because of client project
 	slowRepoFolder := os.Getenv("MONAKO_SLOW_REPO_FOLDER")
@@ -91,7 +91,7 @@ func BenchmarkSlowRepository(b *testing.B) {
 		filepath.Join(os.Getenv("HOME"), slowRepoFolder),
 		"develop",
 		"",
-		"huge/test/docs",
+		"../../tmp/testdata/huge/test/docs",
 	)
 
 	// Don't fetch commit info early
@@ -108,6 +108,67 @@ func BenchmarkSlowRepository(b *testing.B) {
 			// Older commit long time no change, far behind in git log
 			_, err = getCommitInfo(slowRepoFile2, origin.repo)
 			assert.NoError(b, err)
+		}
+
+	})
+
+}
+
+func BenchmarkWholeRepoHugoRepositoryWholeRepo(b *testing.B) {
+
+	origin := NewOrigin(
+		// local path is $HOME/temp/hugo for hugo source code with lots of commits
+		filepath.Join(os.Getenv("HOME"), "/temp/monako-testrepos/hugo"),
+		"master",
+		"docs/content/en/commands",
+		"../../tmp/testdata/huge/test/docs/hugo/",
+	)
+
+	origin.config = &Config{
+		DisableCommitInfo: false,
+		FileWhitelist:     []string{".md", ".png"},
+	}
+
+	origin.FileWhitelist = origin.config.FileWhitelist
+	origin.CloneDir()
+
+	// Don't fetch commit info early
+	b.Run("Get Commit Info for Hugo", func(b *testing.B) {
+
+		for n := 0; n < b.N; n++ {
+			origin.ComposeDir()
+		}
+
+	})
+
+}
+
+func BenchmarkWholeRepoSlowRepository(b *testing.B) {
+
+	// Use env vars, these folders are secret because of a client project
+	slowRepoFolder := os.Getenv("MONAKO_SLOW_REPO_FOLDER")
+	slowRepoSource := os.Getenv("MONAKO_SLOW_REPO_SOURCE")
+
+	origin := NewOrigin(
+		// local path is $HOME/temp/hugo for hugo source code with lots of commits
+		filepath.Join(os.Getenv("HOME"), slowRepoFolder),
+		"develop",
+		slowRepoSource,
+		"../../tmp/testdata/huge/test/docs/slow",
+	)
+
+	origin.config = &Config{
+		DisableCommitInfo: false,
+		FileWhitelist:     []string{".md", ".png"},
+	}
+
+	origin.FileWhitelist = origin.config.FileWhitelist
+
+	origin.CloneDir()
+	b.Run("Get Commit Info", func(b *testing.B) {
+
+		for n := 0; n < b.N; n++ {
+			origin.ComposeDir()
 		}
 
 	})
