@@ -27,11 +27,14 @@ theme: clean
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
 
-test:
+test: clean_test
 	go test -covermode=count -coverprofile=coverage.out.tmp ./...
 	# -coverpkg=./...  also calculates the whole coverage, for example code that was involded by the main test
 	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
 	rm coverage.out.tmp
+
+clean_test:
+	rm -r tmp/testdata/ || true
 
 test_deps:
 	go get golang.org/x/tools/cmd/cover

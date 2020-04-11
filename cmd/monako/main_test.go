@@ -1,6 +1,6 @@
 package main
 
-// run: go test -v ./cmd/monako -run TestGetUrlKeyValuesFromHTML
+// run: go test -v ./cmd/monako
 
 import (
 	"fmt"
@@ -22,7 +22,9 @@ import (
 
 func TestMain(t *testing.T) {
 
-	targetDir := filet.TmpDir(t, "")
+	targetDir := GetLocalTempDir(t)
+	err := os.Chdir(targetDir)
+	assert.NoError(t, err)
 
 	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
 
@@ -143,7 +145,9 @@ func TestMain(t *testing.T) {
 
 func TestMainSplitCalls(t *testing.T) {
 
-	targetDir := filet.TmpDir(t, "")
+	targetDir := GetLocalTempDir(t)
+	err := os.Chdir(targetDir)
+	assert.NoError(t, err)
 
 	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
 
@@ -175,7 +179,9 @@ func TestMainSplitCalls(t *testing.T) {
 func TestFailOnNoComposeBeforeGenerate(t *testing.T) {
 
 	t.Skip("Does not work since fatal can not be intercepted")
-	targetDir := filet.TmpDir(t, "")
+	targetDir := GetLocalTempDir(t)
+	err := os.Chdir(targetDir)
+	assert.NoError(t, err)
 
 	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
 	os.Args = []string{
@@ -325,17 +331,26 @@ headless: true
 <br />
 	`)
 
-	pathMonakoConfig := "../../test/configs/testgenerated/config.testgenerated.yaml"
+	pathMonakoConfig := "config.testgenerated.yaml"
 	err := ioutil.WriteFile(pathMonakoConfig, []byte(monakoConfig), os.FileMode(0600))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pathMenuConfig := "../../test/configs/testgenerated/menu.testgenerated.md"
+	pathMenuConfig := "menu.testgenerated.md"
 	err = ioutil.WriteFile(pathMenuConfig, []byte(menuConfig), os.FileMode(0600))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return pathMonakoConfig, pathMenuConfig
+}
+
+func GetLocalTempDir(t *testing.T) (tempdir string) {
+
+	localTmpDir := filepath.Join("../../tmp/testdata/", t.Name())
+	err := os.MkdirAll(localTmpDir, os.FileMode(0700))
+	assert.NoError(t, err)
+
+	return filet.TmpDir(t, localTmpDir)
 }
