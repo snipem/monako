@@ -54,7 +54,7 @@ func BenchmarkHugeRepositories(b *testing.B) {
 
 	origin := NewOrigin(
 		// local path is $HOME/temp/hugo for hugo source code with lots of commits
-		filepath.Join(os.Getenv("HOME"), "temp", "hugo"),
+		filepath.Join(os.Getenv("HOME"), "/temp/monako-testrepos/hugo"),
 		"master",
 		"",
 		"huge/test/docs",
@@ -66,6 +66,10 @@ func BenchmarkHugeRepositories(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
 			_, err := getCommitInfo("README.md", origin.repo)
+			assert.NoError(b, err)
+
+			// Older commit long time no change, far behind in git log
+			_, err = getCommitInfo("docs/archetypes/default.md", origin.repo)
 			assert.NoError(b, err)
 		}
 

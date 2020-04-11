@@ -104,7 +104,6 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, err
 		return nil, fmt.Errorf("Repository is nil")
 	}
 
-	start := time.Now()
 	// Problem seems to be the longer the file hasn't been in the log, the longer it takes to retrieve it
 	cIter, err := repo.Log(&git.LogOptions{
 		FileName: &remotePath,
@@ -116,7 +115,6 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, err
 	}
 
 	returnCommit, err := cIter.Next()
-	log.Debugf("Git Log took %s", time.Since(start))
 
 	if err != nil {
 		return nil, fmt.Errorf("File not found in git log: '%s'", remotePath)

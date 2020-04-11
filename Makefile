@@ -36,12 +36,13 @@ test:
 test_deps:
 	go get golang.org/x/tools/cmd/cover
 
-test_local_clone:
-	git clone https://github.com/snipem/monako-test.git /tmp/testdata/monako-test
+clones_for_local_testing:
+	git clone https://github.com/snipem/monako-test.git ${HOME}/temp/monako-testrepos/monako-test
+	git clone https://github.com/gohugoio/hugo.git ${HOME}/temp/monako-testrepos/hugo
 
 # Use this for local tests, uses the locally cloned test data from test_data step
 test_local:
-	MONAKO_TEST_REPO="/tmp/testdata/monako-test" $(MAKE) test
+	MONAKO_TEST_REPO="${HOME}/temp/monako-testrepos/monako-test" $(MAKE) test
 
 benchmark:
 	go test -v ./pkg/compose/ -run=BenchmarkHugeRepositories -bench=Benchmark. -benchtime=10s
