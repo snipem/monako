@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/gohugoio/hugo/hugofs/files"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -63,26 +64,15 @@ func TestGitCommiter(t *testing.T) {
 	origins := config.Origins
 	firstOrigin := origins[0]
 
-	t.Run("Retrieve info of first file", func(t *testing.T) {
+	for i := 0; i < len(firstOrigin.Files); i++ {
+		t.Run("Retrieve commit info of file", func(t *testing.T) {
+			if files.IsContentFile(firstOrigin.Files[i].RemotePath) {
+				ci := firstOrigin.Files[0].Commit
+				assert.Contains(t, ci.Committer.Email, "@")
+			} else {
+				t.Logf("Skipping commit check for %s, is not a content file", firstOrigin.Files[i].RemotePath)
+			}
 
-		assert.NotNil(t, firstOrigin.Files)
-		ci := firstOrigin.Files[0].Commit
-
-		assert.Contains(t, ci.Committer.Email, "@")
-
-	})
-
-	t.Run("Second file", func(t *testing.T) {
-		ci := firstOrigin.Files[1].Commit
-
-		assert.Contains(t, ci.Committer.Email, "@")
-
-	})
-
-	t.Run("Not existing file", func(t *testing.T) {
-
-		t.Skip("This wont work right now")
-
-	})
-
+		})
+	}
 }
