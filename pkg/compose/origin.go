@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/gohugoio/hugo/hugofs/files"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/pkg/helpers"
@@ -152,11 +153,18 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 
 	if !origin.config.DisableCommitInfo {
 
-		commitinfo, err := getCommitInfo(remotePath, origin.repo)
-		if err != nil {
-			log.Warnf("Can't extract Commit Info for '%s'", err)
+		// Only get commit info for content files
+		// This speeds up commit fetching on repository with lots of files
+		// heavily. Most non content files are static and therefore way back
+		// in the commit log. This also reduces the calls to git log.
+		if files.IsContentFile(remotePath) {
+			commitinfo, err := getCommitInfo(remotePath, origin.repo)
+			if err != nil {
+				log.Warnf("Can't extract Commit Info for '%s'", err)
+			}
+			originFile.Commit = commitinfo
+
 		}
-		originFile.Commit = commitinfo
 	}
 
 	return originFile
