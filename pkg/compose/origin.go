@@ -60,7 +60,7 @@ func (origin *Origin) CloneDir() {
 	}
 
 	origin.repo = repo
-	log.Debugf("Start cloning of %s", origin.URL)
+	log.Debugf("Ended cloning of %s", origin.URL)
 
 }
 
