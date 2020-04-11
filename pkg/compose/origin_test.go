@@ -14,7 +14,9 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 	t.Run("Load good Config", func(t *testing.T) {
-		customWorkingdir := "workingdir123"
+
+		customWorkingdir := GetLocalTempDir(t)
+
 		config, err := LoadConfig("../../test/config.local.yaml", customWorkingdir)
 		assert.NoError(t, err)
 

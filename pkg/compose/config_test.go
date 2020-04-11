@@ -103,6 +103,14 @@ func getLocalOrRemoteRepo(t *testing.T) *Origin {
 	return NewOrigin(testRepo, "master", ".", "docs/monako-test")
 
 }
+func GetLocalTempDir(t *testing.T) (tempdir string) {
+
+	localTmpDir := filepath.Join("../../tmp/testdata/", t.Name())
+	err := os.MkdirAll(localTmpDir, standardFilemode)
+	assert.NoError(t, err)
+
+	return filet.TmpDir(t, localTmpDir)
+}
 
 // getTestConfig returns a test config with a variable list of origins. If no origin is set
 // as a parameter an example configuration is returned
@@ -116,7 +124,7 @@ func getTestConfig(t *testing.T, origins ...Origin) (config *Config, tempdir str
 		testOrigins = origins
 	}
 
-	tempdir = filet.TmpDir(t, os.TempDir())
+	tempdir = GetLocalTempDir(t)
 
 	config = &Config{
 		BaseURL:       "http://exampleurl.com",
@@ -133,7 +141,7 @@ func getTestConfig(t *testing.T, origins ...Origin) (config *Config, tempdir str
 }
 
 func TestInit(t *testing.T) {
-	localFolder := "tmp/testdata"
+	localFolder := GetLocalTempDir(t)
 	commandLineBaseURL := "http://overwrite.config"
 	menuConfigFile := filet.TmpFile(t, os.TempDir(), "# Empty Menu")
 
