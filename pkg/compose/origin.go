@@ -158,6 +158,7 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 		// heavily. Most non content files are static and therefore way back
 		// in the commit log. This also reduces the calls to git log.
 		if files.IsContentFile(remotePath) {
+			// TODO add safe way to acces not existing commit info
 			commitinfo, err := getCommitInfo(remotePath, origin.repo)
 			if err != nil {
 				log.Warnf("Can't extract Commit Info for '%s'", err)
