@@ -1,6 +1,6 @@
 package main
 
-// run: go test -v ./cmd/monako
+// run: go test -v ./cmd/monako -run TestGetUrlKeyValuesFromHTML
 
 import (
 	"fmt"
@@ -79,27 +79,34 @@ func TestMain(t *testing.T) {
 		assert.Contains(t, content, "<img src=\"../subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains relative picture")
 	})
 
+	// Provide the public folder over a webserver
 	fs := http.FileServer(http.Dir(filepath.Join(targetDir, "compose/public/")))
 	ts := httptest.NewServer(http.StripPrefix("/", fs))
 	defer ts.Close()
 
 	t.Run("Check if images and sources are served", func(t *testing.T) {
 
-		content, err := getContent(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
-		urls, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
+		srcs, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		hrefs, err := getURLKeyValuesFromHTML(content, "href", ts.URL)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		// TODO For some reason images seem to be ignored in urls
-		for _, url := range urls {
+		assert.NotNil(t, len(srcs), fmt.Sprintf("No links found in %s", ts.URL))
+		assert.NotNil(t, len(srcs), fmt.Sprintf("No images found in %s", ts.URL))
+
+		for _, url := range append(srcs, hrefs...) {
 			if strings.HasPrefix(url.String(), ts.URL) {
-				// t.Logf("Checking for local served url %s", url.String())
 				// Check only if it's served, ignore content
-				_, err = getContent(ts, "")
-				assert.NoError(t, err, "URL is not served")
+				_, err = getContentFromURL(ts, "")
+				assert.NoError(t, err)
+				t.Logf("Url %s is served correctly", url.String())
 			}
 		}
 
@@ -107,7 +114,7 @@ func TestMain(t *testing.T) {
 
 	t.Run("Check contents of served page markdown", func(t *testing.T) {
 
-		content, err := getContent(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -118,7 +125,7 @@ func TestMain(t *testing.T) {
 
 	t.Run("Check contents of served page asciidoc", func(t *testing.T) {
 
-		content, err := getContent(ts, "/docs/test/test_doc_asciidoc/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc/index.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -183,7 +190,7 @@ func TestFailOnNoComposeBeforeGenerate(t *testing.T) {
 	assert.NoDirExists(t, filepath.Join(targetDir, "compose", "public"))
 }
 
-func getContent(ts *httptest.Server, url string) (string, error) {
+func getContentFromURL(ts *httptest.Server, url string) (string, error) {
 	// res, err := http.Get(ts.URL)
 	res, err := http.Get(ts.URL + url)
 	if err != nil {
@@ -194,23 +201,41 @@ func getContent(ts *httptest.Server, url string) (string, error) {
 	return string(contentBytes), err
 }
 
-func TestURLKeyValues(t *testing.T) {
+func TestGetUrlKeyValuesFromHTML(t *testing.T) {
 
-	cases := []struct {
-		URL, Key, Base, Expected string
-	}{
-		{"<a href=\"/local/\"></a>", "href", "http://localhost", "http://localhost/local/"},
-		{"<img src=\"../image.png\"></a>", "src", "http://localhost/content/docs/", "http://localhost/content/image.png"},
-	}
+	t.Run("Test a href", func(t *testing.T) {
 
-	for _, tc := range cases {
-		t.Run(fmt.Sprintf("Extract %s from %s", tc.Key, tc.URL), func(t *testing.T) {
-			t.Parallel()
-			urls, err := getURLKeyValuesFromHTML(tc.URL, tc.Key, tc.Base)
-			assert.NoError(t, err, "Error at extraction")
-			assert.Equal(t, tc.Expected, urls[0].String())
-		})
-	}
+		urls, err := getURLKeyValuesFromHTML(`
+
+		<a href="/local/path1">Link 1</a>
+		<a href="/local/path2">Link 2</a>
+
+		<a href="http://absolute.url/path3">Link 3</a>
+
+		`, "href", "http://example.com")
+		assert.NoError(t, err)
+
+		assert.Equal(t, "http://example.com/local/path1", urls[0].String())
+		assert.Equal(t, "http://example.com/local/path2", urls[1].String())
+		assert.Equal(t, "http://absolute.url/path3", urls[2].String())
+	})
+
+	t.Run("Test img src", func(t *testing.T) {
+
+		urls, err := getURLKeyValuesFromHTML(`
+
+		<img src="/local/path1.jpg">Link 1</img>
+		<img src="/local/path2.jpg">Link 2</img>
+
+		<img src="http://absolute.url/path3.jpg">Link 3</img>
+
+		`, "src", "http://example.com")
+		assert.NoError(t, err)
+
+		assert.Equal(t, "http://example.com/local/path1.jpg", urls[0].String())
+		assert.Equal(t, "http://example.com/local/path2.jpg", urls[1].String())
+		assert.Equal(t, "http://absolute.url/path3.jpg", urls[2].String())
+	})
 
 }
 
