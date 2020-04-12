@@ -27,12 +27,12 @@ const Markdown = "MARKDOWN"
 
 // CloneDir clones a HTTPS or lokal Git repository with the given branch and optional username and password.
 // A virtual filesystem is returned containing the cloned files.
-func (origin *Origin) CloneDir() {
+func (origin *Origin) CloneDir() (filesystem billy.Filesystem) {
 
 	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
 	log.Debugf("Start cloning of %s", origin.URL)
 
-	origin.filesystem = memfs.New()
+	filesystem = memfs.New()
 
 	basicauth := http.BasicAuth{}
 
@@ -48,7 +48,7 @@ func (origin *Origin) CloneDir() {
 	}
 
 	// TODO Check if we can check out less depth. Like depth = 1
-	repo, err := git.Clone(memory.NewStorage(), origin.filesystem, &git.CloneOptions{
+	repo, err := git.Clone(memory.NewStorage(), filesystem, &git.CloneOptions{
 		URL:           origin.URL,
 		Depth:         0, // problem with depth = 1 is that git log from older commits, can't be accessed
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", origin.Branch)),
@@ -62,6 +62,8 @@ func (origin *Origin) CloneDir() {
 
 	origin.repo = repo
 	log.Debugf("Ended cloning of %s", origin.URL)
+
+	return filesystem
 
 }
 
@@ -78,23 +80,22 @@ type Origin struct {
 
 	Files []OriginFile
 
-	repo       *git.Repository
-	config     *Config
-	filesystem billy.Filesystem
+	repo   *git.Repository
+	config *Config
 }
 
 // ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func (origin *Origin) ComposeDir() {
-	origin.Files = origin.getMatchingFiles(origin.SourceDir)
+func (origin *Origin) ComposeDir(filesystem billy.Filesystem) {
+	origin.Files = origin.getMatchingFiles(origin.SourceDir, filesystem)
 
 	if len(origin.Files) == 0 {
 		log.Printf("Found no matching files in '%s' with branch '%s' in folder '%s'\n", origin.URL, origin.Branch, origin.SourceDir)
 	}
 
 	for _, file := range origin.Files {
-		file.composeFile()
+		file.composeFile(filesystem)
 	}
 }
 
@@ -108,11 +109,11 @@ func NewOrigin(url string, branch string, sourceDir string, targetDir string) *O
 	return o
 }
 
-func (origin *Origin) getMatchingFiles(startdir string) []OriginFile {
+func (origin *Origin) getMatchingFiles(startdir string, filesystem billy.Filesystem) []OriginFile {
 
 	var originFiles []OriginFile
 
-	files, _ := origin.filesystem.ReadDir(startdir)
+	files, _ := filesystem.ReadDir(startdir)
 	for _, file := range files {
 
 		// This is the path as stored in the remote repo
@@ -127,6 +128,7 @@ func (origin *Origin) getMatchingFiles(startdir string) []OriginFile {
 				originFiles,
 				origin.getMatchingFiles(
 					remotePath,
+					filesystem,
 				)...)
 		} else if helpers.FileIsListed(file.Name(), origin.FileWhitelist) &&
 			!helpers.FileIsListed(file.Name(), origin.FileBlacklist) {

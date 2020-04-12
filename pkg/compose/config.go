@@ -95,8 +95,32 @@ func (config *Config) Compose() {
 		if config.Origins[i].FileBlacklist == nil {
 			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
-		config.Origins[i].CloneDir()
-		config.Origins[i].ComposeDir()
+
+		filesystem := config.Origins[i].CloneDir()
+		config.Origins[i].ComposeDir(filesystem)
+
+		// After processing the origin, delete repo for freeing up memory
+		// containing the whole virtual filesystem. Can easily add up to
+		// multiple gigabyte
+		config.Origins[i].repo = nil
+
+		// Performance analysis ------
+
+		// Frees up some more megabyte
+		// debug.FreeOSMemory()
+
+		// if os.Getenv("MONAKO_LOG_HEAP") == "true" {
+
+		// 	f, err := os.Create(filepath.Join(fmt.Sprintf("origin_%d.heap.fix.log", i)))
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
+		// 	pprof.WriteHeapProfile(f)
+		// 	f.Close()
+		// }
+
+		// End Performance analysis ------
+
 	}
 
 }

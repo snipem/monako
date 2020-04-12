@@ -23,7 +23,7 @@
             "program": "${workspaceFolder}/cmd/monako/main.go",
             "args": [
                 "-test.run",
-                "TestMain"
+                "TestMainMonakoTest"
             ]
         },
         {

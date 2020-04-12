@@ -130,13 +130,13 @@ func BenchmarkWholeRepoHugoRepositoryWholeRepo(b *testing.B) {
 	}
 
 	origin.FileWhitelist = origin.config.FileWhitelist
-	origin.CloneDir()
+	filesystem := origin.CloneDir()
 
 	// Don't fetch commit info early
 	b.Run("Get Commit Info for Hugo", func(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
-			origin.ComposeDir()
+			origin.ComposeDir(filesystem)
 		}
 
 	})
@@ -164,11 +164,11 @@ func BenchmarkWholeRepoSlowRepository(b *testing.B) {
 
 	origin.FileWhitelist = origin.config.FileWhitelist
 
-	origin.CloneDir()
+	filesystem := origin.CloneDir()
 	b.Run("Get Commit Info", func(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
-			origin.ComposeDir()
+			origin.ComposeDir(filesystem)
 		}
 
 	})
