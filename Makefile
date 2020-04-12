@@ -65,6 +65,10 @@ run_local: build
 	./monako -config test/config.local.yaml -menu-config test/config.menu.local.md
 	$(MAKE) serve
 
+trace:
+	go test -trace=tmp/trace.out ./cmd/monako
+	go tool trace ./cmd/monako/ tmp/trace.out
+
 compose:
 	./monako \
 		-fail-on-error \
