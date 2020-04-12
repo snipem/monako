@@ -230,7 +230,6 @@ MonakoGitLastCommitAuthorEmail: %s
 }
 
 func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
-	// TODO Convert from toml, yaml, etc
 	contentFrontmatter, err := pageparser.ParseFrontMatterAndContent(strings.NewReader(content))
 	if err != nil {
 		log.Fatalf("Error while splitting frontmatter: %s", err)

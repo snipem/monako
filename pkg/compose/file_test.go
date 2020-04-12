@@ -94,6 +94,41 @@ content: linetwo
 
 	})
 
+	t.Run("JSON Frontmatter", func(t *testing.T) {
+		content := `{
+			"categories": [
+			   "Development",
+			   "Docs"
+			],
+			"description": "This is the description",
+			"date": "2020-04-06",
+			"title": "This is the title"
+		 }
+
+=== Body Content
+123
+
+Inline Json Test {"date": "today"}
+Bottom line
+`
+		frontmatter, body := splitFrontmatterAndBody(content)
+		assert.Equal(t,
+			`
+=== Body Content
+123
+
+Inline Json Test {"date": "today"}
+Bottom line
+`,
+			body,
+			"",
+		)
+
+		assert.Contains(t, frontmatter, "description: This is the description\n")
+		assert.Contains(t, frontmatter, "title: This is the title\n")
+
+	})
+
 	t.Run("Frontmatter garbled file with frontmatter style control signs", func(t *testing.T) {
 		content := `---
 simple: content
