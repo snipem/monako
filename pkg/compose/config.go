@@ -1,11 +1,9 @@
 package compose
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime/pprof"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/workarounds"
@@ -98,18 +96,31 @@ func (config *Config) Compose() {
 			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
 
-		if os.Getenv("MONAKO_LOG_HEAP") == "true" {
-
-			f, err := os.Create(filepath.Join(fmt.Sprintf("origin_%d.heap.log", i)))
-			if err != nil {
-				log.Fatal(err)
-			}
-			pprof.WriteHeapProfile(f)
-			f.Close()
-		}
-
 		filesystem := config.Origins[i].CloneDir()
 		config.Origins[i].ComposeDir(filesystem)
+
+		// After processing the origin, delete repo for freeing up memory
+		// containing the whole virtual filesystem. Can easily add up to
+		// multiple gigabyte
+		config.Origins[i].repo = nil
+
+		// Performance analysis ------
+
+		// Frees up some more megabyte
+		// debug.FreeOSMemory()
+
+		// if os.Getenv("MONAKO_LOG_HEAP") == "true" {
+
+		// 	f, err := os.Create(filepath.Join(fmt.Sprintf("origin_%d.heap.fix.log", i)))
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
+		// 	pprof.WriteHeapProfile(f)
+		// 	f.Close()
+		// }
+
+		// End Performance analysis ------
+
 	}
 
 }

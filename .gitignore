@@ -29,3 +29,8 @@ monako
 /compose
 test/configs/testgenerated/config.testgenerated.yaml
 test/configs/testgenerated/menu.testgenerated.md
+
+# Heap analysis
+
+origin*heap*log
+*.log
