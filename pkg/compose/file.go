@@ -18,6 +18,7 @@ import (
 
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
+	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"gopkg.in/yaml.v2"
@@ -39,16 +40,16 @@ type OriginFile struct {
 	parentOrigin *Origin
 }
 
-func (file *OriginFile) composeFile() {
+func (file *OriginFile) composeFile(filesystem billy.Filesystem) {
 
 	file.createParentDir()
 	contentFormat := file.GetFormat()
 
 	switch contentFormat {
 	case Asciidoc, Markdown:
-		file.copyMarkupFile()
+		file.copyMarkupFile(filesystem)
 	default:
-		file.copyRegularFile()
+		file.copyRegularFile(filesystem)
 	}
 	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
 
@@ -75,10 +76,9 @@ func (file *OriginFile) createParentDir() {
 	}
 }
 
-func (file *OriginFile) copyRegularFile() {
+func (file *OriginFile) copyRegularFile(filesystem billy.Filesystem) {
 
-	origin := file.parentOrigin
-	f, err := origin.filesystem.Open(file.RemotePath)
+	f, err := filesystem.Open(file.RemotePath)
 
 	if err != nil {
 		log.Fatal(err)
@@ -128,11 +128,11 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, err
 	return returnCommit, nil
 }
 
-func (file *OriginFile) copyMarkupFile() {
+func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) {
 
 	// TODO: Only use strings not []byte
 
-	bf, err := file.parentOrigin.filesystem.Open(file.RemotePath)
+	bf, err := filesystem.Open(file.RemotePath)
 	if err != nil {
 		log.Fatalf("Error copying markup file %s", err)
 	}

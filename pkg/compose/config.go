@@ -95,8 +95,8 @@ func (config *Config) Compose() {
 		if config.Origins[i].FileBlacklist == nil {
 			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
-		config.Origins[i].CloneDir()
-		config.Origins[i].ComposeDir()
+		filesystem := config.Origins[i].CloneDir()
+		config.Origins[i].ComposeDir(filesystem)
 	}
 
 }
