@@ -47,10 +47,17 @@ func (origin *Origin) CloneDir() (filesystem billy.Filesystem) {
 		}
 	}
 
-	// TODO Check if we can check out less depth. Like depth = 1
+	depth := 0
+
+	if origin.config.DisableCommitInfo {
+		// problem with depth = 1 is that git log from older commits, can't be accessed
+		// since CommitInfo is disabled anyway, use depth = 1 for speed boost
+		depth = 1
+	}
+
 	repo, err := git.Clone(memory.NewStorage(), filesystem, &git.CloneOptions{
 		URL:           origin.URL,
-		Depth:         0, // problem with depth = 1 is that git log from older commits, can't be accessed
+		Depth:         depth,
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", origin.Branch)),
 		SingleBranch:  true,
 		Auth:          &basicauth,

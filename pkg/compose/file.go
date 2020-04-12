@@ -149,26 +149,27 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*OriginFileCommit, 
 
 func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) {
 
-	// TODO: Only use strings not []byte
-
 	bf, err := filesystem.Open(file.RemotePath)
 	if err != nil {
 		log.Fatalf("Error copying markup file %s", err)
 	}
 
-	var dirty, _ = ioutil.ReadAll(bf)
-	var content []byte
+	dirty, err := ioutil.ReadAll(bf)
+	if err != nil {
+		log.Fatalf("Error opening markup file %s", err)
+	}
+	var content string
 	contentFormat := file.GetFormat()
 
 	if contentFormat == Markdown {
-		content = workarounds.MarkdownPostprocessing(dirty)
+		content = workarounds.MarkdownPostprocessing(string(dirty))
 	} else if contentFormat == Asciidoc {
-		content = workarounds.AsciidocPostprocessing(dirty)
+		content = workarounds.AsciidocPostprocessing(string(dirty))
 	}
 
-	content = []byte(file.ExpandFrontmatter(string(content)))
+	content = file.ExpandFrontmatter(string(content))
 
-	err = ioutil.WriteFile(file.LocalPath, content, standardFilemode)
+	err = ioutil.WriteFile(file.LocalPath, []byte(content), standardFilemode)
 	if err != nil {
 		log.Fatalf("Error writing file %s", err)
 	}

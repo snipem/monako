@@ -16,13 +16,13 @@ func TestAsciiDocImageFix(t *testing.T) {
 	noNeedToClean := "image:http://url/image.jpg[image,width=634,height=346]"
 	needToClean := "image:image2.png[image,width=634,height=346]"
 
-	clean := string(AsciidocPostprocessing([]byte(noNeedToClean)))
+	clean := AsciidocPostprocessing(noNeedToClean)
 
 	if clean != noNeedToClean {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
 	}
 
-	clean = string(AsciidocPostprocessing([]byte(needToClean)))
+	clean = AsciidocPostprocessing(needToClean)
 	want := "image:../image2.png[image,width=634,height=346]"
 
 	if clean != want {
@@ -33,7 +33,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 
 		needToClean := "image:./image2.png[image,width=634,height=346]"
 
-		clean = string(AsciidocPostprocessing([]byte(needToClean)))
+		clean = AsciidocPostprocessing(needToClean)
 		want := "image:../image2.png[image,width=634,height=346]"
 
 		if clean != want {
@@ -46,7 +46,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 
 		needToClean := "image::image2.png[image,width=634,height=346]"
 
-		clean = string(AsciidocPostprocessing([]byte(needToClean)))
+		clean = AsciidocPostprocessing(needToClean)
 		want := "image::../image2.png[image,width=634,height=346]"
 
 		if clean != want {
@@ -59,7 +59,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 
 		needToClean := "image::./image2.png[image,width=634,height=346]"
 
-		clean = string(AsciidocPostprocessing([]byte(needToClean)))
+		clean = AsciidocPostprocessing(needToClean)
 		want := "image::../image2.png[image,width=634,height=346]"
 
 		if clean != want {
@@ -72,7 +72,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 
 		needToClean := "image::http://absolute/url/image2.png[image,width=634,height=346]"
 
-		clean = string(AsciidocPostprocessing([]byte(needToClean)))
+		clean = AsciidocPostprocessing(needToClean)
 		want := "image::http://absolute/url/image2.png[image,width=634,height=346]"
 
 		if clean != want {
@@ -85,7 +85,7 @@ func TestAsciiDocImageFix(t *testing.T) {
 func TestMarkdownFix(t *testing.T) {
 
 	noNeedToClean := "![caption example](http://url/image.jpg)"
-	clean := string(MarkdownPostprocessing([]byte(noNeedToClean)))
+	clean := MarkdownPostprocessing(noNeedToClean)
 
 	if clean != noNeedToClean {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
@@ -97,7 +97,7 @@ func TestMarkdownFixDontDo(t *testing.T) {
 	dirty := "![caption example](lokalfolderurl/image.png)"
 	want := "![caption example](../lokalfolderurl/image.png)"
 
-	clean := string(MarkdownPostprocessing([]byte(dirty)))
+	clean := string(MarkdownPostprocessing(dirty))
 
 	if clean != want {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, want)
@@ -109,7 +109,7 @@ func TestMarkdownFixInnerLinks(t *testing.T) {
 
 	noNeedToClean := "[[1]](#1)"
 
-	clean := string(MarkdownPostprocessing([]byte(noNeedToClean)))
+	clean := string(MarkdownPostprocessing(noNeedToClean))
 
 	if clean != noNeedToClean {
 		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
@@ -136,3 +136,20 @@ func TestFakeAsciidoctorBin(t *testing.T) {
 	assert.Contains(t, string(read), "\\/path\\/bla")
 
 }
+
+// func TestRenderMermaidLikeGitlab(t *testing.T) {
+
+// 	before = "```" + `mermaid
+// graph TD;
+//     A-->B;
+//     A-->C;
+//     B-->D;
+//     C-->D;
+// 	` + "```" + `
+
+// 	after = `
+// 	{{< mermaid >}}
+// 	{{< /mermaid >}}
+// `
+
+// }

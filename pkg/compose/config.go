@@ -146,7 +146,7 @@ func (config *Config) setWorkingDir(workingdir string) {
 	}
 }
 
-// Init loads the Monako config, adds Workarounds, runs Hugo for initializing the workign dir
+// Init loads the Monako config, adds Workarounds, runs Hugo for initializing the working directory
 func Init(cliSettings CommandLineSettings) (config *Config) {
 
 	config, err := LoadConfig(cliSettings.ConfigFilePath, cliSettings.ContentWorkingDir)
@@ -154,14 +154,13 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		log.Fatal(err)
 	}
 
-	// TODO Move to loadconfig parameters
 	if cliSettings.BaseURL != "" {
 		// Overwrite config base url if it is set as parameter
 		config.BaseURL = cliSettings.BaseURL
 	}
 
 	if _, isGithub := os.LookupEnv("GITHUB_WORKFLOW"); isGithub {
-		log.Warn("Don't apply workaround on Github Actions, cause its flaky")
+		log.Warn("Don't apply workaround on Github Actions, because its flaky")
 	} else {
 		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
 	}

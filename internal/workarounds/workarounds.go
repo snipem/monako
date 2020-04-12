@@ -17,53 +17,54 @@ import (
 // AsciidocPostprocessing fixes common errors with Hugo processing vanilla Asciidoc
 // 1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
 // for pretty urls
-func AsciidocPostprocessing(dirty []byte) []byte {
+func AsciidocPostprocessing(dirty string) (clean string) {
 
-	var d = string(dirty)
-
-	// TODO: These workarounds will be removed when the asciidoc fix for pathes arrives in Hugo
+	// DEPCRECATED: These workarounds will be removed when the asciidoc fix for pathes arrives in Hugo
 	// https://github.com/gohugoio/hugo/pull/6561
 	// This workaround is still needed as long as we're relying on the asciidoctor diagram fix
 	// since the diagram fix does not work with "ugly" urls
 
 	// Really quick and dirty. There is a problem with Go regexp look ahead
 	// Preserve
-	d = strings.ReplaceAll(d, "image::http", "image+______http")
-	d = strings.ReplaceAll(d, "image:http", "image_______http")
+	dirty = strings.ReplaceAll(dirty, "image::http", "image+______http")
+	dirty = strings.ReplaceAll(dirty, "image:http", "image_______http")
 
 	// Replace
-	d = strings.ReplaceAll(d, "image:", "image:../")
+	dirty = strings.ReplaceAll(dirty, "image:", "image:../")
 
 	// Restore
-	d = strings.ReplaceAll(d, "image_______http", "image:http")
-	d = strings.ReplaceAll(d, "image+______http", "image::http")
+	dirty = strings.ReplaceAll(dirty, "image_______http", "image:http")
+	dirty = strings.ReplaceAll(dirty, "image+______http", "image::http")
 
 	// Fix for colons being moved
-	d = strings.ReplaceAll(d, "image:../:", "image::../")
+	dirty = strings.ReplaceAll(dirty, "image:../:", "image::../")
 
 	// Fix for ./ syntax. It's getting uglier
-	d = strings.ReplaceAll(d, "image::.././", "image::../")
-	d = strings.ReplaceAll(d, "image:.././", "image:../")
+	dirty = strings.ReplaceAll(dirty, "image::.././", "image::../")
+	dirty = strings.ReplaceAll(dirty, "image:.././", "image:../")
 
-	return []byte(d)
+	clean = dirty
+
+	return clean
 }
 
 // MarkdownPostprocessing fixes common errors with Hugo processing vanilla Markdown
 //  1. Add one level to relative picture img/ -> ../img/ since Hugo adds subfolders
 // for pretty urls
-func MarkdownPostprocessing(dirty []byte) []byte {
-	var d = string(dirty)
+func MarkdownPostprocessing(dirty string) (clean string) {
 
 	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
-	d = strings.ReplaceAll(d, "](http", ")_______http")
-	d = strings.ReplaceAll(d, "]](", "]]_______(")
+	dirty = strings.ReplaceAll(dirty, "](http", ")_______http")
+	dirty = strings.ReplaceAll(dirty, "]](", "]]_______(")
 
-	d = strings.ReplaceAll(d, "](", "](../")
+	dirty = strings.ReplaceAll(dirty, "](", "](../")
 
-	d = strings.ReplaceAll(d, ")_______http", "](http")
-	d = strings.ReplaceAll(d, "]]_______(", "]](")
+	dirty = strings.ReplaceAll(dirty, ")_______http", "](http")
+	dirty = strings.ReplaceAll(dirty, "]]_______(", "]](")
 
-	return []byte(d)
+	clean = dirty
+
+	return clean
 }
 
 // AddFakeAsciidoctorBinForDiagramsToPath adds a fake asciidoctor bin to the PATH
@@ -91,7 +92,6 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 
 	// Asciidoctor attributes: https://asciidoctor.org/docs/user-manual/#builtin-attributes
 
-	// TODO: Use variables
 	shellscript := fmt.Sprintf(`#!/bin/bash
 	# inspired by: https://zipproth.de/cheat-sheets/hugo-asciidoctor/#_how_to_make_hugo_use_asciidoctor_with_extensions
 	set -e
