@@ -20,6 +20,8 @@ Monako abstracts the complexity of collecting documentation from a configurable 
 
 Monako uses [Hugo](https://gohugo.io) as a static site generator but hides it to the user. It also uses the great [Hugo Book Theme](https://github.com/alex-shpak/hugo-book) which I forked at [Monako Book](https://github.com/snipem/monako-book).
 
+## How Monako works
+
 ![How Monako works](https://github.com/snipem/monako/raw/master/assets/monako.png)
 
 ## Usage
