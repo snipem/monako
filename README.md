@@ -18,7 +18,9 @@ A less opinionated document aggregator and publisher. Easier to use and to adapt
 
 Monako abstracts the complexity of collecting documentation from a configurable amount of Git repositories (origins).
 
-Monako uses Hugo as a static site generator but hides it to the user.
+Monako uses [Hugo](https://gohugo.io) as a static site generator but hides it to the user. It also uses the great [Hugo Book Theme](https://github.com/alex-shpak/hugo-book) which I forked at [Monako Book](https://github.com/snipem/monako-book).
+
+![How Monako works](https://github.com/snipem/monako/raw/master/assets/monako.png)
 
 ## Usage
 
@@ -82,7 +84,14 @@ A Docker image is available from [Dockerhub](https://hub.docker.com/repository/d
 
 ### Configuration of Documents
 
-Hide Git links. Add to frontmatter:
+Monako supports all [Hugo Frontmatter](https://gohugo.io/content-management/front-matter/) types (YAML, TOML and JSON).
+Monako converts them to YAML.
+
+Add frontmatter as you wish at long as it's supported by Hugo and the Theme.
+
+#### Monako specific options
+
+Hide Git links like "edit this page" and "last edit by". Add this line to the frontmatter of the document:
 
 ```yaml
 MonakoGitLinks = false
