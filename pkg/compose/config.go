@@ -1,9 +1,11 @@
 package compose
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime/pprof"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/workarounds"
@@ -95,6 +97,17 @@ func (config *Config) Compose() {
 		if config.Origins[i].FileBlacklist == nil {
 			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
+
+		if os.Getenv("MONAKO_LOG_HEAP") == "true" {
+
+			f, err := os.Create(filepath.Join(fmt.Sprintf("origin_%d.heap.log", i)))
+			if err != nil {
+				log.Fatal(err)
+			}
+			pprof.WriteHeapProfile(f)
+			f.Close()
+		}
+
 		filesystem := config.Origins[i].CloneDir()
 		config.Origins[i].ComposeDir(filesystem)
 	}
