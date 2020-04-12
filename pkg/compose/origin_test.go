@@ -68,7 +68,7 @@ func TestGitCommiter(t *testing.T) {
 		t.Run("Retrieve commit info of file", func(t *testing.T) {
 			if files.IsContentFile(firstOrigin.Files[i].RemotePath) {
 				ci := firstOrigin.Files[i].Commit
-				assert.Contains(t, ci.Committer.Email, "@")
+				assert.Contains(t, ci.Author.Email, "@")
 			} else {
 				t.Logf("Skipping commit check for %s, is not a content file", firstOrigin.Files[i].RemotePath)
 			}

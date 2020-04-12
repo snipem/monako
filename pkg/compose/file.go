@@ -20,7 +20,6 @@ import (
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,7 +29,7 @@ const standardFilemode = os.FileMode(0700)
 type OriginFile struct {
 
 	// Commit is the commit info about this file
-	Commit *object.Commit
+	Commit *OriginFileCommit
 	// RemotePath is the path in the origin repository
 	RemotePath string
 	// LocalPath is the absolute path on the local disk
@@ -38,6 +37,19 @@ type OriginFile struct {
 
 	// parentOrigin of this file
 	parentOrigin *Origin
+}
+
+// OriginFileCommit represents a commit
+type OriginFileCommit struct {
+	Hash   string
+	Author OriginFileCommitter
+	Date   time.Time
+}
+
+// OriginFileCommitter represents the committer of a commit
+type OriginFileCommitter struct {
+	Name  string
+	Email string
 }
 
 func (file *OriginFile) composeFile(filesystem billy.Filesystem) {
@@ -96,7 +108,7 @@ func (file *OriginFile) copyRegularFile(filesystem billy.Filesystem) {
 
 // getCommitInfo returns the Commit Info for a given file of the repository
 // identified by it's filename
-func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, error) {
+func getCommitInfo(remotePath string, repo *git.Repository) (*OriginFileCommit, error) {
 
 	log.Debugf("Getting commit info for %s", remotePath)
 
@@ -125,7 +137,14 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*object.Commit, err
 	// This has to be here, otherwise the iterator will return garbage
 	defer cIter.Close()
 
-	return returnCommit, nil
+	return &OriginFileCommit{
+		Author: OriginFileCommitter{
+			Name:  returnCommit.Author.Name,
+			Email: returnCommit.Author.Email,
+		},
+		Date: returnCommit.Author.When,
+		Hash: returnCommit.Hash.String(),
+	}, nil
 }
 
 func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) {
@@ -199,11 +218,11 @@ MonakoGitLastCommitAuthorEmail: %s
 		file.Commit.Hash,
 		getWebLinkForGitCommit(
 			file.parentOrigin.URL,
-			file.Commit.Hash.String(),
+			file.Commit.Hash,
 		),
 		// Use lastMod because other variables won't be parsed as date by Hugo
 		// Resulting in no date format functions on the file
-		file.Commit.Author.When.Format(time.RFC3339),
+		file.Commit.Date.Format(time.RFC3339),
 		file.Commit.Author.Name,
 		file.Commit.Author.Email)
 
