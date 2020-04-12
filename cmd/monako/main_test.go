@@ -20,7 +20,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func TestMain(t *testing.T) {
+func TestMainMonakoTest(t *testing.T) {
 
 	targetDir := GetLocalTempDir(t)
 	err := os.Chdir(targetDir)
