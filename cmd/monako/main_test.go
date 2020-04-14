@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/Flaque/filet"
+	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/html"
@@ -133,6 +134,13 @@ func TestMainMonakoTest(t *testing.T) {
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
 		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
 		assert.Contains(t, content, "<a href=\"#_asciidoc_second_level\">Asciidoc Second Level</a>", "Check rendered Asciidoc")
+
+		// TODO Remove on asciidoctor-fix removal in theme
+		t.Run("Check for neccessary Asciidoc Fix Element", func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
+			assert.NoError(t, err)
+			assert.Len(t, doc.Find("body > main > aside.book-toc").Nodes, 1, "Asciidoc Page is missing aside.book-toc that is necessary for asciidoctor-fix")
+		})
 
 	})
 

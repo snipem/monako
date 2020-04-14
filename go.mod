@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
+	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/bradfitz/iter v0.0.0-20191230175014-e8f45d346db8 // indirect
 	github.com/c4milo/unpackit v0.0.0-20170704181138-4ed373e9ef1c
 	github.com/dsnet/compress v0.0.1 // indirect
