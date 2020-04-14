@@ -13,7 +13,7 @@ import (
 )
 
 const monakoMenuDirectory = "monako_menu_directory"
-const themeName = "monako-book-master"
+const themeName = "monako-book-566a1acb4f816f70c9919c6efb7a586dcd7444b2"
 
 // extractTheme extracts the Monako Theme to the Hugo Working Directory
 func extractTheme(hugoWorkingDir string) {
