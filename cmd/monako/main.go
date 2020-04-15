@@ -4,7 +4,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/snipem/monako/pkg/compose"
 	"github.com/snipem/monako/pkg/helpers"
@@ -21,6 +23,7 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 	var workingdir = f.String("working-dir", ".", "Working dir for composed site")
 	var baseURL = f.String("base-url", "", "Custom base URL")
 	var trace = f.Bool("trace", false, "Enable trace logging")
+	var showVersion = f.Bool("version", false, "Show version")
 	var failOnHugoError = f.Bool("fail-on-error", false, "Fail on document conversion errors")
 	var onlyCompose = f.Bool("only-compose", false, "Only compose the Monako structure")
 	var onlyGenerate = f.Bool("only-generate", false, "Only generate HTML files from an existing Monako structure")
@@ -39,15 +42,29 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 		ContentWorkingDir:  *workingdir,
 		BaseURL:            *baseURL,
 		Trace:              *trace,
+		ShowVersion:        *showVersion,
 		FailOnHugoError:    *failOnHugoError,
 		OnlyCompose:        *onlyCompose,
 		OnlyGenerate:       *onlyGenerate,
 	}
 }
 
+// version of Monako
+var version = "Development"
+
+// commit hash of latest commit
+var commit = "Local"
+
 func main() {
 
 	cliSettings := parseCommandLine()
+
+	// Always print version
+	fmt.Println(getVersion())
+
+	if cliSettings.ShowVersion {
+		os.Exit(0)
+	}
 
 	if cliSettings.Trace {
 		helpers.Trace()
@@ -65,4 +82,9 @@ func main() {
 		}
 	}
 
+}
+
+func getVersion() string {
+	osArch := runtime.GOOS + "/" + runtime.GOARCH
+	return fmt.Sprintf("Monako %s %s %s https://github.com/snipem/monako", version, commit, osArch)
 }

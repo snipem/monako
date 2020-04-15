@@ -41,6 +41,8 @@ type CommandLineSettings struct {
 	BaseURL string
 	// Trace activates function name based logging
 	Trace bool
+	// ShowVersion shows the current version and exists
+	ShowVersion bool
 	// FailOnHugoError will fail Monako when there are Hugo errors during build
 	FailOnHugoError bool
 	// OnlyCompose will only compose files but not generate HTML

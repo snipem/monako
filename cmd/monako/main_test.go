@@ -253,6 +253,24 @@ func TestGetUrlKeyValuesFromHTML(t *testing.T) {
 
 }
 
+func TestGetVersion(t *testing.T) {
+	// No newline in version string
+	assert.NotContains(t, getVersion(), "\n")
+
+	t.Run("Test for standard Version values", func(t *testing.T) {
+		assert.Contains(t, getVersion(), "Monako Development Local")
+		assert.Contains(t, getVersion(), "https://github.com/snipem/monako")
+	})
+
+	t.Run("Test if Version string can be overwritten", func(t *testing.T) {
+		version = "v.13.34.67"
+		commit = "LONGHASHID"
+
+		assert.Contains(t, getVersion(), "Monako v.13.34.67 LONGHASHID")
+
+	})
+}
+
 func getURLKeyValuesFromHTML(content string, key string, baseURL string) ([]*url.URL, error) {
 
 	var urls []*url.URL
