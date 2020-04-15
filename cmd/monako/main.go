@@ -59,8 +59,10 @@ func main() {
 
 	cliSettings := parseCommandLine()
 
+	// Always print version
+	fmt.Println(getVersion())
+
 	if cliSettings.ShowVersion {
-		fmt.Println(getVersion())
 		os.Exit(0)
 	}
 
