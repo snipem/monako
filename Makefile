@@ -1,5 +1,6 @@
 
 #run: make run
+SHELL := /bin/bash
 .PHONY: compose test
 
 clean:
@@ -19,7 +20,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	cd assets/theme && ${GOPATH}/bin/go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore ".git" -ignore "exampleSite" monako-book/...
+	cd assets/theme ; ${GOPATH}/bin/go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore ".git" -ignore "exampleSite" monako-book/...
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
