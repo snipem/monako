@@ -35,6 +35,8 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        submodules: 'true'
 
     - name: Dependencies
       run: make --always-make deps test_deps

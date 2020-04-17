@@ -1,14 +1,14 @@
 
-#run: make run
+# run: make theme && head internal/theme/bindata.go     
 SHELL := /bin/bash
 .PHONY: compose test
 
 clean:
-	rm -r tmp/theme || true
 	rm ./monako || true
 
 deps:
 	go mod download
+	git submodule update
 	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
@@ -20,9 +20,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
-	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
+	go generate cmd/monako/main.go
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
@@ -87,5 +85,5 @@ run_image:
 
 hooks:
 	# setup git hooks
-	brew install golangci/tap/golangci-lint
-	git config --local core.hooksPath .githooks/
+	which golangci-lint || brew install golangci/tap/golangci-lint
+	git config --local core.hooksPath githooks/
