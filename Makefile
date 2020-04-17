@@ -8,6 +8,7 @@ clean:
 
 deps:
 	go mod download
+	git submodule update
 	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
@@ -19,7 +20,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	cd assets/theme && ${GOPATH}/bin/go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore ".git" -ignore "exampleSite" monako-book/...
+	cd assets/theme ; ${GOPATH}/bin/go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore ".git" -ignore "exampleSite" monako-book/...
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
