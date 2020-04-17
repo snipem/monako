@@ -20,7 +20,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	go generate
+	go generate cmd/monako/main.go
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
