@@ -9,6 +9,9 @@ clean:
 
 deps:
 	go mod download
+
+	# For theme
+	git submodule update
 	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
@@ -29,7 +32,6 @@ secrets:
 
 test: clean_test
 	go test -covermode=count -coverprofile=coverage.out.tmp ./...
-	# -coverpkg=./...  also calculates the whole coverage, for example code that was involded by the main test
 	cat coverage.out.tmp | grep -v "/bindata.go" > coverage.out
 	rm coverage.out.tmp
 
@@ -79,13 +81,7 @@ serve:
 	echo "Serving under http://localhost:8000"
 	/usr/bin/env python3 -m http.server 8000 --directory compose/public
 
-image:
-	docker build -t monako/monako:0.0.1 .
-
-run_image:
-	docker run -v ${PWD}:/docs monako/monako:0.0.1 monako
-
+# setup git hooks
 hooks:
-	# setup git hooks
-	brew install golangci/tap/golangci-lint
-	git config --local core.hooksPath .githooks/
+	which golangci-lint || brew install golangci/tap/golangci-lint
+	git config --local core.hooksPath githooks/
