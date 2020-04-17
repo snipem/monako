@@ -1,6 +1,6 @@
 package compose
 
-// run: go test ./pkg/compose -run TestGetWebLink
+// run: MONAKO_TEST_REPO="$HOME/temp/monako-testrepos/monako-test" go test ./pkg/compose -run TestCommitInfo
 
 import (
 	"fmt"
@@ -240,4 +240,33 @@ func TestGetCommitWebLink(t *testing.T) {
 			assert.Equal(t, tc.Expected, getWebLinkForGitCommit(tc.gitURL, tc.commitID))
 		})
 	}
+}
+
+func TestCommitInfo(t *testing.T) {
+
+	testConfig, _ := getTestConfig(t)
+	origin := &testConfig.Origins[0]
+	origin.CloneDir()
+
+	t.Run("Test Commit Info", func(t *testing.T) {
+		commit, err := getCommitInfo("README.md", origin.repo)
+		assert.NoError(t, err)
+		assert.Contains(t, commit.Author.Email, "@")
+		assert.NotNil(t, commit.Date)
+		assert.NotNil(t, commit.Hash)
+		assert.NotNil(t, commit.Author.Name)
+	})
+
+	t.Run("Non Existing file", func(t *testing.T) {
+		commit, err := getCommitInfo("THIS FILE WILL NEVER EXIST. fake", origin.repo)
+		assert.Error(t, err)
+		assert.Nil(t, commit)
+	})
+
+	t.Run("No repo", func(t *testing.T) {
+		commit, err := getCommitInfo("README.md", nil)
+		assert.Error(t, err)
+		assert.Nil(t, commit)
+	})
+
 }
