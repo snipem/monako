@@ -1,10 +1,9 @@
 
-#run: make run
+# run: make theme && head internal/theme/bindata.go     
 SHELL := /bin/bash
 .PHONY: compose test
 
 clean:
-	rm -r tmp/theme || true
 	rm ./monako || true
 
 deps:
@@ -23,9 +22,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
-	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
+	go generate cmd/monako/main.go
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env

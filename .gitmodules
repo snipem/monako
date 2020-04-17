@@ -1,0 +1,3 @@
+[submodule "assets/theme/monako-book"]
+	path = assets/theme/monako-book
+	url = https://github.com/snipem/monako-book
