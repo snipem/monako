@@ -5,6 +5,7 @@ SHELL := /bin/bash
 
 clean:
 	rm -r tmp/theme || true
+	rm -r tmp/theme.zip || true
 	rm ./monako || true
 
 deps:
@@ -21,7 +22,7 @@ build: clean
 
 theme: clean
 	mkdir -p tmp/
-	curl -o tmp/theme.zip --location https://github.com/snipem/monako-book/archive/master.zip
+	cd assets/theme && zip -r ../../tmp/theme.zip . -x "*.git*"
 	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
 
 secrets:

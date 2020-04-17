@@ -35,3 +35,4 @@ test/configs/testgenerated/menu.testgenerated.md
 
 origin*heap*log
 *.log
+.DS_Store
