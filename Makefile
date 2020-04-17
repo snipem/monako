@@ -84,5 +84,5 @@ run_image:
 
 hooks:
 	# setup git hooks
-	brew install golangci/tap/golangci-lint
-	git config --local core.hooksPath .githooks/
+	which golangci-lint || brew install golangci/tap/golangci-lint
+	git config --local core.hooksPath githooks/
