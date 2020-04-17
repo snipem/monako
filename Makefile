@@ -4,8 +4,6 @@ SHELL := /bin/bash
 .PHONY: compose test
 
 clean:
-	rm -r tmp/theme || true
-	rm -r tmp/theme.zip || true
 	rm ./monako || true
 
 deps:
@@ -21,9 +19,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	mkdir -p tmp/
-	cd assets/theme && zip -r ../../tmp/theme.zip . -x "*.git*"
-	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go tmp/...
+	cd assets/theme && ${GOPATH}/bin/go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore ".git" -ignore "exampleSite" monako-book/...
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
