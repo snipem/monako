@@ -4,5 +4,3 @@ set -e
 
 make test
 golangci-lint run
-# Maybe this is obsolete
-golint -set_exit_status ./... 
