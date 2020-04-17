@@ -20,7 +20,7 @@ build: clean
 	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
-	${GOPATH}/bin/go-bindata -pkg theme -o internal/theme/bindata.go -ignore "\\.git" -ignore "exampleSite" -prefix "assets/theme" assets/theme/monako-book/...
+	go generate
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
