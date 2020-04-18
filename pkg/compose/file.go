@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/gohugoio/hugo/parser/pageparser"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/internal/workarounds"
@@ -52,18 +53,28 @@ type OriginFileCommitter struct {
 	Email string
 }
 
-func (file *OriginFile) composeFile(filesystem billy.Filesystem) {
+func (file *OriginFile) composeFile(filesystem billy.Filesystem) error {
 
-	file.createParentDir()
+	err := createParentDir(file.LocalPath)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error composing file %s", file.LocalPath))
+	}
 	contentFormat := file.GetFormat()
 
 	switch contentFormat {
 	case Asciidoc, Markdown:
-		file.copyMarkupFile(filesystem)
+		err := file.copyMarkupFile(filesystem)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error copying markup file"))
+		}
 	default:
-		file.copyRegularFile(filesystem)
+		err := file.copyRegularFile(filesystem)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error copying regular file"))
+		}
 	}
 	fmt.Printf("%s -> %s\n", file.RemotePath, file.LocalPath)
+	return nil
 
 }
 
@@ -80,30 +91,31 @@ func (file OriginFile) GetFormat() string {
 }
 
 // createParentDir creates the parent directories for the file in the local filesystem
-func (file *OriginFile) createParentDir() {
-	log.Debugf("Creating local folder '%s'", filepath.Dir(file.LocalPath))
-	err := os.MkdirAll(filepath.Dir(file.LocalPath), standardFilemode)
+func createParentDir(localPath string) error {
+	log.Debugf("Creating parent dir '%s'", filepath.Dir(localPath))
+	err := os.MkdirAll(filepath.Dir(localPath), standardFilemode)
 	if err != nil {
-		log.Fatalf("Error when creating '%s': %s", filepath.Dir(file.LocalPath), err)
+		return errors.Wrap(err, fmt.Sprintf("Error creating parent dir %s", localPath))
 	}
+	return nil
 }
 
-func (file *OriginFile) copyRegularFile(filesystem billy.Filesystem) {
+func (file *OriginFile) copyRegularFile(filesystem billy.Filesystem) error {
 
 	f, err := filesystem.Open(file.RemotePath)
 
 	if err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error opening regular remote file for copying %s", file.RemotePath))
 	}
 	t, err := os.Create(file.LocalPath)
 	if err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error creating regular local file %s", file.LocalPath))
 	}
 
 	if _, err = io.Copy(t, f); err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error copying regular remote file to local file %s -> %s", file.RemotePath, file.LocalPath))
 	}
-
+	return nil
 }
 
 // getCommitInfo returns the Commit Info for a given file of the repository
@@ -147,16 +159,16 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*OriginFileCommit, 
 	}, nil
 }
 
-func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) {
+func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) error {
 
 	bf, err := filesystem.Open(file.RemotePath)
 	if err != nil {
-		log.Fatalf("Error copying markup file %s", err)
+		return errors.Wrap(err, fmt.Sprintf("Error opening markup file %s", file.RemotePath))
 	}
 
 	dirty, err := ioutil.ReadAll(bf)
 	if err != nil {
-		log.Fatalf("Error opening markup file %s", err)
+		return errors.Wrap(err, fmt.Sprintf("Error reading markup file %s", file.RemotePath))
 	}
 	var content string
 	contentFormat := file.GetFormat()
@@ -167,12 +179,16 @@ func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) {
 		content = workarounds.AsciidocPostprocessing(string(dirty))
 	}
 
-	content = file.ExpandFrontmatter(string(content))
+	content, err = file.ExpandFrontmatter(string(content))
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error expanding frontmatter for %s", file.RemotePath))
+	}
 
 	err = ioutil.WriteFile(file.LocalPath, []byte(content), standardFilemode)
 	if err != nil {
-		log.Fatalf("Error writing file %s", err)
+		return errors.Wrap(err, fmt.Sprintf("Error writing remote markup file to local file %s -> %s", file.RemotePath, file.LocalPath))
 	}
+	return nil
 }
 
 // getLocalFilePath returns the desired local file path for a remote file in the local filesystem.
@@ -185,14 +201,17 @@ func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteF
 }
 
 // ExpandFrontmatter expands the existing frontmatter with the parameters given
-func (file *OriginFile) ExpandFrontmatter(content string) string {
+func (file *OriginFile) ExpandFrontmatter(content string) (expandedFrontmatter string, err error) {
 
 	if file.Commit == nil {
 		log.Debug("Git Info is not set, returning without adding it")
-		return content
+		return content, nil
 	}
 
-	oldFrontmatter, body := splitFrontmatterAndBody(content)
+	oldFrontmatter, body, err := splitFrontmatterAndBody(content)
+	if err != nil {
+		return "", errors.Wrap(err, fmt.Sprintf("Error expanding front matter"))
+	}
 
 	return fmt.Sprintf(`---
 %s
@@ -208,44 +227,45 @@ MonakoGitLastCommitAuthorEmail: %s
 ---
 
 `+body,
-		oldFrontmatter,
-		file.parentOrigin.URL,
-		file.RemotePath,
-		getWebLinkForFileInGit(
+			oldFrontmatter,
 			file.parentOrigin.URL,
-			file.parentOrigin.Branch,
 			file.RemotePath,
-		),
-		file.Commit.Hash,
-		getWebLinkForGitCommit(
-			file.parentOrigin.URL,
+			getWebLinkForFileInGit(
+				file.parentOrigin.URL,
+				file.parentOrigin.Branch,
+				file.RemotePath,
+			),
 			file.Commit.Hash,
-		),
-		// Use lastMod because other variables won't be parsed as date by Hugo
-		// Resulting in no date format functions on the file
-		file.Commit.Date.Format(time.RFC3339),
-		file.Commit.Author.Name,
-		file.Commit.Author.Email)
+			getWebLinkForGitCommit(
+				file.parentOrigin.URL,
+				file.Commit.Hash,
+			),
+			// Use lastMod because other variables won't be parsed as date by Hugo
+			// Resulting in no date format functions on the file
+			file.Commit.Date.Format(time.RFC3339),
+			file.Commit.Author.Name,
+			file.Commit.Author.Email),
+		nil
 
 }
 
-func splitFrontmatterAndBody(content string) (frontmatter string, body string) {
+func splitFrontmatterAndBody(content string) (frontmatter string, body string, err error) {
 	contentFrontmatter, err := pageparser.ParseFrontMatterAndContent(strings.NewReader(content))
 	if err != nil {
-		log.Fatalf("Error while splitting frontmatter: %s", err)
+		return "", "", errors.Wrap(err, fmt.Sprintf("While splitting frontmatter for content: %s", content))
 	}
 
 	// No frontmatter found, return old content
 	if contentFrontmatter.Content == nil {
-		return "", content
+		return "", content, nil
 	}
 
 	contentMarshaled, err := yaml.Marshal(contentFrontmatter.FrontMatter)
 	if err != nil {
-		log.Fatalf("Error while marshalling frontmatter to YAML: %s", err)
+		return "", "", errors.Wrap(err, fmt.Sprintf("Error while marshalling frontmatter to YAML"))
 	}
 
-	return string(contentMarshaled), string(contentFrontmatter.Content)
+	return string(contentMarshaled), string(contentFrontmatter.Content), nil
 }
 
 func getWebLinkForFileInGit(gitURL string, branch string, remotePath string) string {

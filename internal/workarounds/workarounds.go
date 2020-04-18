@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -70,16 +71,16 @@ func MarkdownPostprocessing(dirty string) (clean string) {
 // AddFakeAsciidoctorBinForDiagramsToPath adds a fake asciidoctor bin to the PATH
 // to trick Hugo into taking this one. This makes it possible to manipulate the parameters
 // for asciidoctor while being called from Hugo.
-func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
+func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) (fakeBinaryPath string, err error) {
 
 	if runtime.GOOS == "windows" {
 		log.Warn("Can't apply asciidoctor diagram workaround on Windows")
-		return ""
+		return "", nil
 	}
 
 	url, err := url.Parse(baseURL)
 	if err != nil {
-		log.Fatal(err)
+		return "", errors.Wrap(err, fmt.Sprintf("Error parsing base url %s", baseURL))
 	}
 	path := url.Path
 
@@ -127,19 +128,19 @@ func AddFakeAsciidoctorBinForDiagramsToPath(baseURL string) string {
 	tempDir := filepath.Join(os.TempDir(), "monako_asciidoctor_fake_binary")
 	err = os.Mkdir(tempDir, os.FileMode(0700))
 	if err != nil && !os.IsExist(err) {
-		log.Fatalf("Error creating asciidoctor fake dir : %s", err)
+		return "", errors.Wrap(err, fmt.Sprintf("Error creating asciidoctor fake dir : %s", tempDir))
 	}
-	fakeBinary := filepath.Join(tempDir, "asciidoctor")
+	fakeBinaryPath = filepath.Join(tempDir, "asciidoctor")
 
-	err = ioutil.WriteFile(fakeBinary, []byte(shellscript), os.FileMode(0700))
+	err = ioutil.WriteFile(fakeBinaryPath, []byte(shellscript), os.FileMode(0700))
 	if err != nil {
-		log.Fatalf("Error creating asciidoctor fake binary: %s", err)
+		return "", errors.Wrap(err, fmt.Sprintf("Error creating asciidoctor fake binary: %s", fakeBinaryPath))
 	}
 
 	os.Setenv("PATH", tempDir+":"+os.Getenv("PATH"))
 
-	log.Debugf("Added temporary binary %s to PATH %s", fakeBinary, os.Getenv("PATH"))
+	log.Debugf("Added temporary binary %s to PATH %s", fakeBinaryPath, os.Getenv("PATH"))
 
-	return fakeBinary
+	return fakeBinaryPath, nil
 
 }

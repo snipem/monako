@@ -26,7 +26,8 @@ func TestCreatePage(t *testing.T) {
 
 	t.Run("Create Monako structure", func(t *testing.T) {
 		testMenuConfig := filet.TmpFile(t, os.TempDir(), "# Test Config")
-		createMonakoStructureInHugoFolder(config, testMenuConfig.Name())
+		err := createMonakoStructureInHugoFolder(config, testMenuConfig.Name())
+		assert.NoError(t, err)
 
 		// Check if Monako menu is in place
 		assert.FileExists(t, filepath.Join(config.ContentWorkingDir, monakoMenuDirectory, "index.md"))

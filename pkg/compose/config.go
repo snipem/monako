@@ -1,10 +1,12 @@
 package compose
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
@@ -87,7 +89,7 @@ func (config *Config) initConfig(workingdir string) {
 }
 
 // Compose builds the Monako directory structure
-func (config *Config) Compose() {
+func (config *Config) Compose() error {
 
 	// If Origin has now own whitelist, use the Compose Whitelist
 	for i := range config.Origins {
@@ -98,8 +100,15 @@ func (config *Config) Compose() {
 			config.Origins[i].FileBlacklist = config.FileBlacklist
 		}
 
-		filesystem := config.Origins[i].CloneDir()
-		config.Origins[i].ComposeDir(filesystem)
+		filesystem, err := config.Origins[i].CloneDir()
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error cloning origin %s", config.Origins[i].URL))
+		}
+
+		err = config.Origins[i].ComposeDir(filesystem)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error composing dir '%s' of %s", config.Origins[i].SourceDir, config.Origins[i].URL))
+		}
 
 		// After processing the origin, delete repo for freeing up memory
 		// containing the whole virtual filesystem. Can easily add up to
@@ -124,6 +133,7 @@ func (config *Config) Compose() {
 		// End Performance analysis ------
 
 	}
+	return nil
 
 }
 
@@ -164,14 +174,20 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 	if _, isGithub := os.LookupEnv("GITHUB_WORKFLOW"); isGithub {
 		log.Warn("Don't apply workaround on Github Actions, because its flaky")
 	} else {
-		workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+		_, err := workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
+		if err != nil {
+			log.Fatalf("Can't add Asciidoctor Workaround to path: %s", err)
+		}
 	}
 
 	if !cliSettings.OnlyGenerate {
 		// Dont do these steps if only generate
 		config.CleanUp()
 
-		createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
+		err := createMonakoStructureInHugoFolder(config, cliSettings.MenuConfigFilePath)
+		if err != nil {
+			log.Fatalf("Can't create Monako structure %s", err)
+		}
 	}
 
 	return config

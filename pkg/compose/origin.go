@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/gohugoio/hugo/hugofs/files"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/pkg/helpers"
@@ -27,7 +28,7 @@ const Markdown = "MARKDOWN"
 
 // CloneDir clones a HTTPS or lokal Git repository with the given branch and optional username and password.
 // A virtual filesystem is returned containing the cloned files.
-func (origin *Origin) CloneDir() (filesystem billy.Filesystem) {
+func (origin *Origin) CloneDir() (filesystem billy.Filesystem, err error) {
 
 	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
 	log.Debugf("Start cloning of %s", origin.URL)
@@ -64,13 +65,13 @@ func (origin *Origin) CloneDir() (filesystem billy.Filesystem) {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, errors.Wrap(err, fmt.Sprintf("Error while cloning into %s", origin.URL))
 	}
 
 	origin.repo = repo
 	log.Debugf("Ended cloning of %s", origin.URL)
 
-	return filesystem
+	return filesystem, nil
 
 }
 
@@ -94,7 +95,7 @@ type Origin struct {
 // ComposeDir copies a subdir of a virtual filesystem to a target in the local relative filesystem.
 // The copied files can be limited by a whitelist. The Git repository is used to obtain Git commit
 // information
-func (origin *Origin) ComposeDir(filesystem billy.Filesystem) {
+func (origin *Origin) ComposeDir(filesystem billy.Filesystem) error {
 	origin.Files = origin.getMatchingFiles(origin.SourceDir, filesystem)
 
 	if len(origin.Files) == 0 {
@@ -102,8 +103,12 @@ func (origin *Origin) ComposeDir(filesystem billy.Filesystem) {
 	}
 
 	for _, file := range origin.Files {
-		file.composeFile(filesystem)
+		err := file.composeFile(filesystem)
+		if err != nil {
+			return errors.Wrap(err, fmt.Sprintf("Error composing file %s", file.RemotePath))
+		}
 	}
+	return nil
 }
 
 // NewOrigin returns a new origin with all needed fields

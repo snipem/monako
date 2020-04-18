@@ -121,7 +121,8 @@ func TestFakeAsciidoctorBin(t *testing.T) {
 		t.Skip("Can't test this on Windows")
 	}
 
-	fakePath := AddFakeAsciidoctorBinForDiagramsToPath("http://complexbasepath/path/bla")
+	fakePath, err := AddFakeAsciidoctorBinForDiagramsToPath("http://complexbasepath/path/bla")
+	assert.NoError(t, err)
 
 	assert.FileExists(t, fakePath)
 

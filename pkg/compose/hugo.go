@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 	"github.com/snipem/monako/internal/theme"
 )
 
@@ -14,48 +14,63 @@ const monakoMenuDirectory = "monako_menu_directory"
 const themeName = "monako-book"
 
 // extractTheme extracts the Monako Theme to the Hugo Working Directory
-func extractTheme(hugoWorkingDir string) {
-	err := theme.RestoreAssets(filepath.Join(hugoWorkingDir, "themes"), themeName)
+func extractTheme(hugoWorkingDir string) error {
+	themesDir := filepath.Join(hugoWorkingDir, "themes")
+	err := theme.RestoreAssets(themesDir, themeName)
 	if err != nil {
-		log.Fatalf("Error extracting theme %s", err)
+		return errors.Wrap(err, fmt.Sprintf("Error restoring asset %s to %s", themeName, themesDir))
 	}
+	return nil
 }
 
 // createMonakoStructureInHugoFolder extracts the Monako theme and copies the hugoconfig and menuconfig to the needed files
-func createMonakoStructureInHugoFolder(composeConfig *Config, menuconfig string) {
+func createMonakoStructureInHugoFolder(composeConfig *Config, menuconfig string) error {
 
 	var foldersToCreate = []string{"content", "themes"}
 	for _, folder := range foldersToCreate {
-		err := os.MkdirAll(filepath.Join(composeConfig.ContentWorkingDir, folder), standardFilemode)
+		createDir := filepath.Join(composeConfig.ContentWorkingDir, folder)
+		err := os.MkdirAll(createDir, standardFilemode)
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, fmt.Sprintf("Error creating Monako structure %s", createDir))
 		}
 	}
 
-	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
-	dst := filepath.Join(dir, "index.md")
-
-	extractTheme(composeConfig.HugoWorkingDir)
-
-	err := createHugoConfig(composeConfig)
+	err := extractTheme(composeConfig.HugoWorkingDir)
 	if err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error extracting Hugo Theme"))
 	}
 
-	err = os.MkdirAll(dir, os.FileMode(0744))
+	err = createHugoConfig(composeConfig)
 	if err != nil {
-		log.Fatalf("Error menu dir %s", err)
+		return errors.Wrap(err, fmt.Sprintf("Error creating Hugo config"))
+	}
+
+	err = createMenuConfig(composeConfig, menuconfig)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error creating Monako menu config"))
+	}
+	return nil
+}
+
+func createMenuConfig(composeConfig *Config, menuconfig string) error {
+
+	dir := filepath.Join(composeConfig.ContentWorkingDir, monakoMenuDirectory)
+	dst := filepath.Join(dir, "index.md")
+	err := os.MkdirAll(dir, os.FileMode(0744))
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("Error creating menu dir %s", dir))
 	}
 
 	data, err := ioutil.ReadFile(menuconfig)
 	if err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error reading menu config %s", menuconfig))
 	}
 
 	err = ioutil.WriteFile(dst, data, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, fmt.Sprintf("Error writing menu config to %s", dst))
 	}
+	return nil
 
 }
 

@@ -35,7 +35,8 @@ func TestGetTestConfig(t *testing.T) {
 func TestCompose(t *testing.T) {
 	config, _ := getTestConfig(t)
 
-	config.Compose()
+	err := config.Compose()
+	assert.NoError(t, err)
 
 	wantFiles := []string{
 		"docs/monako-test/README.md",
@@ -60,7 +61,8 @@ func BenchmarkHugoRepositorySingleFiles(b *testing.B) {
 		"huge/test/docs",
 	)
 
-	origin.CloneDir()
+	_, err := origin.CloneDir()
+	assert.NoError(b, err)
 
 	// Don't fetch commit info early
 	origin.config = &Config{DisableCommitInfo: true}
@@ -96,7 +98,8 @@ func BenchmarkSlowRepositorySingleFiles(b *testing.B) {
 
 	// Don't fetch commit info early
 	origin.config = &Config{DisableCommitInfo: true}
-	origin.CloneDir()
+	_, err := origin.CloneDir()
+	assert.NoError(b, err)
 
 	b.Run("Get Commit Info", func(b *testing.B) {
 
@@ -130,13 +133,15 @@ func BenchmarkWholeRepoHugoRepositoryWholeRepo(b *testing.B) {
 	}
 
 	origin.FileWhitelist = origin.config.FileWhitelist
-	filesystem := origin.CloneDir()
+	filesystem, err := origin.CloneDir()
+	assert.NoError(b, err)
 
 	// Don't fetch commit info early
 	b.Run("Get Commit Info for Hugo", func(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
-			origin.ComposeDir(filesystem)
+			err := origin.ComposeDir(filesystem)
+			assert.NoError(b, err)
 		}
 
 	})
@@ -164,11 +169,13 @@ func BenchmarkWholeRepoSlowRepository(b *testing.B) {
 
 	origin.FileWhitelist = origin.config.FileWhitelist
 
-	filesystem := origin.CloneDir()
+	filesystem, err := origin.CloneDir()
+	assert.NoError(b, err)
 	b.Run("Get Commit Info", func(b *testing.B) {
 
 		for n := 0; n < b.N; n++ {
-			origin.ComposeDir(filesystem)
+			err := origin.ComposeDir(filesystem)
+			assert.NoError(b, err)
 		}
 
 	})
@@ -181,7 +188,9 @@ func TestDeactivatedCommitInfo(t *testing.T) {
 	assert.False(t, config.DisableCommitInfo)
 	config.DisableCommitInfo = true
 
-	config.Compose()
+	err := config.Compose()
+	assert.NoError(t, err)
+
 	for i := range config.Origins[0].Files {
 		// Commit must be nil
 		assert.Nil(t, config.Origins[0].Files[i].Commit)

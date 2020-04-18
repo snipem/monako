@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/gohugoio/hugo/hugofs/files"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,9 +43,7 @@ func TestCleanUp(t *testing.T) {
 
 	// Create the test data because it is not existing yet
 	err := os.Mkdir(config.HugoWorkingDir, standardFilemode)
-	if err != nil {
-		log.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	t.Logf("Using temp file %s", tmpFile)
 	_ = ioutil.WriteFile(tmpFile, []byte("none"), standardFilemode)
@@ -60,7 +57,8 @@ func TestCleanUp(t *testing.T) {
 func TestGitCommiter(t *testing.T) {
 
 	config, _ := getTestConfig(t)
-	config.Compose()
+	err := config.Compose()
+	assert.NoError(t, err)
 	origins := config.Origins
 	firstOrigin := origins[0]
 

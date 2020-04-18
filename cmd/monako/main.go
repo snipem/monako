@@ -74,7 +74,10 @@ func main() {
 
 	config := compose.Init(cliSettings)
 	if !cliSettings.OnlyGenerate {
-		config.Compose()
+		err := config.Compose()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if !cliSettings.OnlyCompose {

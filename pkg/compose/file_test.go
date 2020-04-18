@@ -60,7 +60,9 @@ func TestFrontmatterExpanding(t *testing.T) {
 	t.Run("No Frontmatter", func(t *testing.T) {
 		content := `=== Body Content
 123`
-		frontmatter, body := splitFrontmatterAndBody(content)
+		frontmatter, body, err := splitFrontmatterAndBody(content)
+		assert.NoError(t, err)
+
 		assert.Equal(t,
 			`=== Body Content
 123`,
@@ -80,7 +82,9 @@ content: linetwo
 
 === Body Content
 123`
-		frontmatter, body := splitFrontmatterAndBody(content)
+		frontmatter, body, err := splitFrontmatterAndBody(content)
+		assert.NoError(t, err)
+
 		assert.Equal(t,
 			`
 === Body Content
@@ -111,7 +115,9 @@ content: linetwo
 Inline Json Test {"date": "today"}
 Bottom line
 `
-		frontmatter, body := splitFrontmatterAndBody(content)
+		frontmatter, body, err := splitFrontmatterAndBody(content)
+		assert.NoError(t, err)
+
 		assert.Equal(t,
 			`
 === Body Content
@@ -141,7 +147,9 @@ Here be the --- control signs
 ---
 Also on new line`
 
-		frontmatter, body := splitFrontmatterAndBody(content)
+		frontmatter, body, err := splitFrontmatterAndBody(content)
+		assert.NoError(t, err)
+
 		assert.Equal(t,
 			`
 === Body Content
@@ -170,7 +178,9 @@ Here be the +++ control signs
 +++
 Also on new line`
 
-		frontmatter, _ := splitFrontmatterAndBody(content)
+		frontmatter, _, err := splitFrontmatterAndBody(content)
+		assert.NoError(t, err)
+
 		assert.Contains(t, frontmatter, "simple: content\n")
 		assert.Contains(t, frontmatter, "content: linetwo\n")
 	})
@@ -246,7 +256,9 @@ func TestCommitInfo(t *testing.T) {
 
 	testConfig, _ := getTestConfig(t)
 	origin := &testConfig.Origins[0]
-	origin.CloneDir()
+
+	_, err := origin.CloneDir()
+	assert.NoError(t, err)
 
 	t.Run("Test Commit Info", func(t *testing.T) {
 		commit, err := getCommitInfo("README.md", origin.repo)
