@@ -16,6 +16,7 @@ import (
 
 	"github.com/Flaque/filet"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/mmcdole/gofeed"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/html"
@@ -141,6 +142,21 @@ func TestMainMonakoTest(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Len(t, doc.Find("body > main > aside.book-toc").Nodes, 1, "Asciidoc Page is missing aside.book-toc that is necessary for asciidoctor-fix")
 		})
+
+	})
+
+	t.Run("Check for RSS feed", func(t *testing.T) {
+		content, err := getContentFromURL(ts, "/docs/index.xml")
+		assert.NoError(t, err, "HTTP Call failed")
+
+		fp := gofeed.NewParser()
+		feed, err := fp.ParseString(content)
+		assert.NoError(t, err)
+
+		assert.Equal(t, "Docs on Local Test Page", feed.Title)
+		assert.Equal(t, "Monako", feed.Generator)
+
+		assert.Len(t, feed.Items, 4, "Does not contain all matching documents from this test repo")
 
 	})
 

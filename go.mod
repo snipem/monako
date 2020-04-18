@@ -12,6 +12,8 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
+	github.com/mmcdole/gofeed v1.0.0-beta2
+	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/rogpeppe/go-internal v1.5.2 // indirect
 	github.com/sirupsen/logrus v1.5.0
