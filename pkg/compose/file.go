@@ -80,7 +80,7 @@ func (file *OriginFile) composeFile(filesystem billy.Filesystem) error {
 
 // GetFormat determines the markup format of a file by it's filename.
 // Results can be Markdown and Asciidoc
-func (file OriginFile) GetFormat() string {
+func (file *OriginFile) GetFormat() string {
 	if helpers.IsMarkdown(file.RemotePath) {
 		return Markdown
 	} else if helpers.IsAsciidoc(file.RemotePath) {
