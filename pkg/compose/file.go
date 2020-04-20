@@ -181,7 +181,7 @@ func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) error {
 
 	content, err = file.ExpandFrontmatter(string(content))
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("Error expanding frontmatter for %s", file.RemotePath))
+		return errors.Wrap(err, fmt.Sprintf("Error expanding frontmatter for %s -> %s", file.RemotePath, file.LocalPath))
 	}
 
 	err = ioutil.WriteFile(file.LocalPath, []byte(content), standardFilemode)
