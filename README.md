@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/snipem/monako)](https://goreportcard.com/report/github.com/snipem/monako)
 [![GoDoc](https://godoc.org/github.com/snipem/monako?status.svg)](https://godoc.org/github.com/snipem/monako)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1ff16e0c4f8a871bfac3/maintainability)](https://codeclimate.com/github/snipem/monako/maintainability)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsnipem%2Fmonako.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsnipem%2Fmonako?ref=badge_shield)
 
 ![monako logo](https://github.com/snipem/monako/raw/master/assets/logo/cover.png)
 
@@ -124,3 +125,7 @@ Init with `make init`
 ## Improvements
 
 * Support edit this page links with links to origin repository. Book theme provides a [similar feature](https://github.com/alex-shpak/hugo-book/search?q=BookRepo&unscoped_q=BookRepo).
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsnipem%2Fmonako.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsnipem%2Fmonako?ref=badge_large)
