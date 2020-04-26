@@ -61,6 +61,10 @@ func BenchmarkHugoRepositorySingleFiles(b *testing.B) {
 		"huge/test/docs",
 	)
 
+	origin.config = &Config{
+		DisableCommitInfo: false,
+	}
+
 	_, err := origin.CloneDir()
 	assert.NoError(b, err)
 
@@ -82,6 +86,18 @@ func BenchmarkHugoRepositorySingleFiles(b *testing.B) {
 }
 
 func BenchmarkSlowRepositorySingleFiles(b *testing.B) {
+
+	if _, isSet := os.LookupEnv("MONAKO_SLOW_REPO_FOLDER"); !isSet {
+		assert.FailNow(b, "Env var MONAKO_SLOW_REPO_FOLDER not set")
+	}
+
+	if _, isSet := os.LookupEnv("MONAKO_SLOW_REPO_FILE1"); !isSet {
+		assert.FailNow(b, "Env var MONAKO_SLOW_REPO_FILE1 not set")
+	}
+
+	if _, isSet := os.LookupEnv("MONAKO_SLOW_REPO_FILE2"); !isSet {
+		assert.FailNow(b, "Env var MONAKO_SLOW_REPO_FILE2 not set")
+	}
 
 	// Use env vars, these folders are secret because of client project
 	slowRepoFolder := os.Getenv("MONAKO_SLOW_REPO_FOLDER")
@@ -149,6 +165,14 @@ func BenchmarkWholeRepoHugoRepositoryWholeRepo(b *testing.B) {
 }
 
 func BenchmarkWholeRepoSlowRepository(b *testing.B) {
+
+	if _, isSet := os.LookupEnv("MONAKO_SLOW_REPO_FOLDER"); !isSet {
+		assert.FailNow(b, "Env var MONAKO_SLOW_REPO_FOLDER not set")
+	}
+
+	if _, isSet := os.LookupEnv("MONAKO_SLOW_REPO_SOURCE"); !isSet {
+		assert.FailNow(b, "Env var MONAKO_SLOW_REPO_SOURCE not set")
+	}
 
 	// Use env vars, these folders are secret because of a client project
 	slowRepoFolder := os.Getenv("MONAKO_SLOW_REPO_FOLDER")
