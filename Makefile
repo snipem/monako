@@ -8,9 +8,6 @@ clean:
 
 deps:
 	go mod download
-
-	# For theme
-	git submodule update
 	go get -u github.com/go-bindata/go-bindata/...
 
 optional_deps:
@@ -23,6 +20,10 @@ build: clean
 
 theme: clean
 	go generate cmd/monako/main.go
+
+update_theme:
+	# For theme
+	git submodule update
 
 secrets:
 	touch configs/secrets.env && source configs/secrets.env
