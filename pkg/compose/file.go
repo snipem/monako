@@ -226,7 +226,7 @@ MonakoGitLastCommitAuthor: %s
 MonakoGitLastCommitAuthorEmail: %s
 ---
 
-`+body,
+%s`,
 			oldFrontmatter,
 			file.parentOrigin.URL,
 			file.RemotePath,
@@ -244,7 +244,9 @@ MonakoGitLastCommitAuthorEmail: %s
 			// Resulting in no date format functions on the file
 			file.Commit.Date.Format(time.RFC3339),
 			file.Commit.Author.Name,
-			file.Commit.Author.Email),
+			file.Commit.Author.Email,
+			body,
+		),
 		nil
 
 }

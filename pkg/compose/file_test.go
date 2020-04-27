@@ -1,11 +1,12 @@
 package compose
 
-// run: MONAKO_TEST_REPO="$HOME/temp/monako-testrepos/monako-test" go test ./pkg/compose -run TestCommitInfo
+// run: MONAKO_TEST_REPO="$HOME/temp/monako-testrepos/monako-test" go test ./pkg/compose -run TestExpandFrontmatter
 
 import (
 	"fmt"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -279,6 +280,39 @@ func TestCommitInfo(t *testing.T) {
 		commit, err := getCommitInfo("README.md", nil)
 		assert.Error(t, err)
 		assert.Nil(t, commit)
+	})
+
+}
+
+func TestExpandFrontmatter(t *testing.T) {
+
+	t.Run("Expand Frontmatter Simple", func(t *testing.T) {
+		// t.Skip("not ready")
+	})
+
+	t.Run("Expand Frontmatter with whitespace in URLs", func(t *testing.T) {
+		file := &OriginFile{
+			LocalPath:  "localpath",
+			RemotePath: "remotepath",
+			parentOrigin: &Origin{Branch: "master",
+				repo:      nil,
+				URL:       "http://gitrepo.git",
+				SourceDir: "sourcedir",
+				TargetDir: "targetdir",
+			},
+			Commit: &OriginFileCommit{
+				Hash: "abc",
+				Author: OriginFileCommitter{
+					Email: "mail@mail.com",
+					Name:  "commiter name"},
+				Date: time.Now(),
+			},
+		}
+
+		result, err := file.ExpandFrontmatter("content with http://test.de/bla%20blub in link")
+		assert.NoError(t, err)
+		assert.Contains(t, result, "http://test.de/bla%20blub")
+
 	})
 
 }

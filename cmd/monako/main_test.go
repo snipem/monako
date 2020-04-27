@@ -143,6 +143,11 @@ func TestMainMonakoTest(t *testing.T) {
 			assert.Len(t, doc.Find("body > main > aside.book-toc").Nodes, 1, "Asciidoc Page is missing aside.book-toc that is necessary for asciidoctor-fix")
 		})
 
+		// Is tranformed to <a href="http://urlwith.quotes/My%!L(MISSING)inkWith%!W(MISSING)hitespace" class="bare">http://urlwith.quotes/My%!L(MISSING)inkWith%!W(MISSING)hitespace</a>
+		t.Run("Check for Link with whitespaces", func(t *testing.T) {
+			assert.Contains(t, content, "href=\"http://urlwith.quotes/My%20LinkWith%20Whitespace\"", "Does not contain rendered asciidoc with correct %20")
+		})
+
 	})
 
 	t.Run("Check for RSS feed", func(t *testing.T) {
