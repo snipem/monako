@@ -1,3 +1,3 @@
 #!/bin/bash
-# Docker hub has to clone the theme submodule
-git submodule update --init
+# Docker hub has to pull the theme submodule
+git pull --recurse-submodules
