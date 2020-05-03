@@ -22,7 +22,6 @@ theme: clean
 	go generate cmd/monako/main.go
 
 update_theme:
-	# For theme
 	git submodule update
 
 secrets:
