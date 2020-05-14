@@ -107,13 +107,26 @@ func TestMarkdownFixDontDo(t *testing.T) {
 func TestMarkdownFixInnerLinks(t *testing.T) {
 	// Dont fix local links
 
-	noNeedToClean := "[[1]](#1)"
+	t.Run("Pseudo references", func(t *testing.T) {
+		noNeedToClean := "[[1]](#1)"
 
-	clean := string(MarkdownPostprocessing(noNeedToClean))
+		clean := string(MarkdownPostprocessing(noNeedToClean))
 
-	if clean != noNeedToClean {
-		t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
-	}
+		if clean != noNeedToClean {
+			t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
+		}
+
+	})
+
+	t.Run("Alpbabet links", func(t *testing.T) {
+
+		noNeedToClean := "[details](#teamname)"
+		clean := string(MarkdownPostprocessing(noNeedToClean))
+		if clean != noNeedToClean {
+			t.Errorf("Clean was incorrect, got: %s, want: %s.", clean, noNeedToClean)
+		}
+
+	})
 }
 
 func TestFakeAsciidoctorBin(t *testing.T) {
