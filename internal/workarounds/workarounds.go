@@ -55,13 +55,21 @@ func AsciidocPostprocessing(dirty string) (clean string) {
 func MarkdownPostprocessing(dirty string) (clean string) {
 
 	// FIXME really quick and dirty. There is a problem with Go regexp look ahead
+
+	// DEPCRECATED: These workarounds will be removed when the asciidoc fix for pathes arrives in Hugo
+	// https://github.com/gohugoio/hugo/pull/6561
+
+	// Preserve absolute urls
 	dirty = strings.ReplaceAll(dirty, "](http", ")_______http")
-	dirty = strings.ReplaceAll(dirty, "]](", "]]_______(")
+	// Preserve anchors
+	dirty = strings.ReplaceAll(dirty, "](#", "]_______(#")
 
 	dirty = strings.ReplaceAll(dirty, "](", "](../")
 
+	// Restore absolute urls
 	dirty = strings.ReplaceAll(dirty, ")_______http", "](http")
-	dirty = strings.ReplaceAll(dirty, "]]_______(", "]](")
+	// Restore anchors
+	dirty = strings.ReplaceAll(dirty, "]_______(#", "](#")
 
 	clean = dirty
 
