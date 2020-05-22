@@ -8,7 +8,6 @@ import (
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
@@ -169,15 +168,6 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 	if cliSettings.BaseURL != "" {
 		// Overwrite config base url if it is set as parameter
 		config.BaseURL = cliSettings.BaseURL
-	}
-
-	if _, isGithub := os.LookupEnv("GITHUB_WORKFLOW"); isGithub {
-		log.Warn("Don't apply workaround on Github Actions, because its flaky")
-	} else {
-		_, err := workarounds.AddFakeAsciidoctorBinForDiagramsToPath(config.BaseURL)
-		if err != nil {
-			log.Fatalf("Can't add Asciidoctor Workaround to path: %s", err)
-		}
 	}
 
 	if !cliSettings.OnlyGenerate {

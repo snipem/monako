@@ -3,12 +3,7 @@ package workarounds
 // run: make test
 
 import (
-	"io/ioutil"
-	"os/exec"
-	"runtime"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestAsciiDocImageFix(t *testing.T) {
@@ -128,42 +123,3 @@ func TestMarkdownFixInnerLinks(t *testing.T) {
 
 	})
 }
-
-func TestFakeAsciidoctorBin(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("Can't test this on Windows")
-	}
-
-	fakePath, err := AddFakeAsciidoctorBinForDiagramsToPath("http://complexbasepath/path/bla")
-	assert.NoError(t, err)
-
-	assert.FileExists(t, fakePath)
-
-	// This is how Hugo does it: https://github.com/gohugoio/hugo/blob/master/markup/asciidoc/convert.go#L90
-	// We wont to trick Hugo into the same behaviour
-	resolvedPath, err := exec.LookPath("asciidoctor")
-	assert.NoError(t, err)
-	assert.Equal(t, fakePath, resolvedPath)
-
-	read, err := ioutil.ReadFile(fakePath)
-	assert.NoError(t, err)
-	assert.Contains(t, string(read), "\\/path\\/bla")
-
-}
-
-// func TestRenderMermaidLikeGitlab(t *testing.T) {
-
-// 	before = "```" + `mermaid
-// graph TD;
-//     A-->B;
-//     A-->C;
-//     B-->D;
-//     C-->D;
-// 	` + "```" + `
-
-// 	after = `
-// 	{{< mermaid >}}
-// 	{{< /mermaid >}}
-// `
-
-// }
