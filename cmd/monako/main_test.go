@@ -150,6 +150,14 @@ func TestMainMonakoTest(t *testing.T) {
 
 	})
 
+	t.Run("Test if asciidoc diagram is served as svg", func(t *testing.T) {
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc/ditaa-diagram.svg")
+		assert.NoError(t, err, "HTTP Call failed")
+
+		assert.Contains(t, content, "Lots of work")
+
+	})
+
 	t.Run("Check for RSS feed", func(t *testing.T) {
 		content, err := getContentFromURL(ts, "/docs/index.xml")
 		assert.NoError(t, err, "HTTP Call failed")

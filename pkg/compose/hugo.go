@@ -98,6 +98,11 @@ unsafe = true
 [markup.tableOfContents]
 startLevel = 1
 
+[markup.asciidocext]
+     extensions = ["asciidoctor-diagram"]
+     workingFolderCurrent = true
+     trace = true
+
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings
 BookToC = true

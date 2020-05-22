@@ -191,7 +191,11 @@ func (config *Config) Generate() error {
 		log.Fatalf("%s does not exist, run monako only-generate before?", config.HugoWorkingDir)
 	}
 
-	err := helpers.HugoRun([]string{"--source", config.HugoWorkingDir})
+	err := helpers.HugoRun([]string{
+		"--source", config.HugoWorkingDir,
+		// FIXME this is the root of the problem
+		"--destination", "public",
+	})
 	if err != nil {
 		return err
 	}
