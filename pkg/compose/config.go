@@ -193,7 +193,6 @@ func (config *Config) Generate() error {
 
 	err := helpers.HugoRun([]string{
 		"--source", config.HugoWorkingDir,
-		// FIXME this is the root of the problem
 		"--destination", "public",
 	})
 	if err != nil {
