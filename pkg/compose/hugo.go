@@ -82,6 +82,9 @@ baseURL = '%s'
 title = '%s'
 theme = '%s'
 
+# Use Uglyurls with html in path
+uglyurls = true
+
 # Because of this bug: https://github.com/gohugoio/hugo/issues/4841
 # Maybe delete seems to be related to slow Github Actions
 timeout = 60000

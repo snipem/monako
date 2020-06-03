@@ -76,11 +76,11 @@ func TestMainMonakoTest(t *testing.T) {
 		assert.NoError(t, err, "Can't read file")
 		assert.Contains(t, content, "<strong>Test docs</strong>", "Contains menu")
 
-		assert.Contains(t, content, "<img src=\"../profile.png\" alt=\"Picture in same folder\" />", "Contains relative picture")
+		assert.Contains(t, content, "<img src=\"profile.png\" alt=\"Picture in same folder\" />", "Contains picture")
 		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/profile.png"), "Relative picture right placed")
 
 		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/subfolder/subfolderprofile.png"), "Relative subfolder picture right placed")
-		assert.Contains(t, content, "<img src=\"../subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains relative picture")
+		assert.Contains(t, content, "<img src=\"subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains picture")
 	})
 
 	// Provide the public folder over a webserver

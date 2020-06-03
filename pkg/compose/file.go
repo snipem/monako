@@ -17,7 +17,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/snipem/monako/internal/workarounds"
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-git.v4"
@@ -166,18 +165,11 @@ func (file *OriginFile) copyMarkupFile(filesystem billy.Filesystem) error {
 		return errors.Wrap(err, fmt.Sprintf("Error opening markup file %s", file.RemotePath))
 	}
 
-	dirty, err := ioutil.ReadAll(bf)
+	c, err := ioutil.ReadAll(bf)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error reading markup file %s", file.RemotePath))
 	}
-	var content string
-	contentFormat := file.GetFormat()
-
-	if contentFormat == Markdown {
-		content = workarounds.MarkdownPostprocessing(string(dirty))
-	} else if contentFormat == Asciidoc {
-		content = workarounds.AsciidocPostprocessing(string(dirty))
-	}
+	content := string(c)
 
 	content, err = file.ExpandFrontmatter(string(content))
 	if err != nil {
