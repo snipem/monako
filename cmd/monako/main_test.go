@@ -68,9 +68,9 @@ func TestMainMonakoTest(t *testing.T) {
 	})
 
 	t.Run("Check for generated test doc markdown page", func(t *testing.T) {
-		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"), "Generated Test doc does not exist")
+		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown.html"), "Generated Test doc does not exist")
 
-		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"))
+		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown.html"))
 		content := string(contentBytes)
 
 		assert.NoError(t, err, "Can't read file")
@@ -90,7 +90,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check if images and sources are served", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		srcs, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
@@ -118,7 +118,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check contents of served page markdown", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -129,7 +129,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check contents of served page asciidoc", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -151,7 +151,7 @@ func TestMainMonakoTest(t *testing.T) {
 	})
 
 	t.Run("Test if asciidoc diagram is served as svg", func(t *testing.T) {
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc/ditaa-diagram.svg")
+		content, err := getContentFromURL(ts, "/docs/test/ditaa-diagram.svg")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Lots of work")
