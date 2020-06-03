@@ -1,5 +1,4 @@
-
-# run: make theme && head internal/theme/bindata.go     
+# run: make theme && head internal/theme/bindata.go
 SHELL := /bin/bash
 .PHONY: compose test
 
@@ -59,7 +58,7 @@ run_prd: build secrets
 
 run: build compose serve
 
-run_local: build 
+run_local: build
 	# Runs locally, clones this git repo to use test data
 	./monako -config test/config.local.yaml -menu-config test/config.menu.local.md
 	$(MAKE) serve
