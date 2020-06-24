@@ -25,15 +25,15 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 	var trace = f.Bool("trace", false, "Enable trace logging")
 	var showVersion = f.Bool("version", false, "Show version")
 	var failOnHugoError = f.Bool("fail-on-error", false, "Fail on document conversion errors")
-	var onlyCompose = f.Bool("only-compose", false, "Only compose the Monako structure")
-	var onlyGenerate = f.Bool("only-generate", false, "Only generate HTML files from an existing Monako structure")
+	var onlyCompose = f.Bool("compose", false, "Only compose the Monako structure")
+	var onlyRender = f.Bool("render", false, "Only render HTML files from an existing Monako structure")
 
 	err := f.Parse(os.Args[1:])
 	if err != nil {
 		log.Fatal("Can't parse arguments")
 	}
-	if *onlyCompose && *onlyGenerate {
-		log.Fatal("only-compose and only-generate can't be set both")
+	if *onlyCompose && *onlyRender {
+		log.Fatal("compose and render can't be set both")
 	}
 
 	return compose.CommandLineSettings{
@@ -45,7 +45,7 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 		ShowVersion:        *showVersion,
 		FailOnHugoError:    *failOnHugoError,
 		OnlyCompose:        *onlyCompose,
-		OnlyGenerate:       *onlyGenerate,
+		OnlyRender:         *onlyRender,
 	}
 }
 
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	config := compose.Init(cliSettings)
-	if !cliSettings.OnlyGenerate {
+	if !cliSettings.OnlyRender {
 		err := config.Compose()
 		if err != nil {
 			log.Fatal(err)

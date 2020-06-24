@@ -48,8 +48,8 @@ type CommandLineSettings struct {
 	FailOnHugoError bool
 	// OnlyCompose will only compose files but not generate HTML
 	OnlyCompose bool
-	// OnlyGenerate will only generate HTML files but not compose them
-	OnlyGenerate bool
+	// OnlyRender will only render HTML files but not compose them
+	OnlyRender bool
 }
 
 // LoadConfig returns the Monako config from the given configfilepath
@@ -170,7 +170,7 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 		config.BaseURL = cliSettings.BaseURL
 	}
 
-	if !cliSettings.OnlyGenerate {
+	if !cliSettings.OnlyRender {
 		// Dont do these steps if only generate
 		config.CleanUp()
 
@@ -188,7 +188,7 @@ func Init(cliSettings CommandLineSettings) (config *Config) {
 func (config *Config) Generate() error {
 
 	if _, err := os.Stat(config.HugoWorkingDir); os.IsNotExist(err) {
-		log.Fatalf("%s does not exist, run monako only-generate before?", config.HugoWorkingDir)
+		log.Fatalf("%s does not exist, run monako -render before?", config.HugoWorkingDir)
 	}
 
 	err := helpers.HugoRun([]string{

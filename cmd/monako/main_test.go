@@ -190,7 +190,7 @@ func TestMainSplitCalls(t *testing.T) {
 
 	os.Args = []string{
 		"monako",
-		"-only-compose",
+		"-compose",
 		"-fail-on-error",
 		"-working-dir", targetDir,
 		"-config", monakoConfig,
@@ -203,7 +203,7 @@ func TestMainSplitCalls(t *testing.T) {
 
 	os.Args = []string{
 		"monako",
-		"-only-generate",
+		"-render",
 		"-fail-on-error",
 		"-working-dir", targetDir,
 		"-config", monakoConfig,
@@ -223,7 +223,7 @@ func TestFailOnNoComposeBeforeGenerate(t *testing.T) {
 	monakoConfig, menuConfig := writeConfig("https://github.com/snipem/monako-test.git")
 	os.Args = []string{
 		"monako",
-		"-only-generate",
+		"-render",
 		"-fail-on-error",
 		"-working-dir", targetDir,
 		"-config", monakoConfig,
