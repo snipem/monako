@@ -28,4 +28,4 @@ require (
 	gopkg.in/yaml.v2 v2.2.8
 )
 
-replace github.com/gohugoio/hugo => github.com/muenchhausen/hugo v0.60.1-0.20200524154319-6fe82ddc0877
+replace github.com/gohugoio/hugo => github.com/muenchhausen/hugo v0.60.1-0.20200624051337-d63e0580d93b
