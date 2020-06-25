@@ -7,7 +7,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gobuffalo/envy v1.9.0 // indirect
-	github.com/gohugoio/hugo v0.67.0
+	github.com/gohugoio/hugo v0.73.1-0.20200625075133-f0266e2ef348
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
@@ -27,5 +27,3 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v2 v2.2.8
 )
-
-replace github.com/gohugoio/hugo => github.com/muenchhausen/hugo v0.60.1-0.20200624051337-d63e0580d93b
