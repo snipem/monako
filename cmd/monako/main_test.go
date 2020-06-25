@@ -68,19 +68,19 @@ func TestMainMonakoTest(t *testing.T) {
 	})
 
 	t.Run("Check for generated test doc markdown page", func(t *testing.T) {
-		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"), "Generated Test doc does not exist")
+		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown.html"), "Generated Test doc does not exist")
 
-		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown/index.html"))
+		contentBytes, err := ioutil.ReadFile(filepath.Join(targetDir, "compose/public/docs/test/test_doc_markdown.html"))
 		content := string(contentBytes)
 
 		assert.NoError(t, err, "Can't read file")
 		assert.Contains(t, content, "<strong>Test docs</strong>", "Contains menu")
 
-		assert.Contains(t, content, "<img src=\"../profile.png\" alt=\"Picture in same folder\" />", "Contains relative picture")
+		assert.Contains(t, content, "<img src=\"profile.png\" alt=\"Picture in same folder\" />", "Contains picture")
 		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/profile.png"), "Relative picture right placed")
 
 		assert.FileExists(t, filepath.Join(targetDir, "compose/public/docs/test/subfolder/subfolderprofile.png"), "Relative subfolder picture right placed")
-		assert.Contains(t, content, "<img src=\"../subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains relative picture")
+		assert.Contains(t, content, "<img src=\"subfolder/subfolderprofile.png\" alt=\"Picture in sub folder\" />", "Contains picture")
 	})
 
 	// Provide the public folder over a webserver
@@ -90,7 +90,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check if images and sources are served", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		srcs, err := getURLKeyValuesFromHTML(content, "src", ts.URL)
@@ -118,7 +118,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check contents of served page markdown", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_markdown.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -129,7 +129,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 	t.Run("Check contents of served page asciidoc", func(t *testing.T) {
 
-		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc/index.html")
+		content, err := getContentFromURL(ts, "/docs/test/test_doc_asciidoc.html")
 		assert.NoError(t, err, "HTTP Call failed")
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
@@ -147,6 +147,14 @@ func TestMainMonakoTest(t *testing.T) {
 		t.Run("Check for Link with whitespaces", func(t *testing.T) {
 			assert.Contains(t, content, "href=\"http://urlwith.quotes/My%20LinkWith%20Whitespace\"", "Does not contain rendered asciidoc with correct %20")
 		})
+
+	})
+
+	t.Run("Test if asciidoc diagram is served as svg", func(t *testing.T) {
+		content, err := getContentFromURL(ts, "/docs/test/ditaa-diagram.svg")
+		assert.NoError(t, err, "HTTP Call failed")
+
+		assert.Contains(t, content, "Lots of work")
 
 	})
 

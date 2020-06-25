@@ -82,6 +82,9 @@ baseURL = '%s'
 title = '%s'
 theme = '%s'
 
+# Use Uglyurls with html in path
+uglyurls = true
+
 # Because of this bug: https://github.com/gohugoio/hugo/issues/4841
 # Maybe delete seems to be related to slow Github Actions
 timeout = 60000
@@ -97,6 +100,11 @@ unsafe = true
 
 [markup.tableOfContents]
 startLevel = 1
+
+[markup.asciidocext]
+     extensions = ["asciidoctor-diagram"]
+     workingFolderCurrent = true
+     trace = true
 
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings
