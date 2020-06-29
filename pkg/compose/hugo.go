@@ -102,9 +102,14 @@ unsafe = true
 startLevel = 1
 
 [markup.asciidocext]
-     extensions = ["asciidoctor-diagram"]
-     workingFolderCurrent = true
-     trace = true
+extensions = ["asciidoctor-diagram"]
+workingFolderCurrent = true
+# Use trace together with -v in hugo run
+trace = false
+
+[markup.asciidocext.attributes]
+# this is needed for rendering section 0 to h1
+showtitle = "true"
 
 [params]
 # See: https://github.com/snipem/monako-book#configuration for settings

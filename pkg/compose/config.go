@@ -192,6 +192,7 @@ func (config *Config) Generate() error {
 	}
 
 	err := helpers.HugoRun([]string{
+		// "-v",
 		"--source", config.HugoWorkingDir,
 		"--destination", "public",
 	})
