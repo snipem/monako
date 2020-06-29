@@ -138,8 +138,13 @@ func TestMainMonakoTest(t *testing.T) {
 		doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
 		assert.NoError(t, err)
 
+		t.Run("Check that asciidoctor default stylesheet is not used", func(t *testing.T) {
+			assert.NotContains(t, content, "Asciidoctor default stylesheet", "Site has default style sheet of asciidoctor, this will mess up the theme")
+			assert.Equal(t, doc.Find("body > main > div > article > style").Size(), 0, "Embedded style found in asciidoc rendering")
+		})
+
 		t.Run("Check for level one header", func(t *testing.T) {
-			assert.Contains(t, doc.Find("body > main > div > article > div > h1").Text(), "Asciidoc First Level", "Asciidoc is missing first level text, likely due to wrong asciidoc doc type")
+			assert.Contains(t, doc.Find("body > main > div > article > h1").Text(), "Asciidoc First Level", "Asciidoc is missing first level text, likely due to 'showtitle' asciidoctor attribute not set")
 		})
 
 		// TODO Remove on asciidoctor-fix removal in theme
@@ -350,6 +355,7 @@ func writeConfig(repo string) (string, string) {
 
 	if os.Getenv("MONAKO_TEST_REPO") != "" {
 		testRepo = os.Getenv("MONAKO_TEST_REPO")
+		log.Warningf("Using local test repo in %s !\n", testRepo)
 	} else {
 		testRepo = repo
 	}
