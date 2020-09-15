@@ -284,6 +284,30 @@ func TestCommitInfo(t *testing.T) {
 
 }
 
+func TestFixMarkdownLinksToShortcode(t *testing.T) {
+
+	t.Run("Don't do anything", func(t *testing.T) {
+		assert.Equal(t, `[AsciiDoc](http://asciidoc.org)`,
+			FixMarkdownLinksToShortcode("[AsciiDoc](http://asciidoc.org)"))
+
+		assert.Equal(t, `[No markdown file](bla.html)`,
+			FixMarkdownLinksToShortcode("[No markdown file](bla.html)"))
+
+		assert.Equal(t, `[Absolute Url](http://example.com/absolute.md`,
+			FixMarkdownLinksToShortcode("[Absolute Url](http://example.com/absolute.md)"))
+	})
+
+	t.Run("Fix Markdown", func(t *testing.T) {
+
+		assert.Equal(t, `[Markdown file]({{<ref markdown.md>}})`,
+			FixMarkdownLinksToShortcode("[Markdown file](markdown.md)"))
+
+		assert.Equal(t, `[Markdown file in subpath]({{<ref path/sub/markdown.md>}})`,
+			FixMarkdownLinksToShortcode("[Markdown file in subpath](path/sub/markdown.md)"))
+	})
+
+}
+
 func TestExpandFrontmatter(t *testing.T) {
 
 	t.Run("Expand Frontmatter Simple", func(t *testing.T) {

@@ -312,3 +312,7 @@ func getWebLinkForGitCommit(gitURL string, commitID string) string {
 	u.Path = path.Join(u.Path, middlePath, commitID)
 	return u.String()
 }
+
+func FixMarkdownLinksToShortcode(old string) string {
+	return old
+}
