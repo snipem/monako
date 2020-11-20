@@ -28,7 +28,7 @@ jobs:
         echo "${{ github.workspace }}/../go/bin" >> $GITHUB_PATH
 
     - name: Setup Ruby for use with actions
-      uses: actions/setup-ruby@v1.0.0
+      uses: actions/setup-ruby@v1.1.2
     
     - name: Install asciidoctor
       run: gem install asciidoctor asciidoctor-diagram
