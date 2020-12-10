@@ -123,7 +123,7 @@ func TestMainMonakoTest(t *testing.T) {
 
 		assert.Contains(t, content, "Ihr naht euch wieder, schwankende Gestalten!", "Does not contain Goethe")
 		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
-		assert.Contains(t, content, "<h3 id=\"markdown-doc-3\">Markdown Doc 3</h3>", "Check rendered Markdown")
+		assert.Contains(t, content, "<h3 id=\"markdown-doc-3\">\n  Markdown Doc 3\n  <a class=\"anchor\" href=\"#markdown-doc-3\">", "Check rendered Markdown")
 
 	})
 
