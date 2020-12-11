@@ -125,6 +125,7 @@ func TestMainMonakoTest(t *testing.T) {
 		assert.Contains(t, content, "Test docs", "Does not contain Menu header")
 		doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
 		assert.Contains(t, doc.Find("h3#markdown-doc-3").Text(), "Markdown Doc 3", "Check rendered Markdown")
+		assert.NoError(t, err)
 
 	})
 
