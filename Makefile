@@ -2,8 +2,12 @@
 SHELL := /bin/bash
 .PHONY: compose test
 
+build: clean theme
+	go build -o ./monako github.com/snipem/monako/cmd/monako
+
 clean:
-	rm ./monako || true
+	-rm -r compose
+	-rm ./monako
 
 deps:
 	go mod download
@@ -13,9 +17,6 @@ optional_deps:
 	gem install asciidoctor asciidoctor-diagram
 
 init: deps theme
-
-build: clean
-	go build -o ./monako github.com/snipem/monako/cmd/monako
 
 theme: clean
 	go generate cmd/monako/main.go
@@ -58,7 +59,7 @@ run_prd: build secrets
 
 run: build compose serve
 
-run_local: build
+run_local: clean build
 	# Runs locally, clones this git repo to use test data
 	./monako -config test/config.local.yaml -menu-config test/config.menu.local.md
 	$(MAKE) serve
