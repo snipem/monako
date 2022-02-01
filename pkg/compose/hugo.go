@@ -101,6 +101,17 @@ unsafe = true
 [markup.tableOfContents]
 startLevel = 1
 
+[security]
+  enableInlineShortcodes = false
+  [security.exec]
+    allow = ['^asciidoctor$', '^dart-sass-embedded$', '^go$', '^npx$', '^postcss$']
+    osEnv = ['(?i)^(PATH|PATHEXT|APPDATA|TMP|TEMP|TERM)$']
+  [security.funcs]
+    getenv = ['^HUGO_']
+  [security.http]
+    methods = ['(?i)GET|POST']
+    urls = ['.*']
+
 [markup.asciidocext]
 extensions = ["asciidoctor-diagram"]
 workingFolderCurrent = true
