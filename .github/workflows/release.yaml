@@ -10,7 +10,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.14.3]
+        go-version: [1.20]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -32,7 +32,7 @@ jobs:
 
     - name: Dependencies
       run: make --always-make deps theme
-      
+
     - name: Reset go.mod and go.sum
       run: git checkout -- go.mod go.sum
 
@@ -44,4 +44,3 @@ jobs:
         key: ${{ secrets.YOUR_PRIVATE_KEY }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

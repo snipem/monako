@@ -55,7 +55,7 @@ var version = "Development"
 // commit hash of latest commit
 var commit = "Local"
 
-//go:generate go-bindata -pkg theme -o ../../internal/theme/bindata.go -ignore "\\.git" -ignore "exampleSite" -prefix "../../assets/theme/" ../../assets/theme/monako-book/...
+//go:generate go-bindata -pkg theme -o ../../pkg/compose/internal/bindata.go -ignore "\\.git" -ignore "exampleSite" -prefix "../../assets/theme/" ../../assets/theme/monako-book/...
 
 func main() {
 

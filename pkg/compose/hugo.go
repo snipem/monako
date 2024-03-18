@@ -2,12 +2,12 @@ package compose
 
 import (
 	"fmt"
+	theme "github.com/snipem/monako/pkg/compose/internal"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
-	"github.com/snipem/monako/internal/theme"
 )
 
 const monakoMenuDirectory = "monako_menu_directory"
