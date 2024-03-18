@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - 42-version-bumps
 
 # on: [push, pull_request]
 jobs:
