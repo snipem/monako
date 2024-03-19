@@ -45,7 +45,7 @@ Usage of monako:
         Enable trace logging
 ```
 
-A Docker image is available from [Github Packages](https://github.com/users/snipem/packages?repo_name=monako).
+A Docker image is available from [Github Packages](https://github.com/snipem/monako/pkgs/container/monako).
 
 ## Configuration
 
