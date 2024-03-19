@@ -16,6 +16,8 @@ const themeName = "monako-book"
 // extractTheme extracts the Monako Theme to the Hugo Working Directory
 func extractTheme(hugoWorkingDir string) error {
 	themesDir := filepath.Join(hugoWorkingDir, "themes")
+	// theme.RestoreAssets is autogeneration by the generation in cmd/monake/main.go
+	// use "make theme" to generate those files
 	err := theme.RestoreAssets(themesDir, themeName)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error restoring asset %s to %s", themeName, themesDir))
