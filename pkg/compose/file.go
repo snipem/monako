@@ -4,6 +4,8 @@ package compose
 
 import (
 	"fmt"
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-git/v5"
 	"io"
 	"io/ioutil"
 	"net/url"
@@ -18,8 +20,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/snipem/monako/pkg/helpers"
-	"gopkg.in/src-d/go-billy.v4"
-	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/yaml.v2"
 )
 

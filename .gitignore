@@ -15,7 +15,7 @@ secrets.env
 *.prod.*
 tmp
 dist
-internal/theme/bindata.go
+pkg/compose/internal/bindata.go
 builds
 .asciidoctor/
 static
@@ -36,3 +36,4 @@ test/configs/testgenerated/menu.testgenerated.md
 origin*heap*log
 *.log
 .DS_Store
+.idea

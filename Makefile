@@ -11,7 +11,7 @@ clean:
 
 deps:
 	go mod download
-	go get -u github.com/go-bindata/go-bindata/...
+	go install github.com/kevinburke/go-bindata/v4/...@latest
 
 optional_deps:
 	gem install asciidoctor asciidoctor-diagram
