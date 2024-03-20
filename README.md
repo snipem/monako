@@ -1,5 +1,14 @@
 # monako
 
+!!!
+
+**This project is no longer actively maintained. Use it at your own risk.**
+
+!!!
+
+
+## About
+
 ![Build Monako](https://github.com/snipem/monako/workflows/Build%20Monako/badge.svg?branch=develop)
 [![codecov](https://codecov.io/gh/snipem/monako/branch/master/graph/badge.svg)](https://codecov.io/gh/snipem/monako)
 [![Go Report Card](https://goreportcard.com/badge/github.com/snipem/monako)](https://goreportcard.com/report/github.com/snipem/monako)
