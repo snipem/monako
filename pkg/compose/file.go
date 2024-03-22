@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
+	"github.com/snipem/monako/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net/url"
@@ -16,8 +17,7 @@ import (
 	"time"
 
 	"github.com/gohugoio/hugo/parser/pageparser"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"log"
 
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
@@ -91,7 +91,7 @@ func (file *OriginFile) GetFormat() string {
 
 // createParentDir creates the parent directories for the file in the local filesystem
 func createParentDir(localPath string) error {
-	log.Debugf("Creating parent dir '%s'", filepath.Dir(localPath))
+	log.Printf("Creating parent dir '%s'\n", filepath.Dir(localPath))
 	err := os.MkdirAll(filepath.Dir(localPath), standardFilemode)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Error creating parent dir %s", localPath))
@@ -121,7 +121,7 @@ func (file *OriginFile) copyRegularFile(filesystem billy.Filesystem) error {
 // identified by it's filename
 func getCommitInfo(remotePath string, repo *git.Repository) (*OriginFileCommit, error) {
 
-	log.Debugf("Getting commit info for %s", remotePath)
+	log.Printf("Getting commit info for %s\n", remotePath)
 
 	if repo == nil {
 		return nil, fmt.Errorf("Repository is nil")
@@ -143,7 +143,7 @@ func getCommitInfo(remotePath string, repo *git.Repository) (*OriginFileCommit, 
 		return nil, fmt.Errorf("File not found in git log: '%s'", remotePath)
 	}
 
-	log.Debugf("Git Commit found for %s, %s", remotePath, returnCommit)
+	log.Printf("Git Commit found for %s, %s\n", remotePath, returnCommit)
 
 	// This has to be here, otherwise the iterator will return garbage
 	defer cIter.Close()
@@ -196,7 +196,7 @@ func getLocalFilePath(composeDir, remoteDocDir string, targetDir string, remoteF
 func (file *OriginFile) ExpandFrontmatter(content string) (expandedFrontmatter string, err error) {
 
 	if file.Commit == nil {
-		log.Debug("Git Info is not set, returning without adding it")
+		log.Println("Git Info is not set, returning without adding it")
 		return content, nil
 	}
 

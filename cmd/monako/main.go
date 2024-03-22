@@ -5,13 +5,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 
 	"github.com/snipem/monako/pkg/compose"
-	"github.com/snipem/monako/pkg/helpers"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func parseCommandLine() (cliSettings compose.CommandLineSettings) {
@@ -22,7 +20,6 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 	var menuconfigfilepath = f.String("menu-config", "config.menu.md", "Menu file for monako-book theme")
 	var workingdir = f.String("working-dir", ".", "Working dir for composed site")
 	var baseURL = f.String("base-url", "", "Custom base URL")
-	var trace = f.Bool("trace", false, "Enable trace logging")
 	var showVersion = f.Bool("version", false, "Show version")
 	var failOnHugoError = f.Bool("fail-on-error", false, "Fail on document conversion errors")
 	var onlyCompose = f.Bool("compose", false, "Only compose the Monako structure")
@@ -41,7 +38,6 @@ func parseCommandLine() (cliSettings compose.CommandLineSettings) {
 		MenuConfigFilePath: *menuconfigfilepath,
 		ContentWorkingDir:  *workingdir,
 		BaseURL:            *baseURL,
-		Trace:              *trace,
 		ShowVersion:        *showVersion,
 		FailOnHugoError:    *failOnHugoError,
 		OnlyCompose:        *onlyCompose,
@@ -66,10 +62,6 @@ func main() {
 
 	if cliSettings.ShowVersion {
 		os.Exit(0)
-	}
-
-	if cliSettings.Trace {
-		helpers.Trace()
 	}
 
 	config := compose.Init(cliSettings)

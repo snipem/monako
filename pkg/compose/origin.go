@@ -8,12 +8,12 @@ import (
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/snipem/monako/pkg/errors"
 	"os"
 	"path"
 
 	"github.com/gohugoio/hugo/hugofs/files"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"log"
 
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -31,7 +31,7 @@ const Markdown = "MARKDOWN"
 func (origin *Origin) CloneDir() (filesystem billy.Filesystem, err error) {
 
 	fmt.Printf("\nCloning in to '%s' with branch '%s' ...\n", origin.URL, origin.Branch)
-	log.Debugf("Start cloning of %s", origin.URL)
+	log.Printf("Start cloning of %s\n", origin.URL)
 
 	filesystem = memfs.New()
 
@@ -69,7 +69,7 @@ func (origin *Origin) CloneDir() (filesystem billy.Filesystem, err error) {
 	}
 
 	origin.repo = repo
-	log.Debugf("Ended cloning of %s", origin.URL)
+	log.Printf("Ended cloning of %s\n", origin.URL)
 
 	return filesystem, nil
 
@@ -169,13 +169,13 @@ func (origin *Origin) newFile(remotePath string) OriginFile {
 
 		// Only get commit info for content files
 		// This speeds up commit fetching on repository with lots of files
-		// heavily. Most non content files are static and therefore way back
+		// heavily. Most non-content files are static and therefore way back
 		// in the commit log. This also reduces the calls to git log.
 		if files.IsContentFile(remotePath) {
 			// TODO add safe way to acces not existing commit info
 			commitinfo, err := getCommitInfo(remotePath, origin.repo)
 			if err != nil {
-				log.Warnf("Can't extract Commit Info for '%s'", err)
+				log.Printf("Can't extract Commit Info for '%s'\n", err)
 			}
 			originFile.Commit = commitinfo
 
