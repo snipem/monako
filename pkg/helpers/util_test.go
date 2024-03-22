@@ -5,7 +5,6 @@ package helpers
 import (
 	"testing"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,10 +33,4 @@ func TestFileIsWhiteOrBlacklisted(t *testing.T) {
 func TestHugoRun(t *testing.T) {
 	assert.NoError(t, HugoRun([]string{"version"}))
 	assert.Error(t, HugoRun([]string{"unknown-flag-by-monako-test-case"}))
-}
-
-func TestTrace(t *testing.T) {
-	assert.NotEqual(t, logrus.GetLevel(), logrus.DebugLevel)
-	Trace()
-	assert.Equal(t, logrus.GetLevel(), logrus.DebugLevel)
 }

@@ -284,7 +284,6 @@ func TestInit(t *testing.T) {
 		BaseURL:            commandLineBaseURL,
 		ContentWorkingDir:  localFolder,
 		FailOnHugoError:    true,
-		Trace:              true,
 	})
 
 	assert.NotNil(t, config)
