@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
+	"github.com/snipem/monako/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net/url"
@@ -16,7 +17,6 @@ import (
 	"time"
 
 	"github.com/gohugoio/hugo/parser/pageparser"
-	"github.com/pkg/errors"
 	"log"
 
 	"github.com/snipem/monako/pkg/helpers"

@@ -2,12 +2,12 @@ package compose
 
 import (
 	"fmt"
+	"github.com/snipem/monako/pkg/errors"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
