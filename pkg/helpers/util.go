@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	hugo "github.com/gohugoio/hugo/commands"
-	"github.com/sirupsen/logrus"
 )
 
 // FileIsListed returns true if the filename is in the list based on its suffix
@@ -33,12 +32,4 @@ func IsAsciidoc(filename string) bool {
 func HugoRun(args []string) error {
 	response := hugo.Execute(args)
 	return response.Err
-}
-
-// Trace sets trace mode
-func Trace() {
-	logrus.SetLevel(logrus.DebugLevel)
-	// Add line and filename to log
-	// This is slow
-	logrus.SetReportCaller(true)
 }

@@ -2,12 +2,12 @@ package compose
 
 import (
 	"fmt"
+	"github.com/snipem/monako/pkg/errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/snipem/monako/pkg/helpers"
 	"gopkg.in/yaml.v2"
 )
@@ -40,8 +40,6 @@ type CommandLineSettings struct {
 	ContentWorkingDir string
 	// BaseURL is the BaseURL of the site
 	BaseURL string
-	// Trace activates function name based logging
-	Trace bool
 	// ShowVersion shows the current version and exists
 	ShowVersion bool
 	// FailOnHugoError will fail Monako when there are Hugo errors during build
@@ -147,7 +145,7 @@ func (config *Config) CleanUp() {
 		log.Fatalf("CleanUp: Error while cleaning up: %s", err)
 	}
 
-	log.Infof("Cleaned up: %s", config.HugoWorkingDir)
+	log.Printf("Cleaned up: %s", config.HugoWorkingDir)
 }
 
 // setWorkingDir sets the target dir. Standard is relative to the current directory (".")
